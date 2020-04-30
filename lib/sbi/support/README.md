@@ -7,12 +7,13 @@ $ git clone https://github.com/OpenAPITools/openapi-generator.git
 $ cd openapi-generator
 $ mvn clean package
 
-* Generate JSON build/parser
-$ cd /home/acetcom/Documents/git/open5gs/lib/sbi/support
-$ java -jar ${HOME}/Documents/git/my/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar validate -i ./openapi/TS29510_Nnrf_NFManagement.yaml
-$ java -jar ${HOME}/Documents/git/my/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -i ./openapi/TS29510_Nnrf_NFManagement.yaml -g c -o out
-
 * Using NPM
-$ C_POST_PROCESS_FILE=/usr/bin/uncrustify --no-backup
+$ export C_POST_PROCESS_FILE="/usr/bin/uncrustify --no-backup"
 $ npm install @openapitools/openapi-generator-cli -g
-$ npx openapi-generator generate -i ./openapi/TS29510_Nnrf_NFManagement.yaml -g c -o out
+$ npx openapi-generator generate -i ./modified/TS29510_Nnrf_NFManagement.yaml -g c -o ..
+
+* Generate JSON build/parser Using JAVA
+$ cd /home/acetcom/Documents/git/open5gs/lib/sbi/support
+$ java -jar ${HOME}/Documents/git/my/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar validate -i ./3gpp-spec/TS29510_Nnrf_NFManagement.yaml
+$ java -jar ${HOME}/Documents/git/my/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -i ./modified/TS29510_Nnrf_NFManagement.yaml -g c -o ..
+

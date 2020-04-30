@@ -1,0 +1,41 @@
+/*
+ * snssai_smf_info_item.h
+ *
+ * 
+ */
+
+#ifndef _snssai_smf_info_item_H_
+#define _snssai_smf_info_item_H_
+
+#include <string.h>
+#include "../external/cJSON.h"
+#include "../include/list.h"
+#include "../include/keyValuePair.h"
+#include "../include/binary.h"
+
+typedef struct snssai_smf_info_item_t snssai_smf_info_item_t;
+
+#include "dnn_smf_info_item.h"
+#include "snssai.h"
+
+
+
+typedef struct snssai_smf_info_item_t {
+    struct snssai_t *s_nssai; //model
+    list_t *dnn_smf_info_list; //nonprimitive container
+
+} snssai_smf_info_item_t;
+
+snssai_smf_info_item_t *snssai_smf_info_item_create(
+    snssai_t *s_nssai,
+    list_t *dnn_smf_info_list
+);
+
+void snssai_smf_info_item_free(snssai_smf_info_item_t *snssai_smf_info_item);
+
+snssai_smf_info_item_t *snssai_smf_info_item_parseFromJSON(cJSON *snssai_smf_info_itemJSON);
+
+cJSON *snssai_smf_info_item_convertToJSON(snssai_smf_info_item_t *snssai_smf_info_item);
+
+#endif /* _snssai_smf_info_item_H_ */
+
