@@ -20,6 +20,7 @@ libsbi_sources = files('''
     src/apiKey.c
     external/cJSON.c
     model/object.c
+    model/access_type.c
     model/amf_cond.c
     model/amf_info.c
     model/atsss_capability.c
@@ -57,6 +58,8 @@ libsbi_sources = files('''
     model/nf_service.c
     model/nf_service_status.c
     model/nf_service_version.c
+    model/nf_status.c
+    model/nf_type.c
     model/nf_type_cond.c
     model/notif_condition.c
     model/notification_data.c
@@ -105,14 +108,13 @@ if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
                     '-Wno-unused-label',
                     '-Wno-float-equal',
                     '-Wno-discarded-qualifiers',
-                    '-Wno-maybe-uninitialized', # FIXME
     ])
 endif
 
 libsbi = library('ogssbi',
     sources : libsbi_sources,
     version : libogslib_version,
-    c_args : ['-DOGS_SBI_COMPILATION', sbi_cc_flags],
+    c_args : sbi_cc_flags,
     include_directories : [libsbi_inc, libinc],
     dependencies : libcore_dep,
     install : true)

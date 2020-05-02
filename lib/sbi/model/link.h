@@ -1,7 +1,7 @@
 /*
  * link.h
  *
- * 
+ *
  */
 
 #ifndef _link_H_
@@ -14,24 +14,15 @@
 #include "../include/binary.h"
 
 typedef struct link_t link_t;
-
-
-
-
 typedef struct link_t {
-    char *href; // string
-
+    char *href;
 } link_t;
 
 link_t *link_create(
     char *href
-);
-
+    );
 void link_free(link_t *link);
-
 link_t *link_parseFromJSON(cJSON *linkJSON);
-
 cJSON *link_convertToJSON(link_t *link);
-
 #endif /* _link_H_ */
 

@@ -663,8 +663,7 @@ components:
         nwdafInfo:
           $ref: '#/components/schemas/NwdafInfo'
         customInfo:
-#          type: object
-          type: string
+          type: object
         recoveryTime:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/DateTime'
         nfServicePersistence:
@@ -764,32 +763,29 @@ components:
         supportedFeatures:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/SupportedFeatures'
     NFType:
-#      anyOf:
-#        - type: string
-#          enum:
-#            - NRF
-#            - UDM
-#            - AMF
-#            - SMF
-#            - AUSF
-#            - NEF
-#            - PCF
-#            - SMSF
-#            - NSSF
-#            - UDR
-#            - LMF
-#            - GMLC
-#            - 5G_EIR
-#            - SEPP
-#            - UPF
-#            - N3IWF
-#            - AF
-#            - UDSF
-#            - BSF
-#            - CHF
-#            - NWDAF
-#        - type: string
       type: string
+      enum:
+        - NRF
+        - UDM
+        - AMF
+        - SMF
+        - AUSF
+        - NEF
+        - PCF
+        - SMSF
+        - NSSF
+        - UDR
+        - LMF
+        - GMLC
+        - 5G_EIR
+        - SEPP
+        - UPF
+        - N3IWF
+        - AF
+        - UDSF
+        - BSF
+        - CHF
+        - NWDAF
     Fqdn:
       type: string
     IpEndPoint:
@@ -1397,14 +1393,11 @@ components:
             $ref: 'TS29571_CommonData.yaml#/components/schemas/ChangeItem'
           minItems: 1
     NFStatus:
-#      anyOf:
-#        - type: string
-#          enum:
-#            - REGISTERED
-#            - SUSPENDED
-#            - UNDISCOVERABLE
-#        - type: string
       type: string
+      enum:
+        - REGISTERED
+        - SUSPENDED
+        - UNDISCOVERABLE
     NFServiceVersion:
       type: object
       required:

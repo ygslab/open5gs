@@ -264,7 +264,7 @@ components:
         from:
           type: string
         value:
-#          nullable: true
+          nullable: true
           type: string
       required:
         - op
@@ -666,9 +666,9 @@ components:
 
     AccessType:
       type: string
-#      enum:
-#        - 3GPP_ACCESS
-#        - NON_3GPP_ACCESS
+      enum:
+        - 3GPP_ACCESS
+        - NON_3GPP_ACCESS
     AccessTypeRm:
       type: string
       enum:

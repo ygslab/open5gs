@@ -1,7 +1,7 @@
 /*
  * invalid_param.h
  *
- * 
+ *
  */
 
 #ifndef _invalid_param_H_
@@ -14,26 +14,17 @@
 #include "../include/binary.h"
 
 typedef struct invalid_param_t invalid_param_t;
-
-
-
-
 typedef struct invalid_param_t {
-    char *param; // string
-    char *reason; // string
-
+    char *param;
+    char *reason;
 } invalid_param_t;
 
 invalid_param_t *invalid_param_create(
     char *param,
     char *reason
-);
-
+    );
 void invalid_param_free(invalid_param_t *invalid_param);
-
 invalid_param_t *invalid_param_parseFromJSON(cJSON *invalid_paramJSON);
-
 cJSON *invalid_param_convertToJSON(invalid_param_t *invalid_param);
-
 #endif /* _invalid_param_H_ */
 

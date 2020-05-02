@@ -1,15 +1,15 @@
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include "ipv6_prefix_range.h"
 
-
-
 ipv6_prefix_range_t *ipv6_prefix_range_create(
     ipv6_prefix_t *start,
     ipv6_prefix_t *end
-    ) {
-    ipv6_prefix_range_t *ipv6_prefix_range_local_var = malloc(sizeof(ipv6_prefix_range_t));
+    )
+{
+    ipv6_prefix_range_t *ipv6_prefix_range_local_var = ogs_malloc(sizeof(ipv6_prefix_range_t));
     if (!ipv6_prefix_range_local_var) {
         return NULL;
     }
@@ -19,44 +19,41 @@ ipv6_prefix_range_t *ipv6_prefix_range_create(
     return ipv6_prefix_range_local_var;
 }
 
-
-void ipv6_prefix_range_free(ipv6_prefix_range_t *ipv6_prefix_range) {
-    if(NULL == ipv6_prefix_range){
-        return ;
+void ipv6_prefix_range_free(ipv6_prefix_range_t *ipv6_prefix_range)
+{
+    if(NULL == ipv6_prefix_range) {
+        return;
     }
     listEntry_t *listEntry;
     ipv6_prefix_free(ipv6_prefix_range->start);
     ipv6_prefix_free(ipv6_prefix_range->end);
-    free(ipv6_prefix_range);
+    ogs_free(ipv6_prefix_range);
 }
 
-cJSON *ipv6_prefix_range_convertToJSON(ipv6_prefix_range_t *ipv6_prefix_range) {
+cJSON *ipv6_prefix_range_convertToJSON(ipv6_prefix_range_t *ipv6_prefix_range)
+{
     cJSON *item = cJSON_CreateObject();
+    if (ipv6_prefix_range->start) {
+        cJSON *start_local_JSON = ipv6_prefix_convertToJSON(ipv6_prefix_range->start);
+        if(start_local_JSON == NULL) {
+            goto fail;
+        }
+        cJSON_AddItemToObject(item, "start", start_local_JSON);
+        if(item->child == NULL) {
+            goto fail;
+        }
+    }
 
-    // ipv6_prefix_range->start
-    if(ipv6_prefix_range->start) { 
-    cJSON *start_local_JSON = ipv6_prefix_convertToJSON(ipv6_prefix_range->start);
-    if(start_local_JSON == NULL) {
-    goto fail; //model
+    if (ipv6_prefix_range->end) {
+        cJSON *end_local_JSON = ipv6_prefix_convertToJSON(ipv6_prefix_range->end);
+        if(end_local_JSON == NULL) {
+            goto fail;
+        }
+        cJSON_AddItemToObject(item, "end", end_local_JSON);
+        if(item->child == NULL) {
+            goto fail;
+        }
     }
-    cJSON_AddItemToObject(item, "start", start_local_JSON);
-    if(item->child == NULL) {
-    goto fail;
-    }
-     } 
-
-
-    // ipv6_prefix_range->end
-    if(ipv6_prefix_range->end) { 
-    cJSON *end_local_JSON = ipv6_prefix_convertToJSON(ipv6_prefix_range->end);
-    if(end_local_JSON == NULL) {
-    goto fail; //model
-    }
-    cJSON_AddItemToObject(item, "end", end_local_JSON);
-    if(item->child == NULL) {
-    goto fail;
-    }
-     } 
 
     return item;
 fail:
@@ -66,24 +63,22 @@ fail:
     return NULL;
 }
 
-ipv6_prefix_range_t *ipv6_prefix_range_parseFromJSON(cJSON *ipv6_prefix_rangeJSON){
-
+ipv6_prefix_range_t *ipv6_prefix_range_parseFromJSON(cJSON *ipv6_prefix_rangeJSON)
+{
     ipv6_prefix_range_t *ipv6_prefix_range_local_var = NULL;
-
-    // ipv6_prefix_range->start
     cJSON *start = cJSON_GetObjectItemCaseSensitive(ipv6_prefix_rangeJSON, "start");
+
     ipv6_prefix_t *start_local_nonprim = NULL;
-    if (start) { 
-    start_local_nonprim = ipv6_prefix_parseFromJSON(start); //nonprimitive
+    if (start) {
+        start_local_nonprim = ipv6_prefix_parseFromJSON(start);
     }
 
-    // ipv6_prefix_range->end
     cJSON *end = cJSON_GetObjectItemCaseSensitive(ipv6_prefix_rangeJSON, "end");
-    ipv6_prefix_t *end_local_nonprim = NULL;
-    if (end) { 
-    end_local_nonprim = ipv6_prefix_parseFromJSON(end); //nonprimitive
-    }
 
+    ipv6_prefix_t *end_local_nonprim = NULL;
+    if (end) {
+        end_local_nonprim = ipv6_prefix_parseFromJSON(end);
+    }
 
     ipv6_prefix_range_local_var = ipv6_prefix_range_create (
         start ? start_local_nonprim : NULL,
@@ -93,5 +88,5 @@ ipv6_prefix_range_t *ipv6_prefix_range_parseFromJSON(cJSON *ipv6_prefix_rangeJSO
     return ipv6_prefix_range_local_var;
 end:
     return NULL;
-
 }
+

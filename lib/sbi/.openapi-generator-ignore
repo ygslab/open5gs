@@ -12,3 +12,4 @@ unit-test/**
 
 README.md
 libcurl.licence
+uncrustify-rules.cfg

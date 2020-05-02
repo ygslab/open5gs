@@ -1,7 +1,7 @@
 /*
  * tac_range.h
  *
- * 
+ *
  */
 
 #ifndef _tac_range_H_
@@ -14,28 +14,19 @@
 #include "../include/binary.h"
 
 typedef struct tac_range_t tac_range_t;
-
-
-
-
 typedef struct tac_range_t {
-    char *start; // string
-    char *end; // string
-    char *pattern; // string
-
+    char *start;
+    char *end;
+    char *pattern;
 } tac_range_t;
 
 tac_range_t *tac_range_create(
     char *start,
     char *end,
     char *pattern
-);
-
+    );
 void tac_range_free(tac_range_t *tac_range);
-
 tac_range_t *tac_range_parseFromJSON(cJSON *tac_rangeJSON);
-
 cJSON *tac_range_convertToJSON(tac_range_t *tac_range);
-
 #endif /* _tac_range_H_ */
 
