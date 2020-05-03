@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _supi_range_H_
-#define _supi_range_H_
+#ifndef _ogs_sbi_supi_range_H_
+#define _ogs_sbi_supi_range_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,20 +13,29 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct supi_range_t supi_range_t;
-typedef struct supi_range_t {
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct ogs_sbi_supi_range_s ogs_sbi_supi_range_t;
+typedef struct ogs_sbi_supi_range_s {
     char *start;
     char *end;
     char *pattern;
-} supi_range_t;
+} ogs_sbi_supi_range_t;
 
-supi_range_t *supi_range_create(
+ogs_sbi_supi_range_t *ogs_sbi_supi_range_create(
     char *start,
     char *end,
     char *pattern
     );
-void supi_range_free(supi_range_t *supi_range);
-supi_range_t *supi_range_parseFromJSON(cJSON *supi_rangeJSON);
-cJSON *supi_range_convertToJSON(supi_range_t *supi_range);
-#endif /* _supi_range_H_ */
+void ogs_sbi_supi_range_free(ogs_sbi_supi_range_t *supi_range);
+ogs_sbi_supi_range_t *ogs_sbi_supi_range_parseFromJSON(cJSON *supi_rangeJSON);
+cJSON *ogs_sbi_supi_range_convertToJSON(ogs_sbi_supi_range_t *supi_range);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_supi_range_H_ */
 

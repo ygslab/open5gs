@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _nrf_info_H_
-#define _nrf_info_H_
+#ifndef _ogs_sbi_nrf_info_H_
+#define _ogs_sbi_nrf_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -23,34 +23,43 @@
 #include "udr_info.h"
 #include "upf_info.h"
 
-typedef struct nrf_info_t nrf_info_t;
-typedef struct nrf_info_t {
-    list_t* served_udr_info;
-    list_t* served_udm_info;
-    list_t* served_ausf_info;
-    list_t* served_amf_info;
-    list_t* served_smf_info;
-    list_t* served_upf_info;
-    list_t* served_pcf_info;
-    list_t* served_bsf_info;
-    list_t* served_chf_info;
-    list_t* served_nwdaf_info;
-} nrf_info_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-nrf_info_t *nrf_info_create(
-    list_t* served_udr_info,
-    list_t* served_udm_info,
-    list_t* served_ausf_info,
-    list_t* served_amf_info,
-    list_t* served_smf_info,
-    list_t* served_upf_info,
-    list_t* served_pcf_info,
-    list_t* served_bsf_info,
-    list_t* served_chf_info,
-    list_t* served_nwdaf_info
+typedef struct ogs_sbi_nrf_info_s ogs_sbi_nrf_info_t;
+typedef struct ogs_sbi_nrf_info_s {
+    ogs_sbi_list_t* served_udr_info;
+    ogs_sbi_list_t* served_udm_info;
+    ogs_sbi_list_t* served_ausf_info;
+    ogs_sbi_list_t* served_amf_info;
+    ogs_sbi_list_t* served_smf_info;
+    ogs_sbi_list_t* served_upf_info;
+    ogs_sbi_list_t* served_pcf_info;
+    ogs_sbi_list_t* served_bsf_info;
+    ogs_sbi_list_t* served_chf_info;
+    ogs_sbi_list_t* served_nwdaf_info;
+} ogs_sbi_nrf_info_t;
+
+ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_create(
+    ogs_sbi_list_t* served_udr_info,
+    ogs_sbi_list_t* served_udm_info,
+    ogs_sbi_list_t* served_ausf_info,
+    ogs_sbi_list_t* served_amf_info,
+    ogs_sbi_list_t* served_smf_info,
+    ogs_sbi_list_t* served_upf_info,
+    ogs_sbi_list_t* served_pcf_info,
+    ogs_sbi_list_t* served_bsf_info,
+    ogs_sbi_list_t* served_chf_info,
+    ogs_sbi_list_t* served_nwdaf_info
     );
-void nrf_info_free(nrf_info_t *nrf_info);
-nrf_info_t *nrf_info_parseFromJSON(cJSON *nrf_infoJSON);
-cJSON *nrf_info_convertToJSON(nrf_info_t *nrf_info);
-#endif /* _nrf_info_H_ */
+void ogs_sbi_nrf_info_free(ogs_sbi_nrf_info_t *nrf_info);
+ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON);
+cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_nrf_info_H_ */
 

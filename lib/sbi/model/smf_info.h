@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _smf_info_H_
-#define _smf_info_H_
+#ifndef _ogs_sbi_smf_info_H_
+#define _ogs_sbi_smf_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,24 +17,33 @@
 #include "tai.h"
 #include "tai_range.h"
 
-typedef struct smf_info_t smf_info_t;
-typedef struct smf_info_t {
-    list_t *s_nssai_smf_info_list;
-    list_t *tai_list;
-    list_t *tai_range_list;
-    char *pgw_fqdn;
-    list_t *access_type;
-} smf_info_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-smf_info_t *smf_info_create(
-    list_t *s_nssai_smf_info_list,
-    list_t *tai_list,
-    list_t *tai_range_list,
+typedef struct ogs_sbi_smf_info_s ogs_sbi_smf_info_t;
+typedef struct ogs_sbi_smf_info_s {
+    ogs_sbi_list_t *s_nssai_smf_info_list;
+    ogs_sbi_list_t *tai_list;
+    ogs_sbi_list_t *tai_range_list;
+    char *pgw_fqdn;
+    ogs_sbi_list_t *access_type;
+} ogs_sbi_smf_info_t;
+
+ogs_sbi_smf_info_t *ogs_sbi_smf_info_create(
+    ogs_sbi_list_t *s_nssai_smf_info_list,
+    ogs_sbi_list_t *tai_list,
+    ogs_sbi_list_t *tai_range_list,
     char *pgw_fqdn,
-    list_t *access_type
+    ogs_sbi_list_t *access_type
     );
-void smf_info_free(smf_info_t *smf_info);
-smf_info_t *smf_info_parseFromJSON(cJSON *smf_infoJSON);
-cJSON *smf_info_convertToJSON(smf_info_t *smf_info);
-#endif /* _smf_info_H_ */
+void ogs_sbi_smf_info_free(ogs_sbi_smf_info_t *smf_info);
+ogs_sbi_smf_info_t *ogs_sbi_smf_info_parseFromJSON(cJSON *smf_infoJSON);
+cJSON *ogs_sbi_smf_info_convertToJSON(ogs_sbi_smf_info_t *smf_info);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_smf_info_H_ */
 

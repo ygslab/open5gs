@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _bsf_info_H_
-#define _bsf_info_H_
+#ifndef _ogs_sbi_bsf_info_H_
+#define _ogs_sbi_bsf_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -15,22 +15,31 @@
 #include "ipv4_address_range.h"
 #include "ipv6_prefix_range.h"
 
-typedef struct bsf_info_t bsf_info_t;
-typedef struct bsf_info_t {
-    list_t *dnn_list;
-    list_t *ip_domain_list;
-    list_t *ipv4_address_ranges;
-    list_t *ipv6_prefix_ranges;
-} bsf_info_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-bsf_info_t *bsf_info_create(
-    list_t *dnn_list,
-    list_t *ip_domain_list,
-    list_t *ipv4_address_ranges,
-    list_t *ipv6_prefix_ranges
+typedef struct ogs_sbi_bsf_info_s ogs_sbi_bsf_info_t;
+typedef struct ogs_sbi_bsf_info_s {
+    ogs_sbi_list_t *dnn_list;
+    ogs_sbi_list_t *ip_domain_list;
+    ogs_sbi_list_t *ipv4_address_ranges;
+    ogs_sbi_list_t *ipv6_prefix_ranges;
+} ogs_sbi_bsf_info_t;
+
+ogs_sbi_bsf_info_t *ogs_sbi_bsf_info_create(
+    ogs_sbi_list_t *dnn_list,
+    ogs_sbi_list_t *ip_domain_list,
+    ogs_sbi_list_t *ipv4_address_ranges,
+    ogs_sbi_list_t *ipv6_prefix_ranges
     );
-void bsf_info_free(bsf_info_t *bsf_info);
-bsf_info_t *bsf_info_parseFromJSON(cJSON *bsf_infoJSON);
-cJSON *bsf_info_convertToJSON(bsf_info_t *bsf_info);
-#endif /* _bsf_info_H_ */
+void ogs_sbi_bsf_info_free(ogs_sbi_bsf_info_t *bsf_info);
+ogs_sbi_bsf_info_t *ogs_sbi_bsf_info_parseFromJSON(cJSON *bsf_infoJSON);
+cJSON *ogs_sbi_bsf_info_convertToJSON(ogs_sbi_bsf_info_t *bsf_info);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_bsf_info_H_ */
 

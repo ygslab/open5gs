@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _plmn_snssai_H_
-#define _plmn_snssai_H_
+#ifndef _ogs_sbi_plmn_snssai_H_
+#define _ogs_sbi_plmn_snssai_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -15,18 +15,27 @@
 #include "plmn_id.h"
 #include "snssai.h"
 
-typedef struct plmn_snssai_t plmn_snssai_t;
-typedef struct plmn_snssai_t {
-    struct plmn_id_t *plmn_id;
-    list_t *s_nssai_list;
-} plmn_snssai_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-plmn_snssai_t *plmn_snssai_create(
-    plmn_id_t *plmn_id,
-    list_t *s_nssai_list
+typedef struct ogs_sbi_plmn_snssai_s ogs_sbi_plmn_snssai_t;
+typedef struct ogs_sbi_plmn_snssai_s {
+    struct ogs_sbi_plmn_id_s *plmn_id;
+    ogs_sbi_list_t *s_nssai_list;
+} ogs_sbi_plmn_snssai_t;
+
+ogs_sbi_plmn_snssai_t *ogs_sbi_plmn_snssai_create(
+    ogs_sbi_plmn_id_t *plmn_id,
+    ogs_sbi_list_t *s_nssai_list
     );
-void plmn_snssai_free(plmn_snssai_t *plmn_snssai);
-plmn_snssai_t *plmn_snssai_parseFromJSON(cJSON *plmn_snssaiJSON);
-cJSON *plmn_snssai_convertToJSON(plmn_snssai_t *plmn_snssai);
-#endif /* _plmn_snssai_H_ */
+void ogs_sbi_plmn_snssai_free(ogs_sbi_plmn_snssai_t *plmn_snssai);
+ogs_sbi_plmn_snssai_t *ogs_sbi_plmn_snssai_parseFromJSON(cJSON *plmn_snssaiJSON);
+cJSON *ogs_sbi_plmn_snssai_convertToJSON(ogs_sbi_plmn_snssai_t *plmn_snssai);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_plmn_snssai_H_ */
 

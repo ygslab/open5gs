@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _chf_service_info_H_
-#define _chf_service_info_H_
+#ifndef _ogs_sbi_chf_service_info_H_
+#define _ogs_sbi_chf_service_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,18 +13,27 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct chf_service_info_t chf_service_info_t;
-typedef struct chf_service_info_t {
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct ogs_sbi_chf_service_info_s ogs_sbi_chf_service_info_t;
+typedef struct ogs_sbi_chf_service_info_s {
     char *primary_chf_service_instance;
     char *secondary_chf_service_instance;
-} chf_service_info_t;
+} ogs_sbi_chf_service_info_t;
 
-chf_service_info_t *chf_service_info_create(
+ogs_sbi_chf_service_info_t *ogs_sbi_chf_service_info_create(
     char *primary_chf_service_instance,
     char *secondary_chf_service_instance
     );
-void chf_service_info_free(chf_service_info_t *chf_service_info);
-chf_service_info_t *chf_service_info_parseFromJSON(cJSON *chf_service_infoJSON);
-cJSON *chf_service_info_convertToJSON(chf_service_info_t *chf_service_info);
-#endif /* _chf_service_info_H_ */
+void ogs_sbi_chf_service_info_free(ogs_sbi_chf_service_info_t *chf_service_info);
+ogs_sbi_chf_service_info_t *ogs_sbi_chf_service_info_parseFromJSON(cJSON *chf_service_infoJSON);
+cJSON *ogs_sbi_chf_service_info_convertToJSON(ogs_sbi_chf_service_info_t *chf_service_info);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_chf_service_info_H_ */
 

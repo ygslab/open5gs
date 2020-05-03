@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "notification_type.h"
 
-notification_type_t *notification_type_create(
+ogs_sbi_notification_type_t *ogs_sbi_notification_type_create(
     )
 {
-    notification_type_t *notification_type_local_var = ogs_malloc(sizeof(notification_type_t));
+    ogs_sbi_notification_type_t *notification_type_local_var = ogs_malloc(sizeof(ogs_sbi_notification_type_t));
     if (!notification_type_local_var) {
         return NULL;
     }
@@ -15,16 +15,16 @@ notification_type_t *notification_type_create(
     return notification_type_local_var;
 }
 
-void notification_type_free(notification_type_t *notification_type)
+void ogs_sbi_notification_type_free(ogs_sbi_notification_type_t *notification_type)
 {
-    if(NULL == notification_type) {
+    if (NULL == notification_type) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(notification_type);
 }
 
-cJSON *notification_type_convertToJSON(notification_type_t *notification_type)
+cJSON *ogs_sbi_notification_type_convertToJSON(ogs_sbi_notification_type_t *notification_type)
 {
     cJSON *item = cJSON_CreateObject();
     return item;
@@ -35,10 +35,10 @@ fail:
     return NULL;
 }
 
-notification_type_t *notification_type_parseFromJSON(cJSON *notification_typeJSON)
+ogs_sbi_notification_type_t *ogs_sbi_notification_type_parseFromJSON(cJSON *notification_typeJSON)
 {
-    notification_type_t *notification_type_local_var = NULL;
-    notification_type_local_var = notification_type_create (
+    ogs_sbi_notification_type_t *notification_type_local_var = NULL;
+    notification_type_local_var = ogs_sbi_notification_type_create (
         );
 
     return notification_type_local_var;

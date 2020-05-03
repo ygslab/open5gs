@@ -1,9 +1,5 @@
-/*
- * object.h
- */
-
-#ifndef _object_H_
-#define _object_H_
+#ifndef OGS_SBI_OBJECT_H
+#define OGS_SBI_OBJECT_H
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -11,17 +7,24 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-typedef struct object_t {
+typedef struct ogs_sbi_object_s {
     void *temporary;
-} object_t;
+} ogs_sbi_object_t;
 
-object_t *object_create();
+ogs_sbi_object_t *ogs_sbi_object_create(void);
 
-void object_free(object_t *object);
+void ogs_sbi_object_free(ogs_sbi_object_t *object);
 
-object_t *object_parseFromJSON(cJSON *objectJSON);
+ogs_sbi_object_t *ogs_sbi_object_parseFromJSON(cJSON *objectJSON);
 
-cJSON *object_convertToJSON(object_t *object);
+cJSON *ogs_sbi_object_convertToJSON(ogs_sbi_object_t *object);
 
-#endif /* _object_H_ */
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* OGS_SBI_OBJECT_H */

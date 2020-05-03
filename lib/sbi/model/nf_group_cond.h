@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _nf_group_cond_H_
-#define _nf_group_cond_H_
+#ifndef _ogs_sbi_nf_group_cond_H_
+#define _ogs_sbi_nf_group_cond_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,23 +13,32 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct nf_group_cond_t nf_group_cond_t;
-typedef enum { nf_group_cond_NFTYPE_NULL = 0, nf_group_cond_NFTYPE_UDM, nf_group_cond_NFTYPE_AUSF, nf_group_cond_NFTYPE_UDR, nf_group_cond_NFTYPE_PCF } nf_group_cond_nf_type_e;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-char* nf_group_cond_nf_type_ToString(nf_group_cond_nf_type_e nf_type);
+typedef struct ogs_sbi_nf_group_cond_s ogs_sbi_nf_group_cond_t;
+typedef enum { ogs_sbi_nf_group_cond_NFTYPE_NULL = 0, ogs_sbi_nf_group_cond_NFTYPE_UDM, ogs_sbi_nf_group_cond_NFTYPE_AUSF, ogs_sbi_nf_group_cond_NFTYPE_UDR, ogs_sbi_nf_group_cond_NFTYPE_PCF } ogs_sbi_nf_group_cond_nf_type_e;
 
-nf_group_cond_nf_type_e nf_group_cond_nf_type_FromString(char* nf_type);
-typedef struct nf_group_cond_t {
-    nf_group_cond_nf_type_e nf_type;
+char* ogs_sbi_nf_group_cond_nf_type_ToString(ogs_sbi_nf_group_cond_nf_type_e nf_type);
+
+ogs_sbi_nf_group_cond_nf_type_e ogs_sbi_nf_group_cond_nf_type_FromString(char* nf_type);
+typedef struct ogs_sbi_nf_group_cond_s {
+    ogs_sbi_nf_group_cond_nf_type_e nf_type;
     char *nf_group_id;
-} nf_group_cond_t;
+} ogs_sbi_nf_group_cond_t;
 
-nf_group_cond_t *nf_group_cond_create(
-    nf_group_cond_nf_type_e nf_type,
+ogs_sbi_nf_group_cond_t *ogs_sbi_nf_group_cond_create(
+    ogs_sbi_nf_group_cond_nf_type_e nf_type,
     char *nf_group_id
     );
-void nf_group_cond_free(nf_group_cond_t *nf_group_cond);
-nf_group_cond_t *nf_group_cond_parseFromJSON(cJSON *nf_group_condJSON);
-cJSON *nf_group_cond_convertToJSON(nf_group_cond_t *nf_group_cond);
-#endif /* _nf_group_cond_H_ */
+void ogs_sbi_nf_group_cond_free(ogs_sbi_nf_group_cond_t *nf_group_cond);
+ogs_sbi_nf_group_cond_t *ogs_sbi_nf_group_cond_parseFromJSON(cJSON *nf_group_condJSON);
+cJSON *ogs_sbi_nf_group_cond_convertToJSON(ogs_sbi_nf_group_cond_t *nf_group_cond);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_nf_group_cond_H_ */
 

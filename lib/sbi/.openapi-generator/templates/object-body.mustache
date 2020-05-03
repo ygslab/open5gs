@@ -3,19 +3,19 @@
 #include <stdio.h>
 #include "object.h"
 
-object_t *object_create()
+ogs_sbi_object_t *ogs_sbi_object_create(void)
 {
-    object_t *object = ogs_malloc(sizeof(object_t));
+    ogs_sbi_object_t *object = ogs_malloc(sizeof(ogs_sbi_object_t));
 
     return object;
 }
 
-void object_free(object_t *object)
+void ogs_sbi_object_free(ogs_sbi_object_t *object)
 {
     ogs_free (object);
 }
 
-cJSON *object_convertToJSON(object_t *object)
+cJSON *ogs_sbi_object_convertToJSON(ogs_sbi_object_t *object)
 {
     cJSON *item = cJSON_CreateObject();
 
@@ -25,9 +25,9 @@ fail:
     return NULL;
 }
 
-object_t *object_parseFromJSON(cJSON *objectJSON)
+ogs_sbi_object_t *ogs_sbi_object_parseFromJSON(cJSON *objectJSON)
 {
-    object_t *object = NULL;
+    ogs_sbi_object_t *object = NULL;
 
     return object;
 end:

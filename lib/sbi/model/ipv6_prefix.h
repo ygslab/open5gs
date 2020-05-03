@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ipv6_prefix_H_
-#define _ipv6_prefix_H_
+#ifndef _ogs_sbi_ipv6_prefix_H_
+#define _ogs_sbi_ipv6_prefix_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,14 +13,23 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct ipv6_prefix_t ipv6_prefix_t;
-typedef struct ipv6_prefix_t {
-} ipv6_prefix_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-ipv6_prefix_t *ipv6_prefix_create(
+typedef struct ogs_sbi_ipv6_prefix_s ogs_sbi_ipv6_prefix_t;
+typedef struct ogs_sbi_ipv6_prefix_s {
+} ogs_sbi_ipv6_prefix_t;
+
+ogs_sbi_ipv6_prefix_t *ogs_sbi_ipv6_prefix_create(
     );
-void ipv6_prefix_free(ipv6_prefix_t *ipv6_prefix);
-ipv6_prefix_t *ipv6_prefix_parseFromJSON(cJSON *ipv6_prefixJSON);
-cJSON *ipv6_prefix_convertToJSON(ipv6_prefix_t *ipv6_prefix);
-#endif /* _ipv6_prefix_H_ */
+void ogs_sbi_ipv6_prefix_free(ogs_sbi_ipv6_prefix_t *ipv6_prefix);
+ogs_sbi_ipv6_prefix_t *ogs_sbi_ipv6_prefix_parseFromJSON(cJSON *ipv6_prefixJSON);
+cJSON *ogs_sbi_ipv6_prefix_convertToJSON(ogs_sbi_ipv6_prefix_t *ipv6_prefix);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_ipv6_prefix_H_ */
 

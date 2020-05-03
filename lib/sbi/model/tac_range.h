@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _tac_range_H_
-#define _tac_range_H_
+#ifndef _ogs_sbi_tac_range_H_
+#define _ogs_sbi_tac_range_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,20 +13,29 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct tac_range_t tac_range_t;
-typedef struct tac_range_t {
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct ogs_sbi_tac_range_s ogs_sbi_tac_range_t;
+typedef struct ogs_sbi_tac_range_s {
     char *start;
     char *end;
     char *pattern;
-} tac_range_t;
+} ogs_sbi_tac_range_t;
 
-tac_range_t *tac_range_create(
+ogs_sbi_tac_range_t *ogs_sbi_tac_range_create(
     char *start,
     char *end,
     char *pattern
     );
-void tac_range_free(tac_range_t *tac_range);
-tac_range_t *tac_range_parseFromJSON(cJSON *tac_rangeJSON);
-cJSON *tac_range_convertToJSON(tac_range_t *tac_range);
-#endif /* _tac_range_H_ */
+void ogs_sbi_tac_range_free(ogs_sbi_tac_range_t *tac_range);
+ogs_sbi_tac_range_t *ogs_sbi_tac_range_parseFromJSON(cJSON *tac_rangeJSON);
+cJSON *ogs_sbi_tac_range_convertToJSON(ogs_sbi_tac_range_t *tac_range);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_tac_range_H_ */
 

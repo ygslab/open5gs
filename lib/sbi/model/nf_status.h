@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _nf_status_H_
-#define _nf_status_H_
+#ifndef _ogs_sbi_nf_status_H_
+#define _ogs_sbi_nf_status_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,10 +13,19 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef enum { nf_status_NULL = 0, nf_status_REGISTERED, nf_status_SUSPENDED, nf_status_UNDISCOVERABLE } nf_status_e;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-char* nf_status_ToString(nf_status_e nf_status);
+typedef enum { ogs_sbi_nf_status_NULL = 0, ogs_sbi_nf_status_REGISTERED, ogs_sbi_nf_status_SUSPENDED, ogs_sbi_nf_status_UNDISCOVERABLE } ogs_sbi_nf_status_e;
 
-nf_status_e nf_status_FromString(char* nf_status);
-#endif /* _nf_status_H_ */
+char* ogs_sbi_nf_status_ToString(ogs_sbi_nf_status_e nf_status);
+
+ogs_sbi_nf_status_e ogs_sbi_nf_status_FromString(char* nf_status);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_nf_status_H_ */
 

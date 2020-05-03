@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "patch_operation.h"
 
-patch_operation_t *patch_operation_create(
+ogs_sbi_patch_operation_t *ogs_sbi_patch_operation_create(
     )
 {
-    patch_operation_t *patch_operation_local_var = ogs_malloc(sizeof(patch_operation_t));
+    ogs_sbi_patch_operation_t *patch_operation_local_var = ogs_malloc(sizeof(ogs_sbi_patch_operation_t));
     if (!patch_operation_local_var) {
         return NULL;
     }
@@ -15,16 +15,16 @@ patch_operation_t *patch_operation_create(
     return patch_operation_local_var;
 }
 
-void patch_operation_free(patch_operation_t *patch_operation)
+void ogs_sbi_patch_operation_free(ogs_sbi_patch_operation_t *patch_operation)
 {
-    if(NULL == patch_operation) {
+    if (NULL == patch_operation) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(patch_operation);
 }
 
-cJSON *patch_operation_convertToJSON(patch_operation_t *patch_operation)
+cJSON *ogs_sbi_patch_operation_convertToJSON(ogs_sbi_patch_operation_t *patch_operation)
 {
     cJSON *item = cJSON_CreateObject();
     return item;
@@ -35,10 +35,10 @@ fail:
     return NULL;
 }
 
-patch_operation_t *patch_operation_parseFromJSON(cJSON *patch_operationJSON)
+ogs_sbi_patch_operation_t *ogs_sbi_patch_operation_parseFromJSON(cJSON *patch_operationJSON)
 {
-    patch_operation_t *patch_operation_local_var = NULL;
-    patch_operation_local_var = patch_operation_create (
+    ogs_sbi_patch_operation_t *patch_operation_local_var = NULL;
+    patch_operation_local_var = ogs_sbi_patch_operation_create (
         );
 
     return patch_operation_local_var;

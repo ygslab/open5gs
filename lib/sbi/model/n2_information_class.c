@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "n2_information_class.h"
 
-n2_information_class_t *n2_information_class_create(
+ogs_sbi_n2_information_class_t *ogs_sbi_n2_information_class_create(
     )
 {
-    n2_information_class_t *n2_information_class_local_var = ogs_malloc(sizeof(n2_information_class_t));
+    ogs_sbi_n2_information_class_t *n2_information_class_local_var = ogs_malloc(sizeof(ogs_sbi_n2_information_class_t));
     if (!n2_information_class_local_var) {
         return NULL;
     }
@@ -15,16 +15,16 @@ n2_information_class_t *n2_information_class_create(
     return n2_information_class_local_var;
 }
 
-void n2_information_class_free(n2_information_class_t *n2_information_class)
+void ogs_sbi_n2_information_class_free(ogs_sbi_n2_information_class_t *n2_information_class)
 {
-    if(NULL == n2_information_class) {
+    if (NULL == n2_information_class) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(n2_information_class);
 }
 
-cJSON *n2_information_class_convertToJSON(n2_information_class_t *n2_information_class)
+cJSON *ogs_sbi_n2_information_class_convertToJSON(ogs_sbi_n2_information_class_t *n2_information_class)
 {
     cJSON *item = cJSON_CreateObject();
     return item;
@@ -35,10 +35,10 @@ fail:
     return NULL;
 }
 
-n2_information_class_t *n2_information_class_parseFromJSON(cJSON *n2_information_classJSON)
+ogs_sbi_n2_information_class_t *ogs_sbi_n2_information_class_parseFromJSON(cJSON *n2_information_classJSON)
 {
-    n2_information_class_t *n2_information_class_local_var = NULL;
-    n2_information_class_local_var = n2_information_class_create (
+    ogs_sbi_n2_information_class_t *n2_information_class_local_var = NULL;
+    n2_information_class_local_var = ogs_sbi_n2_information_class_create (
         );
 
     return n2_information_class_local_var;

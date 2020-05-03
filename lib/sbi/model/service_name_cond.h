@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _service_name_cond_H_
-#define _service_name_cond_H_
+#ifndef _ogs_sbi_service_name_cond_H_
+#define _ogs_sbi_service_name_cond_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -14,16 +14,25 @@
 #include "../include/binary.h"
 #include "service_name.h"
 
-typedef struct service_name_cond_t service_name_cond_t;
-typedef struct service_name_cond_t {
-    struct service_name_t *service_name;
-} service_name_cond_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-service_name_cond_t *service_name_cond_create(
-    service_name_t *service_name
+typedef struct ogs_sbi_service_name_cond_s ogs_sbi_service_name_cond_t;
+typedef struct ogs_sbi_service_name_cond_s {
+    struct ogs_sbi_service_name_s *service_name;
+} ogs_sbi_service_name_cond_t;
+
+ogs_sbi_service_name_cond_t *ogs_sbi_service_name_cond_create(
+    ogs_sbi_service_name_t *service_name
     );
-void service_name_cond_free(service_name_cond_t *service_name_cond);
-service_name_cond_t *service_name_cond_parseFromJSON(cJSON *service_name_condJSON);
-cJSON *service_name_cond_convertToJSON(service_name_cond_t *service_name_cond);
-#endif /* _service_name_cond_H_ */
+void ogs_sbi_service_name_cond_free(ogs_sbi_service_name_cond_t *service_name_cond);
+ogs_sbi_service_name_cond_t *ogs_sbi_service_name_cond_parseFromJSON(cJSON *service_name_condJSON);
+cJSON *ogs_sbi_service_name_cond_convertToJSON(ogs_sbi_service_name_cond_t *service_name_cond);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_service_name_cond_H_ */
 

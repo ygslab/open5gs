@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "up_interface_type.h"
 
-up_interface_type_t *up_interface_type_create(
+ogs_sbi_up_interface_type_t *ogs_sbi_up_interface_type_create(
     )
 {
-    up_interface_type_t *up_interface_type_local_var = ogs_malloc(sizeof(up_interface_type_t));
+    ogs_sbi_up_interface_type_t *up_interface_type_local_var = ogs_malloc(sizeof(ogs_sbi_up_interface_type_t));
     if (!up_interface_type_local_var) {
         return NULL;
     }
@@ -15,16 +15,16 @@ up_interface_type_t *up_interface_type_create(
     return up_interface_type_local_var;
 }
 
-void up_interface_type_free(up_interface_type_t *up_interface_type)
+void ogs_sbi_up_interface_type_free(ogs_sbi_up_interface_type_t *up_interface_type)
 {
-    if(NULL == up_interface_type) {
+    if (NULL == up_interface_type) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(up_interface_type);
 }
 
-cJSON *up_interface_type_convertToJSON(up_interface_type_t *up_interface_type)
+cJSON *ogs_sbi_up_interface_type_convertToJSON(ogs_sbi_up_interface_type_t *up_interface_type)
 {
     cJSON *item = cJSON_CreateObject();
     return item;
@@ -35,10 +35,10 @@ fail:
     return NULL;
 }
 
-up_interface_type_t *up_interface_type_parseFromJSON(cJSON *up_interface_typeJSON)
+ogs_sbi_up_interface_type_t *ogs_sbi_up_interface_type_parseFromJSON(cJSON *up_interface_typeJSON)
 {
-    up_interface_type_t *up_interface_type_local_var = NULL;
-    up_interface_type_local_var = up_interface_type_create (
+    ogs_sbi_up_interface_type_t *up_interface_type_local_var = NULL;
+    up_interface_type_local_var = ogs_sbi_up_interface_type_create (
         );
 
     return up_interface_type_local_var;

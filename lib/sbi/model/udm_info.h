@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _udm_info_H_
-#define _udm_info_H_
+#ifndef _ogs_sbi_udm_info_H_
+#define _ogs_sbi_udm_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -15,24 +15,33 @@
 #include "identity_range.h"
 #include "supi_range.h"
 
-typedef struct udm_info_t udm_info_t;
-typedef struct udm_info_t {
-    char *group_id;
-    list_t *supi_ranges;
-    list_t *gpsi_ranges;
-    list_t *external_group_identifiers_ranges;
-    list_t *routing_indicators;
-} udm_info_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-udm_info_t *udm_info_create(
+typedef struct ogs_sbi_udm_info_s ogs_sbi_udm_info_t;
+typedef struct ogs_sbi_udm_info_s {
+    char *group_id;
+    ogs_sbi_list_t *supi_ranges;
+    ogs_sbi_list_t *gpsi_ranges;
+    ogs_sbi_list_t *external_group_identifiers_ranges;
+    ogs_sbi_list_t *routing_indicators;
+} ogs_sbi_udm_info_t;
+
+ogs_sbi_udm_info_t *ogs_sbi_udm_info_create(
     char *group_id,
-    list_t *supi_ranges,
-    list_t *gpsi_ranges,
-    list_t *external_group_identifiers_ranges,
-    list_t *routing_indicators
+    ogs_sbi_list_t *supi_ranges,
+    ogs_sbi_list_t *gpsi_ranges,
+    ogs_sbi_list_t *external_group_identifiers_ranges,
+    ogs_sbi_list_t *routing_indicators
     );
-void udm_info_free(udm_info_t *udm_info);
-udm_info_t *udm_info_parseFromJSON(cJSON *udm_infoJSON);
-cJSON *udm_info_convertToJSON(udm_info_t *udm_info);
-#endif /* _udm_info_H_ */
+void ogs_sbi_udm_info_free(ogs_sbi_udm_info_t *udm_info);
+ogs_sbi_udm_info_t *ogs_sbi_udm_info_parseFromJSON(cJSON *udm_infoJSON);
+cJSON *ogs_sbi_udm_info_convertToJSON(ogs_sbi_udm_info_t *udm_info);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_udm_info_H_ */
 

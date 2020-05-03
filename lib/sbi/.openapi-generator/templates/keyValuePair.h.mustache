@@ -1,17 +1,25 @@
-#ifndef _keyValuePair_H_
-#define _keyValuePair_H_
+#ifndef OGS_SBI_MAP_H
+#define OGS_SBI_MAP_H
 
 #include "ogs-core.h"
 
-typedef struct keyValuePair_t {
-    char* key;
-    void* value;
-} keyValuePair_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-keyValuePair_t *keyValuePair_create(char *key, void *value);
+typedef struct ogs_sbi_map_s {
+    char *key;
+    void *value;
+} ogs_sbi_map_t;
 
-keyValuePair_t* keyValuePair_create_allocate(char* key, double value);
+ogs_sbi_map_t *ogs_sbi_map_create(char *key, void *value);
 
-void keyValuePair_free(keyValuePair_t *keyValuePair);
+ogs_sbi_map_t *ogs_sbi_map_create_allocate(char *key, double value);
 
-#endif /* _keyValuePair_H_ */
+void ogs_sbi_map_free(ogs_sbi_map_t *ogs_sbi_map);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* OGS_SBI_MAP_H */

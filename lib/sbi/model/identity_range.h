@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _identity_range_H_
-#define _identity_range_H_
+#ifndef _ogs_sbi_identity_range_H_
+#define _ogs_sbi_identity_range_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,20 +13,29 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct identity_range_t identity_range_t;
-typedef struct identity_range_t {
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct ogs_sbi_identity_range_s ogs_sbi_identity_range_t;
+typedef struct ogs_sbi_identity_range_s {
     char *start;
     char *end;
     char *pattern;
-} identity_range_t;
+} ogs_sbi_identity_range_t;
 
-identity_range_t *identity_range_create(
+ogs_sbi_identity_range_t *ogs_sbi_identity_range_create(
     char *start,
     char *end,
     char *pattern
     );
-void identity_range_free(identity_range_t *identity_range);
-identity_range_t *identity_range_parseFromJSON(cJSON *identity_rangeJSON);
-cJSON *identity_range_convertToJSON(identity_range_t *identity_range);
-#endif /* _identity_range_H_ */
+void ogs_sbi_identity_range_free(ogs_sbi_identity_range_t *identity_range);
+ogs_sbi_identity_range_t *ogs_sbi_identity_range_parseFromJSON(cJSON *identity_rangeJSON);
+cJSON *ogs_sbi_identity_range_convertToJSON(ogs_sbi_identity_range_t *identity_range);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_identity_range_H_ */
 

@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _nwdaf_info_H_
-#define _nwdaf_info_H_
+#ifndef _ogs_sbi_nwdaf_info_H_
+#define _ogs_sbi_nwdaf_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,22 +17,31 @@
 #include "tai.h"
 #include "tai_range.h"
 
-typedef struct nwdaf_info_t nwdaf_info_t;
-typedef struct nwdaf_info_t {
-    list_t *event_ids;
-    list_t *nwdaf_events;
-    list_t *tai_list;
-    list_t *tai_range_list;
-} nwdaf_info_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-nwdaf_info_t *nwdaf_info_create(
-    list_t *event_ids,
-    list_t *nwdaf_events,
-    list_t *tai_list,
-    list_t *tai_range_list
+typedef struct ogs_sbi_nwdaf_info_s ogs_sbi_nwdaf_info_t;
+typedef struct ogs_sbi_nwdaf_info_s {
+    ogs_sbi_list_t *event_ids;
+    ogs_sbi_list_t *nwdaf_events;
+    ogs_sbi_list_t *tai_list;
+    ogs_sbi_list_t *tai_range_list;
+} ogs_sbi_nwdaf_info_t;
+
+ogs_sbi_nwdaf_info_t *ogs_sbi_nwdaf_info_create(
+    ogs_sbi_list_t *event_ids,
+    ogs_sbi_list_t *nwdaf_events,
+    ogs_sbi_list_t *tai_list,
+    ogs_sbi_list_t *tai_range_list
     );
-void nwdaf_info_free(nwdaf_info_t *nwdaf_info);
-nwdaf_info_t *nwdaf_info_parseFromJSON(cJSON *nwdaf_infoJSON);
-cJSON *nwdaf_info_convertToJSON(nwdaf_info_t *nwdaf_info);
-#endif /* _nwdaf_info_H_ */
+void ogs_sbi_nwdaf_info_free(ogs_sbi_nwdaf_info_t *nwdaf_info);
+ogs_sbi_nwdaf_info_t *ogs_sbi_nwdaf_info_parseFromJSON(cJSON *nwdaf_infoJSON);
+cJSON *ogs_sbi_nwdaf_info_convertToJSON(ogs_sbi_nwdaf_info_t *nwdaf_info);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_nwdaf_info_H_ */
 

@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _subscription_data_H_
-#define _subscription_data_H_
+#ifndef _ogs_sbi_subscription_data_H_
+#define _ogs_sbi_subscription_data_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,34 +18,43 @@
 #include "plmn_id.h"
 #include "snssai.h"
 
-typedef struct subscription_data_t subscription_data_t;
-typedef struct subscription_data_t {
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct ogs_sbi_subscription_data_s ogs_sbi_subscription_data_t;
+typedef struct ogs_sbi_subscription_data_s {
     char *nf_status_notification_uri;
     char *req_nf_instance_id;
     char *subscription_id;
     char *validity_time;
-    list_t *req_notif_events;
-    struct plmn_id_t *plmn_id;
-    struct notif_condition_t *notif_condition;
-    nf_type_e req_nf_type;
+    ogs_sbi_list_t *req_notif_events;
+    struct ogs_sbi_plmn_id_s *plmn_id;
+    struct ogs_sbi_notif_condition_s *notif_condition;
+    ogs_sbi_nf_type_e req_nf_type;
     char *req_nf_fqdn;
-    list_t *req_snssais;
-} subscription_data_t;
+    ogs_sbi_list_t *req_snssais;
+} ogs_sbi_subscription_data_t;
 
-subscription_data_t *subscription_data_create(
+ogs_sbi_subscription_data_t *ogs_sbi_subscription_data_create(
     char *nf_status_notification_uri,
     char *req_nf_instance_id,
     char *subscription_id,
     char *validity_time,
-    list_t *req_notif_events,
-    plmn_id_t *plmn_id,
-    notif_condition_t *notif_condition,
-    nf_type_e req_nf_type,
+    ogs_sbi_list_t *req_notif_events,
+    ogs_sbi_plmn_id_t *plmn_id,
+    ogs_sbi_notif_condition_t *notif_condition,
+    ogs_sbi_nf_type_e req_nf_type,
     char *req_nf_fqdn,
-    list_t *req_snssais
+    ogs_sbi_list_t *req_snssais
     );
-void subscription_data_free(subscription_data_t *subscription_data);
-subscription_data_t *subscription_data_parseFromJSON(cJSON *subscription_dataJSON);
-cJSON *subscription_data_convertToJSON(subscription_data_t *subscription_data);
-#endif /* _subscription_data_H_ */
+void ogs_sbi_subscription_data_free(ogs_sbi_subscription_data_t *subscription_data);
+ogs_sbi_subscription_data_t *ogs_sbi_subscription_data_parseFromJSON(cJSON *subscription_dataJSON);
+cJSON *ogs_sbi_subscription_data_convertToJSON(ogs_sbi_subscription_data_t *subscription_data);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_subscription_data_H_ */
 

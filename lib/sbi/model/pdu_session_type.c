@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "pdu_session_type.h"
 
-pdu_session_type_t *pdu_session_type_create(
+ogs_sbi_pdu_session_type_t *ogs_sbi_pdu_session_type_create(
     )
 {
-    pdu_session_type_t *pdu_session_type_local_var = ogs_malloc(sizeof(pdu_session_type_t));
+    ogs_sbi_pdu_session_type_t *pdu_session_type_local_var = ogs_malloc(sizeof(ogs_sbi_pdu_session_type_t));
     if (!pdu_session_type_local_var) {
         return NULL;
     }
@@ -15,16 +15,16 @@ pdu_session_type_t *pdu_session_type_create(
     return pdu_session_type_local_var;
 }
 
-void pdu_session_type_free(pdu_session_type_t *pdu_session_type)
+void ogs_sbi_pdu_session_type_free(ogs_sbi_pdu_session_type_t *pdu_session_type)
 {
-    if(NULL == pdu_session_type) {
+    if (NULL == pdu_session_type) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(pdu_session_type);
 }
 
-cJSON *pdu_session_type_convertToJSON(pdu_session_type_t *pdu_session_type)
+cJSON *ogs_sbi_pdu_session_type_convertToJSON(ogs_sbi_pdu_session_type_t *pdu_session_type)
 {
     cJSON *item = cJSON_CreateObject();
     return item;
@@ -35,10 +35,10 @@ fail:
     return NULL;
 }
 
-pdu_session_type_t *pdu_session_type_parseFromJSON(cJSON *pdu_session_typeJSON)
+ogs_sbi_pdu_session_type_t *ogs_sbi_pdu_session_type_parseFromJSON(cJSON *pdu_session_typeJSON)
 {
-    pdu_session_type_t *pdu_session_type_local_var = NULL;
-    pdu_session_type_local_var = pdu_session_type_create (
+    ogs_sbi_pdu_session_type_t *pdu_session_type_local_var = NULL;
+    pdu_session_type_local_var = ogs_sbi_pdu_session_type_create (
         );
 
     return pdu_session_type_local_var;

@@ -3,167 +3,167 @@
 #include <stdio.h>
 
 #include "../include/list.h"
-static listEntry_t *listEntry_create(void *data) {
-    listEntry_t *createdListEntry = ogs_malloc(sizeof(listEntry_t));
-    if(createdListEntry == NULL) {
+static ogs_sbi_lnode_t *listEntry_create(void *data)
+{
+    ogs_sbi_lnode_t *created = ogs_malloc(sizeof(ogs_sbi_lnode_t));
+
+    if (created == NULL) {
         // TODO Malloc Failure
         return NULL;
     }
-    createdListEntry->data = data;
+    created->data = data;
 
-    return createdListEntry;
+    return created;
 }
 
-void listEntry_free(listEntry_t *listEntry, void *additionalData) {
+void ogs_sbi_lnode_free(ogs_sbi_lnode_t *listEntry, void *additionalData)
+{
     ogs_free(listEntry);
 }
 
-void listEntry_printAsInt(listEntry_t *listEntry, void *additionalData) {
+void ogs_sbi_lnode_print(ogs_sbi_lnode_t *listEntry, void *additionalData)
+{
     printf("%i\n", *((int *) (listEntry->data)));
 }
 
-list_t *list_create() {
-    list_t *createdList = ogs_malloc(sizeof(list_t));
-    if(createdList == NULL) {
+ogs_sbi_list_t *ogs_sbi_list_create(void)
+{
+    ogs_sbi_list_t *createdList = ogs_malloc(sizeof(ogs_sbi_list_t));
+
+    if (createdList == NULL) {
         // TODO Malloc Failure
         return NULL;
     }
-    createdList->firstEntry = NULL;
-    createdList->lastEntry = NULL;
+    createdList->first = NULL;
+    createdList->last = NULL;
     createdList->count = 0;
 
     return createdList;
 }
 
-void list_iterateThroughListForward(list_t *list,
-                                    void (*operationToPerform)(
-                                        listEntry_t *,
-                                        void *callbackFunctionUsedData),
-                                    void *additionalDataNeededForCallbackFunction)
+void ogs_sbi_list_iterate_forward(ogs_sbi_list_t *list,
+                                  void (*operationToPerform)(
+                                      ogs_sbi_lnode_t *, void *callbackFunctionUsedData),
+                                  void *additionalDataNeededForCallbackFunction)
 {
-    listEntry_t *currentListEntry = list->firstEntry;
-    listEntry_t *nextListEntry;
+    ogs_sbi_lnode_t *current = list->first;
+    ogs_sbi_lnode_t *next;
 
-    if(currentListEntry == NULL) {
+    if (current == NULL) {
         return;
     }
 
-    nextListEntry = currentListEntry->nextListEntry;
+    next = current->next;
 
-    operationToPerform(currentListEntry,
-                       additionalDataNeededForCallbackFunction);
-    currentListEntry = nextListEntry;
+    operationToPerform(current, additionalDataNeededForCallbackFunction);
+    current = next;
 
-    while(currentListEntry != NULL) {
-        nextListEntry = currentListEntry->nextListEntry;
-        operationToPerform(currentListEntry,
-                           additionalDataNeededForCallbackFunction);
-        currentListEntry = nextListEntry;
+    while (current != NULL) {
+        next = current->next;
+        operationToPerform(current, additionalDataNeededForCallbackFunction);
+        current = next;
     }
 }
 
-void list_iterateThroughListBackward(list_t *list,
-                                     void (*operationToPerform)(
-                                         listEntry_t *,
-                                         void *callbackFunctionUsedData),
-                                     void *additionalDataNeededForCallbackFunction)
+void ogs_sbi_list_iterate_backward(ogs_sbi_list_t *list,
+                                   void (*operationToPerform)(
+                                       ogs_sbi_lnode_t *, void *callbackFunctionUsedData),
+                                   void *additionalDataNeededForCallbackFunction)
 {
-    listEntry_t *currentListEntry = list->lastEntry;
-    listEntry_t *nextListEntry = currentListEntry->prevListEntry;
+    ogs_sbi_lnode_t *current = list->last;
+    ogs_sbi_lnode_t *next = current->prev;
 
-    if(currentListEntry == NULL) {
+    if (current == NULL) {
         return;
     }
 
-    operationToPerform(currentListEntry,
-                       additionalDataNeededForCallbackFunction);
-    currentListEntry = nextListEntry;
+    operationToPerform(current, additionalDataNeededForCallbackFunction);
+    current = next;
 
-    while(currentListEntry != NULL) {
-        nextListEntry = currentListEntry->prevListEntry;
-        operationToPerform(currentListEntry,
-                           additionalDataNeededForCallbackFunction);
-        currentListEntry = nextListEntry;
+    while (current != NULL) {
+        next = current->prev;
+        operationToPerform(current, additionalDataNeededForCallbackFunction);
+        current = next;
     }
 }
 
-void list_free(list_t *list) {
-    if(list) {
-        list_iterateThroughListForward(list, listEntry_free, NULL);
+void ogs_sbi_list_free(ogs_sbi_list_t *list)
+{
+    if (list) {
+        ogs_sbi_list_iterate_forward(list, ogs_sbi_lnode_free, NULL);
         ogs_free(list);
     }
 }
 
-void list_addElement(list_t *list, void *dataToAddInList) {
-    listEntry_t *newListEntry = listEntry_create(dataToAddInList);
-    if(newListEntry == NULL) {
+void ogs_sbi_list_add(ogs_sbi_list_t *list, void *dataToAddInList)
+{
+    ogs_sbi_lnode_t *newListEntry = listEntry_create(dataToAddInList);
+    if (newListEntry == NULL) {
         // TODO Malloc Failure
         return;
     }
-    if(list->firstEntry == NULL) {
-        list->firstEntry = newListEntry;
-        list->lastEntry = newListEntry;
+    if (list->first == NULL) {
+        list->first = newListEntry;
+        list->last = newListEntry;
 
-        newListEntry->prevListEntry = NULL;
-        newListEntry->nextListEntry = NULL;
+        newListEntry->prev = NULL;
+        newListEntry->next = NULL;
 
         list->count++;
 
         return;
     }
 
-    list->lastEntry->nextListEntry = newListEntry;
-    newListEntry->prevListEntry = list->lastEntry;
-    newListEntry->nextListEntry = NULL;
-    list->lastEntry = newListEntry;
+    list->last->next = newListEntry;
+    newListEntry->prev = list->last;
+    newListEntry->next = NULL;
+    list->last = newListEntry;
 
     list->count++;
 }
 
-void list_removeElement(list_t *list, listEntry_t *elementToRemove) {
-    listEntry_t *elementBeforeElementToRemove =
-        elementToRemove->prevListEntry;
-    listEntry_t *elementAfterElementToRemove =
-        elementToRemove->nextListEntry;
+void ogs_sbi_list_remove(ogs_sbi_list_t *list, ogs_sbi_lnode_t *elementToRemove)
+{
+    ogs_sbi_lnode_t *elementBeforeElementToRemove = elementToRemove->prev;
+    ogs_sbi_lnode_t *elementAfterElementToRemove = elementToRemove->next;
 
-    if(elementBeforeElementToRemove != NULL) {
-        elementBeforeElementToRemove->nextListEntry =
-            elementAfterElementToRemove;
+    if (elementBeforeElementToRemove != NULL) {
+        elementBeforeElementToRemove->next = elementAfterElementToRemove;
     } else {
-        list->firstEntry = elementAfterElementToRemove;
+        list->first = elementAfterElementToRemove;
     }
 
-    if(elementAfterElementToRemove != NULL) {
-        elementAfterElementToRemove->prevListEntry =
-            elementBeforeElementToRemove;
+    if (elementAfterElementToRemove != NULL) {
+        elementAfterElementToRemove->prev = elementBeforeElementToRemove;
     } else {
-        list->lastEntry = elementBeforeElementToRemove;
+        list->last = elementBeforeElementToRemove;
     }
 
-    listEntry_free(elementToRemove, NULL);
+    ogs_sbi_lnode_free(elementToRemove, NULL);
 
     list->count--;
 }
 
-listEntry_t *list_getElementAt(list_t *list, long indexOfElement) {
-    listEntry_t *currentListEntry;
+ogs_sbi_lnode_t *ogs_sbi_list_find(ogs_sbi_list_t *list, long indexOfElement)
+{
+    ogs_sbi_lnode_t *current;
     int i;
 
-    if((list->count / 2) > indexOfElement) {
-        currentListEntry = list->firstEntry;
+    if ((list->count / 2) > indexOfElement) {
+        current = list->first;
 
         for(i = 0; i < indexOfElement; i++) {
-            currentListEntry = currentListEntry->nextListEntry;
+            current = current->next;
         }
 
-        return currentListEntry;
+        return current;
     } else {
-        currentListEntry = list->lastEntry;
+        current = list->last;
 
         for(i = 1; i < (list->count - indexOfElement); i++) {
-            currentListEntry = currentListEntry->prevListEntry;
+            current = current->prev;
         }
 
-        return currentListEntry;
+        return current;
     }
 }

@@ -4,15 +4,15 @@
 #include <stdio.h>
 #include "change_item.h"
 
-change_item_t *change_item_create(
-    change_type_t *op,
+ogs_sbi_change_item_t *ogs_sbi_change_item_create(
+    ogs_sbi_change_type_t *op,
     char *path,
     char *from,
     char *orig_value,
     char *new_value
     )
 {
-    change_item_t *change_item_local_var = ogs_malloc(sizeof(change_item_t));
+    ogs_sbi_change_item_t *change_item_local_var = ogs_malloc(sizeof(ogs_sbi_change_item_t));
     if (!change_item_local_var) {
         return NULL;
     }
@@ -25,13 +25,13 @@ change_item_t *change_item_create(
     return change_item_local_var;
 }
 
-void change_item_free(change_item_t *change_item)
+void ogs_sbi_change_item_free(ogs_sbi_change_item_t *change_item)
 {
-    if(NULL == change_item) {
+    if (NULL == change_item) {
         return;
     }
-    listEntry_t *listEntry;
-    change_type_free(change_item->op);
+    ogs_sbi_lnode_t *node;
+    ogs_sbi_change_type_free(change_item->op);
     ogs_free(change_item->path);
     ogs_free(change_item->from);
     ogs_free(change_item->orig_value);
@@ -39,42 +39,42 @@ void change_item_free(change_item_t *change_item)
     ogs_free(change_item);
 }
 
-cJSON *change_item_convertToJSON(change_item_t *change_item)
+cJSON *ogs_sbi_change_item_convertToJSON(ogs_sbi_change_item_t *change_item)
 {
     cJSON *item = cJSON_CreateObject();
     if (!change_item->op) {
         goto fail;
     }
-    cJSON *op_local_JSON = change_type_convertToJSON(change_item->op);
-    if(op_local_JSON == NULL) {
+    cJSON *op_local_JSON = ogs_sbi_change_type_convertToJSON(change_item->op);
+    if (op_local_JSON == NULL) {
         goto fail;
     }
     cJSON_AddItemToObject(item, "op", op_local_JSON);
-    if(item->child == NULL) {
+    if (item->child == NULL) {
         goto fail;
     }
 
     if (!change_item->path) {
         goto fail;
     }
-    if(cJSON_AddStringToObject(item, "path", change_item->path) == NULL) {
+    if (cJSON_AddStringToObject(item, "path", change_item->path) == NULL) {
         goto fail;
     }
 
     if (change_item->from) {
-        if(cJSON_AddStringToObject(item, "from", change_item->from) == NULL) {
+        if (cJSON_AddStringToObject(item, "from", change_item->from) == NULL) {
             goto fail;
         }
     }
 
     if (change_item->orig_value) {
-        if(cJSON_AddStringToObject(item, "origValue", change_item->orig_value) == NULL) {
+        if (cJSON_AddStringToObject(item, "origValue", change_item->orig_value) == NULL) {
             goto fail;
         }
     }
 
     if (change_item->new_value) {
-        if(cJSON_AddStringToObject(item, "newValue", change_item->new_value) == NULL) {
+        if (cJSON_AddStringToObject(item, "newValue", change_item->new_value) == NULL) {
             goto fail;
         }
     }
@@ -87,17 +87,17 @@ fail:
     return NULL;
 }
 
-change_item_t *change_item_parseFromJSON(cJSON *change_itemJSON)
+ogs_sbi_change_item_t *ogs_sbi_change_item_parseFromJSON(cJSON *change_itemJSON)
 {
-    change_item_t *change_item_local_var = NULL;
+    ogs_sbi_change_item_t *change_item_local_var = NULL;
     cJSON *op = cJSON_GetObjectItemCaseSensitive(change_itemJSON, "op");
     if (!op) {
         goto end;
     }
 
-    change_type_t *op_local_nonprim = NULL;
+    ogs_sbi_change_type_t *op_local_nonprim = NULL;
 
-    op_local_nonprim = change_type_parseFromJSON(op);
+    op_local_nonprim = ogs_sbi_change_type_parseFromJSON(op);
 
     cJSON *path = cJSON_GetObjectItemCaseSensitive(change_itemJSON, "path");
     if (!path) {
@@ -105,7 +105,7 @@ change_item_t *change_item_parseFromJSON(cJSON *change_itemJSON)
     }
 
 
-    if(!cJSON_IsString(path))
+    if (!cJSON_IsString(path))
     {
         goto end;
     }
@@ -113,7 +113,7 @@ change_item_t *change_item_parseFromJSON(cJSON *change_itemJSON)
     cJSON *from = cJSON_GetObjectItemCaseSensitive(change_itemJSON, "from");
 
     if (from) {
-        if(!cJSON_IsString(from))
+        if (!cJSON_IsString(from))
         {
             goto end;
         }
@@ -122,7 +122,7 @@ change_item_t *change_item_parseFromJSON(cJSON *change_itemJSON)
     cJSON *orig_value = cJSON_GetObjectItemCaseSensitive(change_itemJSON, "origValue");
 
     if (orig_value) {
-        if(!cJSON_IsString(orig_value))
+        if (!cJSON_IsString(orig_value))
         {
             goto end;
         }
@@ -131,13 +131,13 @@ change_item_t *change_item_parseFromJSON(cJSON *change_itemJSON)
     cJSON *new_value = cJSON_GetObjectItemCaseSensitive(change_itemJSON, "newValue");
 
     if (new_value) {
-        if(!cJSON_IsString(new_value))
+        if (!cJSON_IsString(new_value))
         {
             goto end;
         }
     }
 
-    change_item_local_var = change_item_create (
+    change_item_local_var = ogs_sbi_change_item_create (
         op_local_nonprim,
         ogs_strdup(path->valuestring),
         from ? ogs_strdup(from->valuestring) : NULL,

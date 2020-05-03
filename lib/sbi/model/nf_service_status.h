@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _nf_service_status_H_
-#define _nf_service_status_H_
+#ifndef _ogs_sbi_nf_service_status_H_
+#define _ogs_sbi_nf_service_status_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,14 +13,23 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct nf_service_status_t nf_service_status_t;
-typedef struct nf_service_status_t {
-} nf_service_status_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-nf_service_status_t *nf_service_status_create(
+typedef struct ogs_sbi_nf_service_status_s ogs_sbi_nf_service_status_t;
+typedef struct ogs_sbi_nf_service_status_s {
+} ogs_sbi_nf_service_status_t;
+
+ogs_sbi_nf_service_status_t *ogs_sbi_nf_service_status_create(
     );
-void nf_service_status_free(nf_service_status_t *nf_service_status);
-nf_service_status_t *nf_service_status_parseFromJSON(cJSON *nf_service_statusJSON);
-cJSON *nf_service_status_convertToJSON(nf_service_status_t *nf_service_status);
-#endif /* _nf_service_status_H_ */
+void ogs_sbi_nf_service_status_free(ogs_sbi_nf_service_status_t *nf_service_status);
+ogs_sbi_nf_service_status_t *ogs_sbi_nf_service_status_parseFromJSON(cJSON *nf_service_statusJSON);
+cJSON *ogs_sbi_nf_service_status_convertToJSON(ogs_sbi_nf_service_status_t *nf_service_status);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_nf_service_status_H_ */
 

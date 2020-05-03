@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _snssai_H_
-#define _snssai_H_
+#ifndef _ogs_sbi_snssai_H_
+#define _ogs_sbi_snssai_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,18 +13,27 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct snssai_t snssai_t;
-typedef struct snssai_t {
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct ogs_sbi_snssai_s ogs_sbi_snssai_t;
+typedef struct ogs_sbi_snssai_s {
     int sst;
     char *sd;
-} snssai_t;
+} ogs_sbi_snssai_t;
 
-snssai_t *snssai_create(
+ogs_sbi_snssai_t *ogs_sbi_snssai_create(
     int sst,
     char *sd
     );
-void snssai_free(snssai_t *snssai);
-snssai_t *snssai_parseFromJSON(cJSON *snssaiJSON);
-cJSON *snssai_convertToJSON(snssai_t *snssai);
-#endif /* _snssai_H_ */
+void ogs_sbi_snssai_free(ogs_sbi_snssai_t *snssai);
+ogs_sbi_snssai_t *ogs_sbi_snssai_parseFromJSON(cJSON *snssaiJSON);
+cJSON *ogs_sbi_snssai_convertToJSON(ogs_sbi_snssai_t *snssai);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_snssai_H_ */
 

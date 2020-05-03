@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _change_type_H_
-#define _change_type_H_
+#ifndef _ogs_sbi_change_type_H_
+#define _ogs_sbi_change_type_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,14 +13,23 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct change_type_t change_type_t;
-typedef struct change_type_t {
-} change_type_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-change_type_t *change_type_create(
+typedef struct ogs_sbi_change_type_s ogs_sbi_change_type_t;
+typedef struct ogs_sbi_change_type_s {
+} ogs_sbi_change_type_t;
+
+ogs_sbi_change_type_t *ogs_sbi_change_type_create(
     );
-void change_type_free(change_type_t *change_type);
-change_type_t *change_type_parseFromJSON(cJSON *change_typeJSON);
-cJSON *change_type_convertToJSON(change_type_t *change_type);
-#endif /* _change_type_H_ */
+void ogs_sbi_change_type_free(ogs_sbi_change_type_t *change_type);
+ogs_sbi_change_type_t *ogs_sbi_change_type_parseFromJSON(cJSON *change_typeJSON);
+cJSON *ogs_sbi_change_type_convertToJSON(ogs_sbi_change_type_t *change_type);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_change_type_H_ */
 

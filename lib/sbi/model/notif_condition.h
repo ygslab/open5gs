@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _notif_condition_H_
-#define _notif_condition_H_
+#ifndef _ogs_sbi_notif_condition_H_
+#define _ogs_sbi_notif_condition_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,18 +13,27 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct notif_condition_t notif_condition_t;
-typedef struct notif_condition_t {
-    list_t *monitored_attributes;
-    list_t *unmonitored_attributes;
-} notif_condition_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-notif_condition_t *notif_condition_create(
-    list_t *monitored_attributes,
-    list_t *unmonitored_attributes
+typedef struct ogs_sbi_notif_condition_s ogs_sbi_notif_condition_t;
+typedef struct ogs_sbi_notif_condition_s {
+    ogs_sbi_list_t *monitored_attributes;
+    ogs_sbi_list_t *unmonitored_attributes;
+} ogs_sbi_notif_condition_t;
+
+ogs_sbi_notif_condition_t *ogs_sbi_notif_condition_create(
+    ogs_sbi_list_t *monitored_attributes,
+    ogs_sbi_list_t *unmonitored_attributes
     );
-void notif_condition_free(notif_condition_t *notif_condition);
-notif_condition_t *notif_condition_parseFromJSON(cJSON *notif_conditionJSON);
-cJSON *notif_condition_convertToJSON(notif_condition_t *notif_condition);
-#endif /* _notif_condition_H_ */
+void ogs_sbi_notif_condition_free(ogs_sbi_notif_condition_t *notif_condition);
+ogs_sbi_notif_condition_t *ogs_sbi_notif_condition_parseFromJSON(cJSON *notif_conditionJSON);
+cJSON *ogs_sbi_notif_condition_convertToJSON(ogs_sbi_notif_condition_t *notif_condition);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_notif_condition_H_ */
 

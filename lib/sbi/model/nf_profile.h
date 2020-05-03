@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _nf_profile_H_
-#define _nf_profile_H_
+#ifndef _ogs_sbi_nf_profile_H_
+#define _ogs_sbi_nf_profile_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -33,110 +33,119 @@
 #include "udr_info.h"
 #include "upf_info.h"
 
-typedef struct nf_profile_t nf_profile_t;
-typedef struct nf_profile_t {
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct ogs_sbi_nf_profile_s ogs_sbi_nf_profile_t;
+typedef struct ogs_sbi_nf_profile_s {
     char *nf_instance_id;
     char *nf_instance_name;
-    nf_type_e nf_type;
-    nf_status_e nf_status;
+    ogs_sbi_nf_type_e nf_type;
+    ogs_sbi_nf_status_e nf_status;
     int heart_beat_timer;
-    list_t *plmn_list;
-    list_t *s_nssais;
-    list_t *per_plmn_snssai_list;
-    list_t *nsi_list;
+    ogs_sbi_list_t *plmn_list;
+    ogs_sbi_list_t *s_nssais;
+    ogs_sbi_list_t *per_plmn_snssai_list;
+    ogs_sbi_list_t *nsi_list;
     char *fqdn;
     char *inter_plmn_fqdn;
-    list_t *ipv4_addresses;
-    list_t *ipv6_addresses;
-    list_t *allowed_plmns;
-    list_t *allowed_nf_types;
-    list_t *allowed_nf_domains;
-    list_t *allowed_nssais;
+    ogs_sbi_list_t *ipv4_addresses;
+    ogs_sbi_list_t *ipv6_addresses;
+    ogs_sbi_list_t *allowed_plmns;
+    ogs_sbi_list_t *allowed_nf_types;
+    ogs_sbi_list_t *allowed_nf_domains;
+    ogs_sbi_list_t *allowed_nssais;
     int priority;
     int capacity;
     int load;
     char *locality;
-    struct udr_info_t *udr_info;
-    list_t *udr_info_ext;
-    struct udm_info_t *udm_info;
-    list_t *udm_info_ext;
-    struct ausf_info_t *ausf_info;
-    list_t *ausf_info_ext;
-    struct amf_info_t *amf_info;
-    list_t *amf_info_ext;
-    struct smf_info_t *smf_info;
-    list_t *smf_info_ext;
-    struct upf_info_t *upf_info;
-    list_t *upf_info_ext;
-    struct pcf_info_t *pcf_info;
-    list_t *pcf_info_ext;
-    struct bsf_info_t *bsf_info;
-    list_t *bsf_info_ext;
-    struct chf_info_t *chf_info;
-    list_t *chf_info_ext;
-    struct nrf_info_t *nrf_info;
-    struct nwdaf_info_t *nwdaf_info;
-    object_t *custom_info;
+    struct ogs_sbi_udr_info_s *udr_info;
+    ogs_sbi_list_t *udr_info_ext;
+    struct ogs_sbi_udm_info_s *udm_info;
+    ogs_sbi_list_t *udm_info_ext;
+    struct ogs_sbi_ausf_info_s *ausf_info;
+    ogs_sbi_list_t *ausf_info_ext;
+    struct ogs_sbi_amf_info_s *amf_info;
+    ogs_sbi_list_t *amf_info_ext;
+    struct ogs_sbi_smf_info_s *smf_info;
+    ogs_sbi_list_t *smf_info_ext;
+    struct ogs_sbi_upf_info_s *upf_info;
+    ogs_sbi_list_t *upf_info_ext;
+    struct ogs_sbi_pcf_info_s *pcf_info;
+    ogs_sbi_list_t *pcf_info_ext;
+    struct ogs_sbi_bsf_info_s *bsf_info;
+    ogs_sbi_list_t *bsf_info_ext;
+    struct ogs_sbi_chf_info_s *chf_info;
+    ogs_sbi_list_t *chf_info_ext;
+    struct ogs_sbi_nrf_info_s *nrf_info;
+    struct ogs_sbi_nwdaf_info_s *nwdaf_info;
+    ogs_sbi_object_t *custom_info;
     char *recovery_time;
     int nf_service_persistence;
-    list_t *nf_services;
+    ogs_sbi_list_t *nf_services;
     int nf_profile_changes_support_ind;
     int nf_profile_changes_ind;
-    list_t *default_notification_subscriptions;
-} nf_profile_t;
+    ogs_sbi_list_t *default_notification_subscriptions;
+} ogs_sbi_nf_profile_t;
 
-nf_profile_t *nf_profile_create(
+ogs_sbi_nf_profile_t *ogs_sbi_nf_profile_create(
     char *nf_instance_id,
     char *nf_instance_name,
-    nf_type_e nf_type,
-    nf_status_e nf_status,
+    ogs_sbi_nf_type_e nf_type,
+    ogs_sbi_nf_status_e nf_status,
     int heart_beat_timer,
-    list_t *plmn_list,
-    list_t *s_nssais,
-    list_t *per_plmn_snssai_list,
-    list_t *nsi_list,
+    ogs_sbi_list_t *plmn_list,
+    ogs_sbi_list_t *s_nssais,
+    ogs_sbi_list_t *per_plmn_snssai_list,
+    ogs_sbi_list_t *nsi_list,
     char *fqdn,
     char *inter_plmn_fqdn,
-    list_t *ipv4_addresses,
-    list_t *ipv6_addresses,
-    list_t *allowed_plmns,
-    list_t *allowed_nf_types,
-    list_t *allowed_nf_domains,
-    list_t *allowed_nssais,
+    ogs_sbi_list_t *ipv4_addresses,
+    ogs_sbi_list_t *ipv6_addresses,
+    ogs_sbi_list_t *allowed_plmns,
+    ogs_sbi_list_t *allowed_nf_types,
+    ogs_sbi_list_t *allowed_nf_domains,
+    ogs_sbi_list_t *allowed_nssais,
     int priority,
     int capacity,
     int load,
     char *locality,
-    udr_info_t *udr_info,
-    list_t *udr_info_ext,
-    udm_info_t *udm_info,
-    list_t *udm_info_ext,
-    ausf_info_t *ausf_info,
-    list_t *ausf_info_ext,
-    amf_info_t *amf_info,
-    list_t *amf_info_ext,
-    smf_info_t *smf_info,
-    list_t *smf_info_ext,
-    upf_info_t *upf_info,
-    list_t *upf_info_ext,
-    pcf_info_t *pcf_info,
-    list_t *pcf_info_ext,
-    bsf_info_t *bsf_info,
-    list_t *bsf_info_ext,
-    chf_info_t *chf_info,
-    list_t *chf_info_ext,
-    nrf_info_t *nrf_info,
-    nwdaf_info_t *nwdaf_info,
-    object_t *custom_info,
+    ogs_sbi_udr_info_t *udr_info,
+    ogs_sbi_list_t *udr_info_ext,
+    ogs_sbi_udm_info_t *udm_info,
+    ogs_sbi_list_t *udm_info_ext,
+    ogs_sbi_ausf_info_t *ausf_info,
+    ogs_sbi_list_t *ausf_info_ext,
+    ogs_sbi_amf_info_t *amf_info,
+    ogs_sbi_list_t *amf_info_ext,
+    ogs_sbi_smf_info_t *smf_info,
+    ogs_sbi_list_t *smf_info_ext,
+    ogs_sbi_upf_info_t *upf_info,
+    ogs_sbi_list_t *upf_info_ext,
+    ogs_sbi_pcf_info_t *pcf_info,
+    ogs_sbi_list_t *pcf_info_ext,
+    ogs_sbi_bsf_info_t *bsf_info,
+    ogs_sbi_list_t *bsf_info_ext,
+    ogs_sbi_chf_info_t *chf_info,
+    ogs_sbi_list_t *chf_info_ext,
+    ogs_sbi_nrf_info_t *nrf_info,
+    ogs_sbi_nwdaf_info_t *nwdaf_info,
+    ogs_sbi_object_t *custom_info,
     char *recovery_time,
     int nf_service_persistence,
-    list_t *nf_services,
+    ogs_sbi_list_t *nf_services,
     int nf_profile_changes_support_ind,
     int nf_profile_changes_ind,
-    list_t *default_notification_subscriptions
+    ogs_sbi_list_t *default_notification_subscriptions
     );
-void nf_profile_free(nf_profile_t *nf_profile);
-nf_profile_t *nf_profile_parseFromJSON(cJSON *nf_profileJSON);
-cJSON *nf_profile_convertToJSON(nf_profile_t *nf_profile);
-#endif /* _nf_profile_H_ */
+void ogs_sbi_nf_profile_free(ogs_sbi_nf_profile_t *nf_profile);
+ogs_sbi_nf_profile_t *ogs_sbi_nf_profile_parseFromJSON(cJSON *nf_profileJSON);
+cJSON *ogs_sbi_nf_profile_convertToJSON(ogs_sbi_nf_profile_t *nf_profile);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_nf_profile_H_ */
 

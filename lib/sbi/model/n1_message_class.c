@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "n1_message_class.h"
 
-n1_message_class_t *n1_message_class_create(
+ogs_sbi_n1_message_class_t *ogs_sbi_n1_message_class_create(
     )
 {
-    n1_message_class_t *n1_message_class_local_var = ogs_malloc(sizeof(n1_message_class_t));
+    ogs_sbi_n1_message_class_t *n1_message_class_local_var = ogs_malloc(sizeof(ogs_sbi_n1_message_class_t));
     if (!n1_message_class_local_var) {
         return NULL;
     }
@@ -15,16 +15,16 @@ n1_message_class_t *n1_message_class_create(
     return n1_message_class_local_var;
 }
 
-void n1_message_class_free(n1_message_class_t *n1_message_class)
+void ogs_sbi_n1_message_class_free(ogs_sbi_n1_message_class_t *n1_message_class)
 {
-    if(NULL == n1_message_class) {
+    if (NULL == n1_message_class) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(n1_message_class);
 }
 
-cJSON *n1_message_class_convertToJSON(n1_message_class_t *n1_message_class)
+cJSON *ogs_sbi_n1_message_class_convertToJSON(ogs_sbi_n1_message_class_t *n1_message_class)
 {
     cJSON *item = cJSON_CreateObject();
     return item;
@@ -35,10 +35,10 @@ fail:
     return NULL;
 }
 
-n1_message_class_t *n1_message_class_parseFromJSON(cJSON *n1_message_classJSON)
+ogs_sbi_n1_message_class_t *ogs_sbi_n1_message_class_parseFromJSON(cJSON *n1_message_classJSON)
 {
-    n1_message_class_t *n1_message_class_local_var = NULL;
-    n1_message_class_local_var = n1_message_class_create (
+    ogs_sbi_n1_message_class_t *n1_message_class_local_var = NULL;
+    n1_message_class_local_var = ogs_sbi_n1_message_class_create (
         );
 
     return n1_message_class_local_var;

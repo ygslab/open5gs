@@ -4,13 +4,13 @@
 #include <stdio.h>
 #include "ausf_info.h"
 
-ausf_info_t *ausf_info_create(
+ogs_sbi_ausf_info_t *ogs_sbi_ausf_info_create(
     char *group_id,
-    list_t *supi_ranges,
-    list_t *routing_indicators
+    ogs_sbi_list_t *supi_ranges,
+    ogs_sbi_list_t *routing_indicators
     )
 {
-    ausf_info_t *ausf_info_local_var = ogs_malloc(sizeof(ausf_info_t));
+    ogs_sbi_ausf_info_t *ausf_info_local_var = ogs_malloc(sizeof(ogs_sbi_ausf_info_t));
     if (!ausf_info_local_var) {
         return NULL;
     }
@@ -21,44 +21,44 @@ ausf_info_t *ausf_info_create(
     return ausf_info_local_var;
 }
 
-void ausf_info_free(ausf_info_t *ausf_info)
+void ogs_sbi_ausf_info_free(ogs_sbi_ausf_info_t *ausf_info)
 {
-    if(NULL == ausf_info) {
+    if (NULL == ausf_info) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(ausf_info->group_id);
-    list_ForEach(listEntry, ausf_info->supi_ranges) {
-        supi_range_free(listEntry->data);
+    ogs_sbi_list_for_each(node, ausf_info->supi_ranges) {
+        ogs_sbi_supi_range_free(node->data);
     }
-    list_free(ausf_info->supi_ranges);
-    list_ForEach(listEntry, ausf_info->routing_indicators) {
-        ogs_free(listEntry->data);
+    ogs_sbi_list_free(ausf_info->supi_ranges);
+    ogs_sbi_list_for_each(node, ausf_info->routing_indicators) {
+        ogs_free(node->data);
     }
-    list_free(ausf_info->routing_indicators);
+    ogs_sbi_list_free(ausf_info->routing_indicators);
     ogs_free(ausf_info);
 }
 
-cJSON *ausf_info_convertToJSON(ausf_info_t *ausf_info)
+cJSON *ogs_sbi_ausf_info_convertToJSON(ogs_sbi_ausf_info_t *ausf_info)
 {
     cJSON *item = cJSON_CreateObject();
     if (ausf_info->group_id) {
-        if(cJSON_AddStringToObject(item, "groupId", ausf_info->group_id) == NULL) {
+        if (cJSON_AddStringToObject(item, "groupId", ausf_info->group_id) == NULL) {
             goto fail;
         }
     }
 
     if (ausf_info->supi_ranges) {
         cJSON *supi_ranges = cJSON_AddArrayToObject(item, "supiRanges");
-        if(supi_ranges == NULL) {
+        if (supi_ranges == NULL) {
             goto fail;
         }
 
-        listEntry_t *supi_rangesListEntry;
+        ogs_sbi_lnode_t *supi_ranges_node;
         if (ausf_info->supi_ranges) {
-            list_ForEach(supi_rangesListEntry, ausf_info->supi_ranges) {
-                cJSON *itemLocal = supi_range_convertToJSON(supi_rangesListEntry->data);
-                if(itemLocal == NULL) {
+            ogs_sbi_list_for_each(supi_ranges_node, ausf_info->supi_ranges) {
+                cJSON *itemLocal = ogs_sbi_supi_range_convertToJSON(supi_ranges_node->data);
+                if (itemLocal == NULL) {
                     goto fail;
                 }
                 cJSON_AddItemToArray(supi_ranges, itemLocal);
@@ -68,13 +68,13 @@ cJSON *ausf_info_convertToJSON(ausf_info_t *ausf_info)
 
     if (ausf_info->routing_indicators) {
         cJSON *routing_indicators = cJSON_AddArrayToObject(item, "routingIndicators");
-        if(routing_indicators == NULL) {
+        if (routing_indicators == NULL) {
             goto fail;
         }
 
-        listEntry_t *routing_indicatorsListEntry;
-        list_ForEach(routing_indicatorsListEntry, ausf_info->routing_indicators) {
-            if(cJSON_AddStringToObject(routing_indicators, "", (char*)routing_indicatorsListEntry->data) == NULL) {
+        ogs_sbi_lnode_t *routing_indicators_node;
+        ogs_sbi_list_for_each(routing_indicators_node, ausf_info->routing_indicators) {
+            if (cJSON_AddStringToObject(routing_indicators, "", (char*)routing_indicators_node->data) == NULL) {
                 goto fail;
             }
         }
@@ -88,13 +88,13 @@ fail:
     return NULL;
 }
 
-ausf_info_t *ausf_info_parseFromJSON(cJSON *ausf_infoJSON)
+ogs_sbi_ausf_info_t *ogs_sbi_ausf_info_parseFromJSON(cJSON *ausf_infoJSON)
 {
-    ausf_info_t *ausf_info_local_var = NULL;
+    ogs_sbi_ausf_info_t *ausf_info_local_var = NULL;
     cJSON *group_id = cJSON_GetObjectItemCaseSensitive(ausf_infoJSON, "groupId");
 
     if (group_id) {
-        if(!cJSON_IsString(group_id))
+        if (!cJSON_IsString(group_id))
         {
             goto end;
         }
@@ -102,44 +102,44 @@ ausf_info_t *ausf_info_parseFromJSON(cJSON *ausf_infoJSON)
 
     cJSON *supi_ranges = cJSON_GetObjectItemCaseSensitive(ausf_infoJSON, "supiRanges");
 
-    list_t *supi_rangesList;
+    ogs_sbi_list_t *supi_rangesList;
     if (supi_ranges) {
         cJSON *supi_ranges_local_nonprimitive;
-        if(!cJSON_IsArray(supi_ranges)) {
+        if (!cJSON_IsArray(supi_ranges)) {
             goto end;
         }
 
-        supi_rangesList = list_create();
+        supi_rangesList = ogs_sbi_list_create();
 
         cJSON_ArrayForEach(supi_ranges_local_nonprimitive,supi_ranges ) {
-            if(!cJSON_IsObject(supi_ranges_local_nonprimitive)) {
+            if (!cJSON_IsObject(supi_ranges_local_nonprimitive)) {
                 goto end;
             }
-            supi_range_t *supi_rangesItem = supi_range_parseFromJSON(supi_ranges_local_nonprimitive);
+            ogs_sbi_supi_range_t *supi_rangesItem = ogs_sbi_supi_range_parseFromJSON(supi_ranges_local_nonprimitive);
 
-            list_addElement(supi_rangesList, supi_rangesItem);
+            ogs_sbi_list_add(supi_rangesList, supi_rangesItem);
         }
     }
 
     cJSON *routing_indicators = cJSON_GetObjectItemCaseSensitive(ausf_infoJSON, "routingIndicators");
 
-    list_t *routing_indicatorsList;
+    ogs_sbi_list_t *routing_indicatorsList;
     if (routing_indicators) {
         cJSON *routing_indicators_local;
-        if(!cJSON_IsArray(routing_indicators)) {
+        if (!cJSON_IsArray(routing_indicators)) {
             goto end;
         }
-        routing_indicatorsList = list_create();
+        routing_indicatorsList = ogs_sbi_list_create();
 
         cJSON_ArrayForEach(routing_indicators_local, routing_indicators) {
-            if(!cJSON_IsString(routing_indicators_local)) {
+            if (!cJSON_IsString(routing_indicators_local)) {
                 goto end;
             }
-            list_addElement(routing_indicatorsList, ogs_strdup(routing_indicators_local->valuestring));
+            ogs_sbi_list_add(routing_indicatorsList, ogs_strdup(routing_indicators_local->valuestring));
         }
     }
 
-    ausf_info_local_var = ausf_info_create (
+    ausf_info_local_var = ogs_sbi_ausf_info_create (
         group_id ? ogs_strdup(group_id->valuestring) : NULL,
         supi_ranges ? supi_rangesList : NULL,
         routing_indicators ? routing_indicatorsList : NULL

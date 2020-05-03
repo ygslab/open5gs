@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "notification_event_type.h"
 
-notification_event_type_t *notification_event_type_create(
+ogs_sbi_notification_event_type_t *ogs_sbi_notification_event_type_create(
     )
 {
-    notification_event_type_t *notification_event_type_local_var = ogs_malloc(sizeof(notification_event_type_t));
+    ogs_sbi_notification_event_type_t *notification_event_type_local_var = ogs_malloc(sizeof(ogs_sbi_notification_event_type_t));
     if (!notification_event_type_local_var) {
         return NULL;
     }
@@ -15,16 +15,16 @@ notification_event_type_t *notification_event_type_create(
     return notification_event_type_local_var;
 }
 
-void notification_event_type_free(notification_event_type_t *notification_event_type)
+void ogs_sbi_notification_event_type_free(ogs_sbi_notification_event_type_t *notification_event_type)
 {
-    if(NULL == notification_event_type) {
+    if (NULL == notification_event_type) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(notification_event_type);
 }
 
-cJSON *notification_event_type_convertToJSON(notification_event_type_t *notification_event_type)
+cJSON *ogs_sbi_notification_event_type_convertToJSON(ogs_sbi_notification_event_type_t *notification_event_type)
 {
     cJSON *item = cJSON_CreateObject();
     return item;
@@ -35,10 +35,10 @@ fail:
     return NULL;
 }
 
-notification_event_type_t *notification_event_type_parseFromJSON(cJSON *notification_event_typeJSON)
+ogs_sbi_notification_event_type_t *ogs_sbi_notification_event_type_parseFromJSON(cJSON *notification_event_typeJSON)
 {
-    notification_event_type_t *notification_event_type_local_var = NULL;
-    notification_event_type_local_var = notification_event_type_create (
+    ogs_sbi_notification_event_type_t *notification_event_type_local_var = NULL;
+    notification_event_type_local_var = ogs_sbi_notification_event_type_create (
         );
 
     return notification_event_type_local_var;

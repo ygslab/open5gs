@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _up_interface_type_H_
-#define _up_interface_type_H_
+#ifndef _ogs_sbi_up_interface_type_H_
+#define _ogs_sbi_up_interface_type_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,14 +13,23 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct up_interface_type_t up_interface_type_t;
-typedef struct up_interface_type_t {
-} up_interface_type_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-up_interface_type_t *up_interface_type_create(
+typedef struct ogs_sbi_up_interface_type_s ogs_sbi_up_interface_type_t;
+typedef struct ogs_sbi_up_interface_type_s {
+} ogs_sbi_up_interface_type_t;
+
+ogs_sbi_up_interface_type_t *ogs_sbi_up_interface_type_create(
     );
-void up_interface_type_free(up_interface_type_t *up_interface_type);
-up_interface_type_t *up_interface_type_parseFromJSON(cJSON *up_interface_typeJSON);
-cJSON *up_interface_type_convertToJSON(up_interface_type_t *up_interface_type);
-#endif /* _up_interface_type_H_ */
+void ogs_sbi_up_interface_type_free(ogs_sbi_up_interface_type_t *up_interface_type);
+ogs_sbi_up_interface_type_t *ogs_sbi_up_interface_type_parseFromJSON(cJSON *up_interface_typeJSON);
+cJSON *ogs_sbi_up_interface_type_convertToJSON(ogs_sbi_up_interface_type_t *up_interface_type);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_up_interface_type_H_ */
 

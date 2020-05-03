@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _plmn_id_H_
-#define _plmn_id_H_
+#ifndef _ogs_sbi_plmn_id_H_
+#define _ogs_sbi_plmn_id_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,18 +13,27 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct plmn_id_t plmn_id_t;
-typedef struct plmn_id_t {
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct ogs_sbi_plmn_id_s ogs_sbi_plmn_id_t;
+typedef struct ogs_sbi_plmn_id_s {
     char *mcc;
     char *mnc;
-} plmn_id_t;
+} ogs_sbi_plmn_id_t;
 
-plmn_id_t *plmn_id_create(
+ogs_sbi_plmn_id_t *ogs_sbi_plmn_id_create(
     char *mcc,
     char *mnc
     );
-void plmn_id_free(plmn_id_t *plmn_id);
-plmn_id_t *plmn_id_parseFromJSON(cJSON *plmn_idJSON);
-cJSON *plmn_id_convertToJSON(plmn_id_t *plmn_id);
-#endif /* _plmn_id_H_ */
+void ogs_sbi_plmn_id_free(ogs_sbi_plmn_id_t *plmn_id);
+ogs_sbi_plmn_id_t *ogs_sbi_plmn_id_parseFromJSON(cJSON *plmn_idJSON);
+cJSON *ogs_sbi_plmn_id_convertToJSON(ogs_sbi_plmn_id_t *plmn_id);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_plmn_id_H_ */
 

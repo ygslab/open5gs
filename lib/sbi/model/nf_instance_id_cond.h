@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _nf_instance_id_cond_H_
-#define _nf_instance_id_cond_H_
+#ifndef _ogs_sbi_nf_instance_id_cond_H_
+#define _ogs_sbi_nf_instance_id_cond_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,16 +13,25 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct nf_instance_id_cond_t nf_instance_id_cond_t;
-typedef struct nf_instance_id_cond_t {
-    char *nf_instance_id;
-} nf_instance_id_cond_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-nf_instance_id_cond_t *nf_instance_id_cond_create(
+typedef struct ogs_sbi_nf_instance_id_cond_s ogs_sbi_nf_instance_id_cond_t;
+typedef struct ogs_sbi_nf_instance_id_cond_s {
+    char *nf_instance_id;
+} ogs_sbi_nf_instance_id_cond_t;
+
+ogs_sbi_nf_instance_id_cond_t *ogs_sbi_nf_instance_id_cond_create(
     char *nf_instance_id
     );
-void nf_instance_id_cond_free(nf_instance_id_cond_t *nf_instance_id_cond);
-nf_instance_id_cond_t *nf_instance_id_cond_parseFromJSON(cJSON *nf_instance_id_condJSON);
-cJSON *nf_instance_id_cond_convertToJSON(nf_instance_id_cond_t *nf_instance_id_cond);
-#endif /* _nf_instance_id_cond_H_ */
+void ogs_sbi_nf_instance_id_cond_free(ogs_sbi_nf_instance_id_cond_t *nf_instance_id_cond);
+ogs_sbi_nf_instance_id_cond_t *ogs_sbi_nf_instance_id_cond_parseFromJSON(cJSON *nf_instance_id_condJSON);
+cJSON *ogs_sbi_nf_instance_id_cond_convertToJSON(ogs_sbi_nf_instance_id_cond_t *nf_instance_id_cond);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_nf_instance_id_cond_H_ */
 

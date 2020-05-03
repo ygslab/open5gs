@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ipv6_prefix_range_H_
-#define _ipv6_prefix_range_H_
+#ifndef _ogs_sbi_ipv6_prefix_range_H_
+#define _ogs_sbi_ipv6_prefix_range_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -14,18 +14,27 @@
 #include "../include/binary.h"
 #include "ipv6_prefix.h"
 
-typedef struct ipv6_prefix_range_t ipv6_prefix_range_t;
-typedef struct ipv6_prefix_range_t {
-    struct ipv6_prefix_t *start;
-    struct ipv6_prefix_t *end;
-} ipv6_prefix_range_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-ipv6_prefix_range_t *ipv6_prefix_range_create(
-    ipv6_prefix_t *start,
-    ipv6_prefix_t *end
+typedef struct ogs_sbi_ipv6_prefix_range_s ogs_sbi_ipv6_prefix_range_t;
+typedef struct ogs_sbi_ipv6_prefix_range_s {
+    struct ogs_sbi_ipv6_prefix_s *start;
+    struct ogs_sbi_ipv6_prefix_s *end;
+} ogs_sbi_ipv6_prefix_range_t;
+
+ogs_sbi_ipv6_prefix_range_t *ogs_sbi_ipv6_prefix_range_create(
+    ogs_sbi_ipv6_prefix_t *start,
+    ogs_sbi_ipv6_prefix_t *end
     );
-void ipv6_prefix_range_free(ipv6_prefix_range_t *ipv6_prefix_range);
-ipv6_prefix_range_t *ipv6_prefix_range_parseFromJSON(cJSON *ipv6_prefix_rangeJSON);
-cJSON *ipv6_prefix_range_convertToJSON(ipv6_prefix_range_t *ipv6_prefix_range);
-#endif /* _ipv6_prefix_range_H_ */
+void ogs_sbi_ipv6_prefix_range_free(ogs_sbi_ipv6_prefix_range_t *ipv6_prefix_range);
+ogs_sbi_ipv6_prefix_range_t *ogs_sbi_ipv6_prefix_range_parseFromJSON(cJSON *ipv6_prefix_rangeJSON);
+cJSON *ogs_sbi_ipv6_prefix_range_convertToJSON(ogs_sbi_ipv6_prefix_range_t *ipv6_prefix_range);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_ipv6_prefix_range_H_ */
 

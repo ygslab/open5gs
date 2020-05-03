@@ -4,12 +4,12 @@
 #include <stdio.h>
 #include "snssai.h"
 
-snssai_t *snssai_create(
+ogs_sbi_snssai_t *ogs_sbi_snssai_create(
     int sst,
     char *sd
     )
 {
-    snssai_t *snssai_local_var = ogs_malloc(sizeof(snssai_t));
+    ogs_sbi_snssai_t *snssai_local_var = ogs_malloc(sizeof(ogs_sbi_snssai_t));
     if (!snssai_local_var) {
         return NULL;
     }
@@ -19,28 +19,28 @@ snssai_t *snssai_create(
     return snssai_local_var;
 }
 
-void snssai_free(snssai_t *snssai)
+void ogs_sbi_snssai_free(ogs_sbi_snssai_t *snssai)
 {
-    if(NULL == snssai) {
+    if (NULL == snssai) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(snssai->sd);
     ogs_free(snssai);
 }
 
-cJSON *snssai_convertToJSON(snssai_t *snssai)
+cJSON *ogs_sbi_snssai_convertToJSON(ogs_sbi_snssai_t *snssai)
 {
     cJSON *item = cJSON_CreateObject();
     if (!snssai->sst) {
         goto fail;
     }
-    if(cJSON_AddNumberToObject(item, "sst", snssai->sst) == NULL) {
+    if (cJSON_AddNumberToObject(item, "sst", snssai->sst) == NULL) {
         goto fail;
     }
 
     if (snssai->sd) {
-        if(cJSON_AddStringToObject(item, "sd", snssai->sd) == NULL) {
+        if (cJSON_AddStringToObject(item, "sd", snssai->sd) == NULL) {
             goto fail;
         }
     }
@@ -53,29 +53,29 @@ fail:
     return NULL;
 }
 
-snssai_t *snssai_parseFromJSON(cJSON *snssaiJSON)
+ogs_sbi_snssai_t *ogs_sbi_snssai_parseFromJSON(cJSON *snssaiJSON)
 {
-    snssai_t *snssai_local_var = NULL;
+    ogs_sbi_snssai_t *snssai_local_var = NULL;
     cJSON *sst = cJSON_GetObjectItemCaseSensitive(snssaiJSON, "sst");
     if (!sst) {
         goto end;
     }
 
 
-    if(!cJSON_IsNumber(sst)) {
+    if (!cJSON_IsNumber(sst)) {
         goto end;
     }
 
     cJSON *sd = cJSON_GetObjectItemCaseSensitive(snssaiJSON, "sd");
 
     if (sd) {
-        if(!cJSON_IsString(sd))
+        if (!cJSON_IsString(sd))
         {
             goto end;
         }
     }
 
-    snssai_local_var = snssai_create (
+    snssai_local_var = ogs_sbi_snssai_create (
         sst->valuedouble,
         sd ? ogs_strdup(sd->valuestring) : NULL
         );

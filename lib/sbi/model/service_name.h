@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _service_name_H_
-#define _service_name_H_
+#ifndef _ogs_sbi_service_name_H_
+#define _ogs_sbi_service_name_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,14 +13,23 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct service_name_t service_name_t;
-typedef struct service_name_t {
-} service_name_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-service_name_t *service_name_create(
+typedef struct ogs_sbi_service_name_s ogs_sbi_service_name_t;
+typedef struct ogs_sbi_service_name_s {
+} ogs_sbi_service_name_t;
+
+ogs_sbi_service_name_t *ogs_sbi_service_name_create(
     );
-void service_name_free(service_name_t *service_name);
-service_name_t *service_name_parseFromJSON(cJSON *service_nameJSON);
-cJSON *service_name_convertToJSON(service_name_t *service_name);
-#endif /* _service_name_H_ */
+void ogs_sbi_service_name_free(ogs_sbi_service_name_t *service_name);
+ogs_sbi_service_name_t *ogs_sbi_service_name_parseFromJSON(cJSON *service_nameJSON);
+cJSON *ogs_sbi_service_name_convertToJSON(ogs_sbi_service_name_t *service_name);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_service_name_H_ */
 

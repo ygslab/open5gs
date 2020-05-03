@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _patch_operation_H_
-#define _patch_operation_H_
+#ifndef _ogs_sbi_patch_operation_H_
+#define _ogs_sbi_patch_operation_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,14 +13,23 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct patch_operation_t patch_operation_t;
-typedef struct patch_operation_t {
-} patch_operation_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-patch_operation_t *patch_operation_create(
+typedef struct ogs_sbi_patch_operation_s ogs_sbi_patch_operation_t;
+typedef struct ogs_sbi_patch_operation_s {
+} ogs_sbi_patch_operation_t;
+
+ogs_sbi_patch_operation_t *ogs_sbi_patch_operation_create(
     );
-void patch_operation_free(patch_operation_t *patch_operation);
-patch_operation_t *patch_operation_parseFromJSON(cJSON *patch_operationJSON);
-cJSON *patch_operation_convertToJSON(patch_operation_t *patch_operation);
-#endif /* _patch_operation_H_ */
+void ogs_sbi_patch_operation_free(ogs_sbi_patch_operation_t *patch_operation);
+ogs_sbi_patch_operation_t *ogs_sbi_patch_operation_parseFromJSON(cJSON *patch_operationJSON);
+cJSON *ogs_sbi_patch_operation_convertToJSON(ogs_sbi_patch_operation_t *patch_operation);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_patch_operation_H_ */
 

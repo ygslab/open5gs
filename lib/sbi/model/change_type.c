@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "change_type.h"
 
-change_type_t *change_type_create(
+ogs_sbi_change_type_t *ogs_sbi_change_type_create(
     )
 {
-    change_type_t *change_type_local_var = ogs_malloc(sizeof(change_type_t));
+    ogs_sbi_change_type_t *change_type_local_var = ogs_malloc(sizeof(ogs_sbi_change_type_t));
     if (!change_type_local_var) {
         return NULL;
     }
@@ -15,16 +15,16 @@ change_type_t *change_type_create(
     return change_type_local_var;
 }
 
-void change_type_free(change_type_t *change_type)
+void ogs_sbi_change_type_free(ogs_sbi_change_type_t *change_type)
 {
-    if(NULL == change_type) {
+    if (NULL == change_type) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(change_type);
 }
 
-cJSON *change_type_convertToJSON(change_type_t *change_type)
+cJSON *ogs_sbi_change_type_convertToJSON(ogs_sbi_change_type_t *change_type)
 {
     cJSON *item = cJSON_CreateObject();
     return item;
@@ -35,10 +35,10 @@ fail:
     return NULL;
 }
 
-change_type_t *change_type_parseFromJSON(cJSON *change_typeJSON)
+ogs_sbi_change_type_t *ogs_sbi_change_type_parseFromJSON(cJSON *change_typeJSON)
 {
-    change_type_t *change_type_local_var = NULL;
-    change_type_local_var = change_type_create (
+    ogs_sbi_change_type_t *change_type_local_var = NULL;
+    change_type_local_var = ogs_sbi_change_type_create (
         );
 
     return change_type_local_var;

@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _snssai_smf_info_item_H_
-#define _snssai_smf_info_item_H_
+#ifndef _ogs_sbi_snssai_smf_info_item_H_
+#define _ogs_sbi_snssai_smf_info_item_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -15,18 +15,27 @@
 #include "dnn_smf_info_item.h"
 #include "snssai.h"
 
-typedef struct snssai_smf_info_item_t snssai_smf_info_item_t;
-typedef struct snssai_smf_info_item_t {
-    struct snssai_t *s_nssai;
-    list_t *dnn_smf_info_list;
-} snssai_smf_info_item_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-snssai_smf_info_item_t *snssai_smf_info_item_create(
-    snssai_t *s_nssai,
-    list_t *dnn_smf_info_list
+typedef struct ogs_sbi_snssai_smf_info_item_s ogs_sbi_snssai_smf_info_item_t;
+typedef struct ogs_sbi_snssai_smf_info_item_s {
+    struct ogs_sbi_snssai_s *s_nssai;
+    ogs_sbi_list_t *dnn_smf_info_list;
+} ogs_sbi_snssai_smf_info_item_t;
+
+ogs_sbi_snssai_smf_info_item_t *ogs_sbi_snssai_smf_info_item_create(
+    ogs_sbi_snssai_t *s_nssai,
+    ogs_sbi_list_t *dnn_smf_info_list
     );
-void snssai_smf_info_item_free(snssai_smf_info_item_t *snssai_smf_info_item);
-snssai_smf_info_item_t *snssai_smf_info_item_parseFromJSON(cJSON *snssai_smf_info_itemJSON);
-cJSON *snssai_smf_info_item_convertToJSON(snssai_smf_info_item_t *snssai_smf_info_item);
-#endif /* _snssai_smf_info_item_H_ */
+void ogs_sbi_snssai_smf_info_item_free(ogs_sbi_snssai_smf_info_item_t *snssai_smf_info_item);
+ogs_sbi_snssai_smf_info_item_t *ogs_sbi_snssai_smf_info_item_parseFromJSON(cJSON *snssai_smf_info_itemJSON);
+cJSON *ogs_sbi_snssai_smf_info_item_convertToJSON(ogs_sbi_snssai_smf_info_item_t *snssai_smf_info_item);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_snssai_smf_info_item_H_ */
 

@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _guami_H_
-#define _guami_H_
+#ifndef _ogs_sbi_guami_H_
+#define _ogs_sbi_guami_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -14,18 +14,27 @@
 #include "../include/binary.h"
 #include "plmn_id.h"
 
-typedef struct guami_t guami_t;
-typedef struct guami_t {
-    struct plmn_id_t *plmn_id;
-    char *amf_id;
-} guami_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-guami_t *guami_create(
-    plmn_id_t *plmn_id,
+typedef struct ogs_sbi_guami_s ogs_sbi_guami_t;
+typedef struct ogs_sbi_guami_s {
+    struct ogs_sbi_plmn_id_s *plmn_id;
+    char *amf_id;
+} ogs_sbi_guami_t;
+
+ogs_sbi_guami_t *ogs_sbi_guami_create(
+    ogs_sbi_plmn_id_t *plmn_id,
     char *amf_id
     );
-void guami_free(guami_t *guami);
-guami_t *guami_parseFromJSON(cJSON *guamiJSON);
-cJSON *guami_convertToJSON(guami_t *guami);
-#endif /* _guami_H_ */
+void ogs_sbi_guami_free(ogs_sbi_guami_t *guami);
+ogs_sbi_guami_t *ogs_sbi_guami_parseFromJSON(cJSON *guamiJSON);
+cJSON *ogs_sbi_guami_convertToJSON(ogs_sbi_guami_t *guami);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_guami_H_ */
 

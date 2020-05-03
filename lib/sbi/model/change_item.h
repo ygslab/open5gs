@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _change_item_H_
-#define _change_item_H_
+#ifndef _ogs_sbi_change_item_H_
+#define _ogs_sbi_change_item_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -14,24 +14,33 @@
 #include "../include/binary.h"
 #include "change_type.h"
 
-typedef struct change_item_t change_item_t;
-typedef struct change_item_t {
-    struct change_type_t *op;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct ogs_sbi_change_item_s ogs_sbi_change_item_t;
+typedef struct ogs_sbi_change_item_s {
+    struct ogs_sbi_change_type_s *op;
     char *path;
     char *from;
     char *orig_value;
     char *new_value;
-} change_item_t;
+} ogs_sbi_change_item_t;
 
-change_item_t *change_item_create(
-    change_type_t *op,
+ogs_sbi_change_item_t *ogs_sbi_change_item_create(
+    ogs_sbi_change_type_t *op,
     char *path,
     char *from,
     char *orig_value,
     char *new_value
     );
-void change_item_free(change_item_t *change_item);
-change_item_t *change_item_parseFromJSON(cJSON *change_itemJSON);
-cJSON *change_item_convertToJSON(change_item_t *change_item);
-#endif /* _change_item_H_ */
+void ogs_sbi_change_item_free(ogs_sbi_change_item_t *change_item);
+ogs_sbi_change_item_t *ogs_sbi_change_item_parseFromJSON(cJSON *change_itemJSON);
+cJSON *ogs_sbi_change_item_convertToJSON(ogs_sbi_change_item_t *change_item);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_change_item_H_ */
 

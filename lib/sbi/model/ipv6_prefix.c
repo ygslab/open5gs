@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "ipv6_prefix.h"
 
-ipv6_prefix_t *ipv6_prefix_create(
+ogs_sbi_ipv6_prefix_t *ogs_sbi_ipv6_prefix_create(
     )
 {
-    ipv6_prefix_t *ipv6_prefix_local_var = ogs_malloc(sizeof(ipv6_prefix_t));
+    ogs_sbi_ipv6_prefix_t *ipv6_prefix_local_var = ogs_malloc(sizeof(ogs_sbi_ipv6_prefix_t));
     if (!ipv6_prefix_local_var) {
         return NULL;
     }
@@ -15,16 +15,16 @@ ipv6_prefix_t *ipv6_prefix_create(
     return ipv6_prefix_local_var;
 }
 
-void ipv6_prefix_free(ipv6_prefix_t *ipv6_prefix)
+void ogs_sbi_ipv6_prefix_free(ogs_sbi_ipv6_prefix_t *ipv6_prefix)
 {
-    if(NULL == ipv6_prefix) {
+    if (NULL == ipv6_prefix) {
         return;
     }
-    listEntry_t *listEntry;
+    ogs_sbi_lnode_t *node;
     ogs_free(ipv6_prefix);
 }
 
-cJSON *ipv6_prefix_convertToJSON(ipv6_prefix_t *ipv6_prefix)
+cJSON *ogs_sbi_ipv6_prefix_convertToJSON(ogs_sbi_ipv6_prefix_t *ipv6_prefix)
 {
     cJSON *item = cJSON_CreateObject();
     return item;
@@ -35,10 +35,10 @@ fail:
     return NULL;
 }
 
-ipv6_prefix_t *ipv6_prefix_parseFromJSON(cJSON *ipv6_prefixJSON)
+ogs_sbi_ipv6_prefix_t *ogs_sbi_ipv6_prefix_parseFromJSON(cJSON *ipv6_prefixJSON)
 {
-    ipv6_prefix_t *ipv6_prefix_local_var = NULL;
-    ipv6_prefix_local_var = ipv6_prefix_create (
+    ogs_sbi_ipv6_prefix_t *ipv6_prefix_local_var = NULL;
+    ipv6_prefix_local_var = ogs_sbi_ipv6_prefix_create (
         );
 
     return ipv6_prefix_local_var;

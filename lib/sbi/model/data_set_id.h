@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _data_set_id_H_
-#define _data_set_id_H_
+#ifndef _ogs_sbi_data_set_id_H_
+#define _ogs_sbi_data_set_id_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -13,14 +13,23 @@
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
 
-typedef struct data_set_id_t data_set_id_t;
-typedef struct data_set_id_t {
-} data_set_id_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-data_set_id_t *data_set_id_create(
+typedef struct ogs_sbi_data_set_id_s ogs_sbi_data_set_id_t;
+typedef struct ogs_sbi_data_set_id_s {
+} ogs_sbi_data_set_id_t;
+
+ogs_sbi_data_set_id_t *ogs_sbi_data_set_id_create(
     );
-void data_set_id_free(data_set_id_t *data_set_id);
-data_set_id_t *data_set_id_parseFromJSON(cJSON *data_set_idJSON);
-cJSON *data_set_id_convertToJSON(data_set_id_t *data_set_id);
-#endif /* _data_set_id_H_ */
+void ogs_sbi_data_set_id_free(ogs_sbi_data_set_id_t *data_set_id);
+ogs_sbi_data_set_id_t *ogs_sbi_data_set_id_parseFromJSON(cJSON *data_set_idJSON);
+cJSON *ogs_sbi_data_set_id_convertToJSON(ogs_sbi_data_set_id_t *data_set_id);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _ogs_sbi_data_set_id_H_ */
 
