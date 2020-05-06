@@ -17,57 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef OGS_APP_H
-#define OGS_APP_H
+#if !defined(OGS_SBI_INSIDE) && !defined(OGS_SBI_COMPILATION)
+#error "This header cannot be included directly."
+#endif
 
-#include "ogs-core.h"
-
-#define OGS_APP_INSIDE
-
-extern int __ogs_app_domain;
-
-#include "app/ogs-yaml.h"
-#include "app/ogs-config.h"
-#include "app/ogs-init.h"
-
-#undef OGS_APP_INSIDE
-
-#undef OGS_LOG_DOMAIN
-#define OGS_LOG_DOMAIN __ogs_app_domain
+#ifndef OGS_SBI_CONTEXT_H
+#define OGS_SBI_CONTEXT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int app_initialize(const char *const argv[]);
-void app_terminate(void);
+typedef struct ogs_sbi_context_s {
+    ogs_pollset_t   *pollset;       /* Poll Set for I/O Multiplexing */
 
-int mme_initialize(void);
-void mme_terminate(void);
+    uint32_t        http_port;      /* SBI HTTP local port */
+    uint32_t        https_port;     /* SBI HTTPS local port */
 
-int hss_initialize(void);
-void hss_terminate(void);
+} ogs_sbi_context_t;
 
-int sgw_initialize(void);
-void sgw_terminate(void);
-
-int pgw_initialize(void);
-void pgw_terminate(void);
-
-int pcrf_initialize(void);
-void pcrf_terminate(void);
-
-int nrf_initialize(void);
-void nrf_terminate(void);
-
-int smf_initialize(void);
-void smf_terminate(void);
-
-int upf_initialize(void);
-void upf_terminate(void);
+void ogs_sbi_context_init(ogs_pollset_t *pollset);
+void ogs_sbi_context_final(void);
+ogs_sbi_context_t *ogs_sbi_self(void);
+int ogs_sbi_context_parse_config(const char *local, const char *remote);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_APP_H */
+#endif /* OGS_SBI_CONTEXT_H */

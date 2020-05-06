@@ -17,57 +17,42 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef OGS_APP_H
-#define OGS_APP_H
+#ifndef NRF_EVENT_H
+#define NRF_EVENT_H
 
 #include "ogs-core.h"
-
-#define OGS_APP_INSIDE
-
-extern int __ogs_app_domain;
-
-#include "app/ogs-yaml.h"
-#include "app/ogs-config.h"
-#include "app/ogs-init.h"
-
-#undef OGS_APP_INSIDE
-
-#undef OGS_LOG_DOMAIN
-#define OGS_LOG_DOMAIN __ogs_app_domain
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int app_initialize(const char *const argv[]);
-void app_terminate(void);
+typedef enum {
+    NRF_EVT_BASE = OGS_FSM_USER_SIG,
 
-int mme_initialize(void);
-void mme_terminate(void);
+    NRF_EVT_SBI_MESSAGE,
 
-int hss_initialize(void);
-void hss_terminate(void);
+    NRF_EVT_TOP,
 
-int sgw_initialize(void);
-void sgw_terminate(void);
+} nrf_event_e;
 
-int pgw_initialize(void);
-void pgw_terminate(void);
+typedef struct nrf_event_s {
+    int id;
+    struct {
+        void *connection;
+    } server;
+} nrf_event_t;
 
-int pcrf_initialize(void);
-void pcrf_terminate(void);
+void nrf_event_init(void);
+void nrf_event_term(void);
+void nrf_event_final(void);
 
-int nrf_initialize(void);
-void nrf_terminate(void);
+nrf_event_t *nrf_event_new(nrf_event_e id);
+void nrf_event_free(nrf_event_t *e);
 
-int smf_initialize(void);
-void smf_terminate(void);
-
-int upf_initialize(void);
-void upf_terminate(void);
+const char *nrf_event_get_name(nrf_event_t *e);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_APP_H */
+#endif /* NRF_EVENT_H */

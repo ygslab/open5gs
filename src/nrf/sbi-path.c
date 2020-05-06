@@ -17,45 +17,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef OGS_SBI_H
-#define OGS_SBI_H
+#include "sbi-path.h"
+#include "context.h"
+#include "event.h"
+#include "microhttpd.h"
 
-#include "ogs-core.h"
+static int sbi_recv_cb(void *data)
+{
+    nrf_event_t *e = NULL;
+    int rv;
 
-#define OGS_SBI_HTTP_PORT               80
-#define OGS_SBI_HTTPS_PORT              443
+    e = nrf_event_new(NRF_EVT_SBI_MESSAGE);
+    ogs_assert(e);
+    e->server.connection = data;
 
-#if defined(__GNUC__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstrict-prototypes"
-#endif
+    rv = ogs_queue_push(nrf_self()->queue, e);
+    if (rv != OGS_OK) {
+        ogs_error("ogs_queue_push() failed:%d", (int)rv);
+        nrf_event_free(e);
+        return OGS_ERROR;
+    }
 
-#include "model/nf_profile.h"
-#include "model/nf_group_cond.h"
-#include "model/smf_info.h"
-
-#if defined(__GNUC__)
-#pragma GCC diagnostic pop
-#endif
-
-#define OGS_SBI_INSIDE
-
-#include "sbi/context.h"
-#include "sbi/server.h"
-
-#undef OGS_SBI_INSIDE
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-extern int __ogs_sbi_domain;
-
-#undef OGS_LOG_DOMAIN
-#define OGS_LOG_DOMAIN __ogs_sbi_domain
-
-#ifdef __cplusplus
+    return OGS_OK;
 }
-#endif
 
-#endif /* OGS_SBI_H */
+int nrf_sbi_open(void)
+{
+    ogs_sbi_server_add(NULL, sbi_recv_cb);
+
+    return OGS_OK;
+}
+
+void nrf_sbi_close(void)
+{
+    ogs_sbi_server_remove_all();
+}

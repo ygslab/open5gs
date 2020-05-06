@@ -17,45 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef OGS_SBI_H
-#define OGS_SBI_H
+#include "ogs-app.h"
 
-#include "ogs-core.h"
+int app_initialize(const char *const argv[])
+{
+    int rv;
 
-#define OGS_SBI_HTTP_PORT               80
-#define OGS_SBI_HTTPS_PORT              443
+    rv = nrf_initialize();
+    if (rv != OGS_OK) {
+        ogs_error("Failed to intialize NRF");
+        return rv;
+    }
+    ogs_info("NRF initialize...done");
 
-#if defined(__GNUC__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstrict-prototypes"
-#endif
-
-#include "model/nf_profile.h"
-#include "model/nf_group_cond.h"
-#include "model/smf_info.h"
-
-#if defined(__GNUC__)
-#pragma GCC diagnostic pop
-#endif
-
-#define OGS_SBI_INSIDE
-
-#include "sbi/context.h"
-#include "sbi/server.h"
-
-#undef OGS_SBI_INSIDE
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-extern int __ogs_sbi_domain;
-
-#undef OGS_LOG_DOMAIN
-#define OGS_LOG_DOMAIN __ogs_sbi_domain
-
-#ifdef __cplusplus
+    return OGS_OK;
 }
-#endif
 
-#endif /* OGS_SBI_H */
+void app_terminate(void)
+{
+    nrf_terminate();
+    ogs_info("NRF terminate...done");
+}

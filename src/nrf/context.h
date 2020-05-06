@@ -17,57 +17,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef OGS_APP_H
-#define OGS_APP_H
+#ifndef NRF_CONTEXT_H
+#define NRF_CONTEXT_H
 
-#include "ogs-core.h"
-
-#define OGS_APP_INSIDE
-
-extern int __ogs_app_domain;
-
-#include "app/ogs-yaml.h"
-#include "app/ogs-config.h"
-#include "app/ogs-init.h"
-
-#undef OGS_APP_INSIDE
-
-#undef OGS_LOG_DOMAIN
-#define OGS_LOG_DOMAIN __ogs_app_domain
+#include "ogs-app.h"
+#include "ogs-sbi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int app_initialize(const char *const argv[]);
-void app_terminate(void);
+extern int __nrf_log_domain;
 
-int mme_initialize(void);
-void mme_terminate(void);
+#undef OGS_LOG_DOMAIN
+#define OGS_LOG_DOMAIN __nrf_log_domain
 
-int hss_initialize(void);
-void hss_terminate(void);
+typedef struct nrf_context_s {
+    ogs_queue_t     *queue;         /* Queue for processing UPF control */
+    ogs_timer_mgr_t *timer_mgr;     /* Timer Manager */
+    ogs_pollset_t   *pollset;       /* Poll Set for I/O Multiplexing */
 
-int sgw_initialize(void);
-void sgw_terminate(void);
+    void                *NFProfileCollection;
+    ogs_thread_mutex_t  db_lock;
+} nrf_context_t;
 
-int pgw_initialize(void);
-void pgw_terminate(void);
+void nrf_context_init(void);
+void nrf_context_final(void);
+nrf_context_t *nrf_self(void);
 
-int pcrf_initialize(void);
-void pcrf_terminate(void);
+int nrf_context_parse_config(void);
 
-int nrf_initialize(void);
-void nrf_terminate(void);
-
-int smf_initialize(void);
-void smf_terminate(void);
-
-int upf_initialize(void);
-void upf_terminate(void);
+int nrf_db_init(void);
+int nrf_db_final(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_APP_H */
+#endif /* NRF_CONTEXT_H */

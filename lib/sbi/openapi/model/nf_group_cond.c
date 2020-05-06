@@ -4,16 +4,16 @@
 #include <stdio.h>
 #include "nf_group_cond.h"
 
-char* ogs_sbi_nf_typenf_group_cond_ToString(ogs_sbi_nf_group_cond_nf_type_e nf_type)
+char *ogs_sbi_nf_typenf_group_cond_ToString(ogs_sbi_nf_group_cond_nf_type_e nf_type)
 {
-    char* nf_typeArray[] =  { "NULL", "UDM", "AUSF", "UDR", "PCF" };
-    return nf_typeArray[nf_type];
+    const char *nf_typeArray[] =  { "NULL", "UDM", "AUSF", "UDR", "PCF" };
+    return (char *)nf_typeArray[nf_type];
 }
 
 ogs_sbi_nf_group_cond_nf_type_e ogs_sbi_nf_typenf_group_cond_FromString(char* nf_type)
 {
     int stringToReturn = 0;
-    char *nf_typeArray[] =  { "NULL", "UDM", "AUSF", "UDR", "PCF" };
+    const char *nf_typeArray[] =  { "NULL", "UDM", "AUSF", "UDR", "PCF" };
     size_t sizeofArray = sizeof(nf_typeArray) / sizeof(nf_typeArray[0]);
     while (stringToReturn < sizeofArray) {
         if (strcmp(nf_type, nf_typeArray[stringToReturn]) == 0) {
