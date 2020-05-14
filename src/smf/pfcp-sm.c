@@ -40,9 +40,6 @@ void smf_pfcp_state_initial(ogs_fsm_t *s, smf_event_t *e)
             ogs_pfcp_self()->pfcp_sock, ogs_pfcp_self()->pfcp_sock6, node);
     ogs_assert(rv == OGS_OK);
 
-    node->t_association = ogs_timer_add(smf_self()->timer_mgr,
-            smf_timer_pfcp_association, node);
-    ogs_assert(node->t_association);
     node->t_heartbeat = ogs_timer_add(smf_self()->timer_mgr,
             smf_timer_pfcp_heartbeat, node);
     ogs_assert(node->t_heartbeat);
@@ -61,7 +58,6 @@ void smf_pfcp_state_final(ogs_fsm_t *s, smf_event_t *e)
     node = e->pfcp_node;
     ogs_assert(node);
 
-    ogs_timer_delete(node->t_association);
     ogs_timer_delete(node->t_heartbeat);
 }
 
@@ -87,14 +83,20 @@ void smf_pfcp_state_will_associate(ogs_fsm_t *s, smf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
-        ogs_timer_start(node->t_association,
-                smf_timer_cfg(SMF_TIMER_PFCP_ASSOCIATION)->duration);
+        if (node->t_association) {
+            ogs_timer_start(node->t_association,
+                    smf_timer_cfg(SMF_TIMER_ASSOCIATION)->duration);
 
-        smf_pfcp_send_association_setup_request(node);
+            smf_pfcp_send_association_setup_request(node);
+        }
         break;
+
     case OGS_FSM_EXIT_SIG:
-        ogs_timer_stop(node->t_association);
+        if (node->t_association) {
+            ogs_timer_stop(node->t_association);
+        }
         break;
+
     case SMF_EVT_N4_TIMER:
         switch(e->timer_id) {
         case SMF_TIMER_PFCP_ASSOCIATION:
@@ -104,6 +106,7 @@ void smf_pfcp_state_will_associate(ogs_fsm_t *s, smf_event_t *e)
             ogs_warn("Retry to association with peer [%s]:%d failed",
                         OGS_ADDR(addr, buf), OGS_PORT(addr));
 
+            ogs_assert(node->t_association);
             ogs_timer_start(node->t_association,
                 smf_timer_cfg(SMF_TIMER_PFCP_ASSOCIATION)->duration);
 

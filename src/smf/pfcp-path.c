@@ -22,6 +22,35 @@
 #include "pfcp-path.h"
 #include "n4-build.h"
 
+static void pfcp_node_fsm_init(ogs_pfcp_node_t *node, bool try_to_assoicate)
+{
+    smf_event_t e;
+
+    ogs_assert(node);
+    e.pfcp_node = node;
+
+    if (try_to_assoicate == true) {
+        node->t_association = ogs_timer_add(smf_self()->timer_mgr,
+                smf_timer_association, node);
+        ogs_assert(node->t_association);
+    }
+
+    ogs_fsm_create(&node->sm, smf_pfcp_state_initial, smf_pfcp_state_final);
+    ogs_fsm_init(&node->sm, &e);
+}
+
+static void pfcp_node_fsm_fini(ogs_pfcp_node_t *node)
+{
+    smf_event_t e;
+    e.pfcp_node = node;
+
+    ogs_fsm_fini(&node->sm, &e);
+    ogs_fsm_delete(&node->sm);
+
+    if (node->t_association)
+        ogs_timer_delete(node->t_association);
+}
+
 static void pfcp_recv_cb(short when, ogs_socket_t fd, void *data)
 {
     int rv;
@@ -66,13 +95,16 @@ static void pfcp_recv_cb(short when, ogs_socket_t fd, void *data)
     }
 
     e = smf_event_new(SMF_EVT_N4_MESSAGE);
+    ogs_assert(e);
+
     node = ogs_pfcp_node_find(&ogs_pfcp_self()->n4_list, &from);
     if (!node) {
         node = ogs_pfcp_node_add(&ogs_pfcp_self()->n4_list, &from);
         ogs_assert(node);
+
         node->sock = data;
+        pfcp_node_fsm_init(node, false);
     }
-    ogs_assert(e);
     e->pfcp_node = node;
     e->pkbuf = pkbuf;
 
@@ -118,14 +150,8 @@ int smf_pfcp_open(void)
 
     ogs_assert(ogs_pfcp_self()->pfcp_addr || ogs_pfcp_self()->pfcp_addr6);
 
-    ogs_list_for_each(&ogs_pfcp_self()->n4_list, pfcp_node) {
-        smf_event_t e;
-        e.pfcp_node = pfcp_node;
-
-        ogs_fsm_create(&pfcp_node->sm,
-                smf_pfcp_state_initial, smf_pfcp_state_final);
-        ogs_fsm_init(&pfcp_node->sm, &e);
-    }
+    ogs_list_for_each(&ogs_pfcp_self()->n4_list, pfcp_node)
+        pfcp_node_fsm_init(pfcp_node, true);
 
     return OGS_OK;
 }
@@ -134,13 +160,8 @@ void smf_pfcp_close(void)
 {
     ogs_pfcp_node_t *pfcp_node = NULL;
 
-    ogs_list_for_each(&ogs_pfcp_self()->n4_list, pfcp_node) {
-        smf_event_t e;
-        e.pfcp_node = pfcp_node;
-
-        ogs_fsm_fini(&pfcp_node->sm, &e);
-        ogs_fsm_delete(&pfcp_node->sm);
-    }
+    ogs_list_for_each(&ogs_pfcp_self()->n4_list, pfcp_node)
+        pfcp_node_fsm_fini(pfcp_node);
 
     ogs_socknode_remove_all(&ogs_pfcp_self()->pfcp_list);
     ogs_socknode_remove_all(&ogs_pfcp_self()->pfcp_list6);

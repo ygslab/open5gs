@@ -210,6 +210,7 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
         ogs_assert(recvbuf);
         pfcp_node = e->pfcp_node;
         ogs_assert(pfcp_node);
+        ogs_assert(OGS_FSM_STATE(&pfcp_node->sm));
 
         if (ogs_pfcp_parse_msg(&pfcp_message, recvbuf) != OGS_OK) {
             ogs_error("ogs_pfcp_parse_msg() failed");
