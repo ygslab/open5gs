@@ -2307,15 +2307,15 @@ components:
           - RAN
       - type: string
     N1MessageClass:
-      anyOf:
-      - type: string
+#      anyOf:
+#      - type: string
         enum:
           - 5GMM
           - SM
           - LPP
           - SMS
           - UPDP
-      - type: string
+        type: string
     N1N2MessageTransferCause:
       anyOf:
       - type: string

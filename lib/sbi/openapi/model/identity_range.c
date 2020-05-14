@@ -10,7 +10,7 @@ ogs_sbi_identity_range_t *ogs_sbi_identity_range_create(
     char *pattern
     )
 {
-    ogs_sbi_identity_range_t *identity_range_local_var = ogs_malloc(sizeof(ogs_sbi_identity_range_t));
+    ogs_sbi_identity_range_t *identity_range_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_identity_range_t));
     if (!identity_range_local_var) {
         return NULL;
     }
@@ -38,28 +38,27 @@ cJSON *ogs_sbi_identity_range_convertToJSON(ogs_sbi_identity_range_t *identity_r
     cJSON *item = cJSON_CreateObject();
     if (identity_range->start) {
         if (cJSON_AddStringToObject(item, "start", identity_range->start) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_identity_range_convertToJSON() failed [start]");
+            goto end;
         }
     }
 
     if (identity_range->end) {
         if (cJSON_AddStringToObject(item, "end", identity_range->end) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_identity_range_convertToJSON() failed [end]");
+            goto end;
         }
     }
 
     if (identity_range->pattern) {
         if (cJSON_AddStringToObject(item, "pattern", identity_range->pattern) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_identity_range_convertToJSON() failed [pattern]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_identity_range_t *ogs_sbi_identity_range_parseFromJSON(cJSON *identity_rangeJSON)
@@ -68,8 +67,8 @@ ogs_sbi_identity_range_t *ogs_sbi_identity_range_parseFromJSON(cJSON *identity_r
     cJSON *start = cJSON_GetObjectItemCaseSensitive(identity_rangeJSON, "start");
 
     if (start) {
-        if (!cJSON_IsString(start))
-        {
+        if (!cJSON_IsString(start)) {
+            ogs_error("ogs_sbi_identity_range_parseFromJSON() failed [start]");
             goto end;
         }
     }
@@ -77,8 +76,8 @@ ogs_sbi_identity_range_t *ogs_sbi_identity_range_parseFromJSON(cJSON *identity_r
     cJSON *end = cJSON_GetObjectItemCaseSensitive(identity_rangeJSON, "end");
 
     if (end) {
-        if (!cJSON_IsString(end))
-        {
+        if (!cJSON_IsString(end)) {
+            ogs_error("ogs_sbi_identity_range_parseFromJSON() failed [end]");
             goto end;
         }
     }
@@ -86,8 +85,8 @@ ogs_sbi_identity_range_t *ogs_sbi_identity_range_parseFromJSON(cJSON *identity_r
     cJSON *pattern = cJSON_GetObjectItemCaseSensitive(identity_rangeJSON, "pattern");
 
     if (pattern) {
-        if (!cJSON_IsString(pattern))
-        {
+        if (!cJSON_IsString(pattern)) {
+            ogs_error("ogs_sbi_identity_range_parseFromJSON() failed [pattern]");
             goto end;
         }
     }

@@ -763,29 +763,31 @@ components:
         supportedFeatures:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/SupportedFeatures'
     NFType:
-      type: string
-      enum:
-        - NRF
-        - UDM
-        - AMF
-        - SMF
-        - AUSF
-        - NEF
-        - PCF
-        - SMSF
-        - NSSF
-        - UDR
-        - LMF
-        - GMLC
-        - 5G_EIR
-        - SEPP
-        - UPF
-        - N3IWF
-        - AF
-        - UDSF
-        - BSF
-        - CHF
-        - NWDAF
+#      anyOf:
+#        - type: string
+          enum:
+            - NRF
+            - UDM
+            - AMF
+            - SMF
+            - AUSF
+            - NEF
+            - PCF
+            - SMSF
+            - NSSF
+            - UDR
+            - LMF
+            - GMLC
+            - 5G_EIR
+            - SEPP
+            - UPF
+            - N3IWF
+            - AF
+            - UDSF
+            - BSF
+            - CHF
+            - NWDAF
+          type: string
     Fqdn:
       type: string
     IpEndPoint:
@@ -805,7 +807,7 @@ components:
       type: object
       required:
         - nfStatusNotificationUri
-        - subscriptionId
+#        - subscriptionId
       properties:
         nfStatusNotificationUri:
           type: string
@@ -1298,29 +1300,29 @@ components:
         n2InformationClass:
           $ref: 'TS29518_Namf_Communication.yaml#/components/schemas/N2InformationClass'
     NotificationType:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
             - N1_MESSAGES
             - N2_INFORMATION
             - LOCATION_NOTIFICATION
             - DATA_REMOVAL_NOTIFICATION
             - DATA_CHANGE_NOTIFICATION
-        - type: string
+          type: string
     TransportProtocol:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
             - TCP
-        - type: string
+          type: string
     NotificationEventType:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
             - NF_REGISTERED
             - NF_DEREGISTERED
             - NF_PROFILE_CHANGED
-        - type: string    
+          type: string    
     NotificationData:
       type: object
       required:
@@ -1393,11 +1395,13 @@ components:
             $ref: 'TS29571_CommonData.yaml#/components/schemas/ChangeItem'
           minItems: 1
     NFStatus:
-      type: string
-      enum:
-        - REGISTERED
-        - SUSPENDED
-        - UNDISCOVERABLE
+#      anyOf:
+#        - type: string
+          enum:
+            - REGISTERED
+            - SUSPENDED
+            - UNDISCOVERABLE
+          type: string
     NFServiceVersion:
       type: object
       required:
@@ -1411,45 +1415,45 @@ components:
         expiry:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/DateTime'
     ServiceName:
-      anyOf:
-        - type: string
-          enum:
-            - nnrf-nfm
-            - nnrf-disc
-            - nudm-sdm
-            - nudm-uecm
-            - nudm-ueau
-            - nudm-ee
-            - nudm-pp
-            - nudm-niddau
-            - namf-comm
-            - namf-evts
-            - namf-mt
-            - namf-loc
-            - nsmf-pdusession
-            - nsmf-event-exposure
-            - nausf-auth
-            - nausf-sorprotection
-            - nausf-upuprotection
-            - nnef-pfdmanagement
-            - npcf-am-policy-control
-            - npcf-smpolicycontrol
-            - npcf-policyauthorization
-            - npcf-bdtpolicycontrol
-            - npcf-eventexposure
-            - npcf-ue-policy-control
-            - nsmsf-sms
-            - nnssf-nsselection
-            - nnssf-nssaiavailability
-            - nudr-dr
-            - nlmf-loc
-            - n5g-eir-eic
-            - nbsf-management
-            - nchf-spendinglimitcontrol
-            - nchf-convergedcharging
-            - nnwdaf-eventssubscription
-            - nnwdaf-analyticsinfo
-        - type: string
+#      anyOf:
+#        - type: string
+#          enum:
+#            - nnrf-nfm
+#            - nnrf-disc
+#            - nudm-sdm
+#            - nudm-uecm
+#            - nudm-ueau
+#            - nudm-ee
+#            - nudm-pp
+#            - nudm-niddau
+#            - namf-comm
+#            - namf-evts
+#            - namf-mt
+#            - namf-loc
+#            - nsmf-pdusession
+#            - nsmf-event-exposure
+#            - nausf-auth
+#            - nausf-sorprotection
+#            - nausf-upuprotection
+#            - nnef-pfdmanagement
+#            - npcf-am-policy-control
+#            - npcf-smpolicycontrol
+#            - npcf-policyauthorization
+#            - npcf-bdtpolicycontrol
+#            - npcf-eventexposure
+#            - npcf-ue-policy-control
+#            - nsmsf-sms
+#            - nnssf-nsselection
+#            - nnssf-nssaiavailability
+#            - nudr-dr
+#            - nlmf-loc
+#            - n5g-eir-eic
+#            - nbsf-management
+#            - nchf-spendinglimitcontrol
+#            - nchf-convergedcharging
+#            - nnwdaf-eventssubscription
+#            - nnwdaf-analyticsinfo
+          type: string
     N2InterfaceAmfInfo:
       type: object
       properties:
@@ -1466,13 +1470,13 @@ components:
         amfName:
             $ref: 'TS29571_CommonData.yaml#/components/schemas/AmfName'
     NFServiceStatus:
-      anyOf:
-        - type: string
+#      anyOf:
+#        - type: string
           enum:
             - REGISTERED
             - SUSPENDED
             - UNDISCOVERABLE
-        - type: string
+          type: string
     TaiRange:
       type: object
       required:

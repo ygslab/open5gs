@@ -4,45 +4,23 @@
 #include <stdio.h>
 #include "uri_scheme.h"
 
-ogs_sbi_uri_scheme_t *ogs_sbi_uri_scheme_create(
-    )
+char* ogs_sbi_uri_scheme_ToString(ogs_sbi_uri_scheme_e uri_scheme)
 {
-    ogs_sbi_uri_scheme_t *uri_scheme_local_var = ogs_malloc(sizeof(ogs_sbi_uri_scheme_t));
-    if (!uri_scheme_local_var) {
-        return NULL;
-    }
-
-    return uri_scheme_local_var;
+    const char *uri_schemeArray[] =  { "NULL", "http", "https" };
+    return (char *)uri_schemeArray[uri_scheme];
 }
 
-void ogs_sbi_uri_scheme_free(ogs_sbi_uri_scheme_t *uri_scheme)
+ogs_sbi_uri_scheme_e ogs_sbi_uri_scheme_FromString(char* uri_scheme)
 {
-    if (NULL == uri_scheme) {
-        return;
+    int stringToReturn = 0;
+    const char *uri_schemeArray[] =  { "NULL", "http", "https" };
+    size_t sizeofArray = sizeof(uri_schemeArray) / sizeof(uri_schemeArray[0]);
+    while (stringToReturn < sizeofArray) {
+        if (strcmp(uri_scheme, uri_schemeArray[stringToReturn]) == 0) {
+            return stringToReturn;
+        }
+        stringToReturn++;
     }
-    ogs_sbi_lnode_t *node;
-    ogs_free(uri_scheme);
-}
-
-cJSON *ogs_sbi_uri_scheme_convertToJSON(ogs_sbi_uri_scheme_t *uri_scheme)
-{
-    cJSON *item = cJSON_CreateObject();
-    return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
-}
-
-ogs_sbi_uri_scheme_t *ogs_sbi_uri_scheme_parseFromJSON(cJSON *uri_schemeJSON)
-{
-    ogs_sbi_uri_scheme_t *uri_scheme_local_var = NULL;
-    uri_scheme_local_var = ogs_sbi_uri_scheme_create (
-        );
-
-    return uri_scheme_local_var;
-end:
-    return NULL;
+    return 0;
 }
 

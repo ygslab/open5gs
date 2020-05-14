@@ -18,8 +18,12 @@
 subdir('openapi')
 
 libsbi_sources = files('''
-    context.c
+    conv.c
+    message.c
+
     server.c
+    client.c
+    context.c
 '''.split())
 
 libsbi_inc = include_directories('.')

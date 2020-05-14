@@ -17,15 +17,11 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_change_type_s ogs_sbi_change_type_t;
-typedef struct ogs_sbi_change_type_s {
-} ogs_sbi_change_type_t;
+typedef enum { ogs_sbi_change_type_NULL = 0, ogs_sbi_change_type_ADD, ogs_sbi_change_type_MOVE, ogs_sbi_change_type__REMOVE, ogs_sbi_change_type_REPLACE } ogs_sbi_change_type_e;
 
-ogs_sbi_change_type_t *ogs_sbi_change_type_create(
-    );
-void ogs_sbi_change_type_free(ogs_sbi_change_type_t *change_type);
-ogs_sbi_change_type_t *ogs_sbi_change_type_parseFromJSON(cJSON *change_typeJSON);
-cJSON *ogs_sbi_change_type_convertToJSON(ogs_sbi_change_type_t *change_type);
+char* ogs_sbi_change_type_ToString(ogs_sbi_change_type_e change_type);
+
+ogs_sbi_change_type_e ogs_sbi_change_type_FromString(char* change_type);
 
 #ifdef __cplusplus
 }

@@ -7,7 +7,7 @@
 ogs_sbi_nwdaf_event_t *ogs_sbi_nwdaf_event_create(
     )
 {
-    ogs_sbi_nwdaf_event_t *nwdaf_event_local_var = ogs_malloc(sizeof(ogs_sbi_nwdaf_event_t));
+    ogs_sbi_nwdaf_event_t *nwdaf_event_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_nwdaf_event_t));
     if (!nwdaf_event_local_var) {
         return NULL;
     }
@@ -27,12 +27,8 @@ void ogs_sbi_nwdaf_event_free(ogs_sbi_nwdaf_event_t *nwdaf_event)
 cJSON *ogs_sbi_nwdaf_event_convertToJSON(ogs_sbi_nwdaf_event_t *nwdaf_event)
 {
     cJSON *item = cJSON_CreateObject();
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_nwdaf_event_t *ogs_sbi_nwdaf_event_parseFromJSON(cJSON *nwdaf_eventJSON)

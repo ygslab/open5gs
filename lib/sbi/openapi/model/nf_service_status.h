@@ -17,15 +17,11 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_nf_service_status_s ogs_sbi_nf_service_status_t;
-typedef struct ogs_sbi_nf_service_status_s {
-} ogs_sbi_nf_service_status_t;
+typedef enum { ogs_sbi_nf_service_status_NULL = 0, ogs_sbi_nf_service_status_REGISTERED, ogs_sbi_nf_service_status_SUSPENDED, ogs_sbi_nf_service_status_UNDISCOVERABLE } ogs_sbi_nf_service_status_e;
 
-ogs_sbi_nf_service_status_t *ogs_sbi_nf_service_status_create(
-    );
-void ogs_sbi_nf_service_status_free(ogs_sbi_nf_service_status_t *nf_service_status);
-ogs_sbi_nf_service_status_t *ogs_sbi_nf_service_status_parseFromJSON(cJSON *nf_service_statusJSON);
-cJSON *ogs_sbi_nf_service_status_convertToJSON(ogs_sbi_nf_service_status_t *nf_service_status);
+char* ogs_sbi_nf_service_status_ToString(ogs_sbi_nf_service_status_e nf_service_status);
+
+ogs_sbi_nf_service_status_e ogs_sbi_nf_service_status_FromString(char* nf_service_status);
 
 #ifdef __cplusplus
 }

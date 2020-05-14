@@ -43,8 +43,6 @@ libsbi_openapi_sources = files('''
     model/invalid_param.c
     model/ip_end_point.c
     model/ipv4_address_range.c
-    model/ipv6_addr.c
-    model/ipv6_prefix.c
     model/ipv6_prefix_range.c
     model/link.c
     model/links_value_schema.c
@@ -76,7 +74,6 @@ libsbi_openapi_sources = files('''
     model/plmn_range.c
     model/plmn_snssai.c
     model/problem_details.c
-    model/service_name.c
     model/service_name_cond.c
     model/smf_info.c
     model/snssai.c

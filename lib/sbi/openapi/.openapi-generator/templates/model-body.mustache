@@ -114,7 +114,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_create(
     {{/isContainer}}
 {{/vars}})
 {
-    ogs_sbi_{{classname}}_t *{{classname}}_local_var = ogs_malloc(sizeof(ogs_sbi_{{classname}}_t));
+    ogs_sbi_{{classname}}_t *{{classname}}_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_{{classname}}_t));
     if (!{{classname}}_local_var) {
         return NULL;
     }
@@ -170,7 +170,7 @@ void ogs_sbi_{{classname}}_free(ogs_sbi_{{classname}}_t *{{classname}})
         {{#isListContainer}}
             {{#isPrimitiveType}}
                 {{^isEnum}}
-                    ogs_sbi_list_for_each(node, {{classname}}->{{name}}) {
+                    ogs_sbi_list_for_each({{classname}}->{{name}}, node) {
                         ogs_free(node->data);
                     }
                 {{/isEnum}}
@@ -178,7 +178,7 @@ void ogs_sbi_{{classname}}_free(ogs_sbi_{{classname}}_t *{{classname}})
             {{/isPrimitiveType}}
             {{^isPrimitiveType}}
                 {{^isEnum}}
-                    ogs_sbi_list_for_each(node, {{classname}}->{{name}}) {
+                    ogs_sbi_list_for_each({{classname}}->{{name}}, node) {
                         ogs_sbi_{{complexType}}_free(node->data);
                     }
                 {{/isEnum}}
@@ -186,7 +186,7 @@ void ogs_sbi_{{classname}}_free(ogs_sbi_{{classname}}_t *{{classname}})
             {{/isPrimitiveType}}
         {{/isListContainer}}
         {{#isMapContainer}}
-            ogs_sbi_list_for_each(node, {{classname}}->{{name}}) {
+            ogs_sbi_list_for_each({{classname}}->{{name}}, node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
                 ogs_sbi_{{complexType}}_free(localKeyValue->value);
                 ogs_free(localKeyValue);
@@ -204,7 +204,8 @@ cJSON *ogs_sbi_{{classname}}_convertToJSON(ogs_sbi_{{classname}}_t *{{classname}
 {{#vars}}
     {{#required}}
         if (!{{{classname}}}->{{{name}}}) {
-            goto fail;
+            ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+            goto end;
         }
     {{/required}}
     {{^required}}
@@ -214,84 +215,99 @@ cJSON *ogs_sbi_{{classname}}_convertToJSON(ogs_sbi_{{classname}}_t *{{classname}
         {{#isPrimitiveType}}
             {{#isEnum}}
                 if (cJSON_AddStringToObject(item, "{{{baseName}}}", ogs_sbi_{{{name}}}{{classname}}_ToString({{{classname}}}->{{{name}}})) == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                    goto end;
                 }
             {{/isEnum}}
             {{^isEnum}}
                 {{#isNumeric}}
                     if (cJSON_AddNumberToObject(item, "{{{baseName}}}", {{{classname}}}->{{{name}}}) == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                 {{/isNumeric}}
                 {{#isBoolean}}
                     if (cJSON_AddBoolToObject(item, "{{{baseName}}}", {{{classname}}}->{{{name}}}) == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                 {{/isBoolean}}
                 {{#isString}}
                 if (cJSON_AddStringToObject(item, "{{{baseName}}}", {{{classname}}}->{{{name}}}) == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                    goto end;
                 }
             {{/isString}}
             {{/isEnum}}
             {{#isByteArray}}
                 if (cJSON_AddNumberToObject(item, "{{{baseName}}}", {{{classname}}}->{{{name}}}) == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                    goto end;
                 }
             {{/isByteArray}}
             {{#isBinary}}
                 char* encoded_str_{{{name}}} = ogs_sbi_base64encode({{{classname}}}->{{{name}}}->data,{{{classname}}}->{{{name}}}->len);
                 if (cJSON_AddStringToObject(item, "{{{baseName}}}", encoded_str_{{{name}}}) == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                    goto end;
                 }
                 ogs_free(encoded_str_{{{name}}});
             {{/isBinary}}
             {{#isDate}}
                 if (cJSON_AddStringToObject(item, "{{{baseName}}}", {{{classname}}}->{{{name}}}) == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                    goto end;
                 }
             {{/isDate}}
             {{#isDateTime}}
                 if (cJSON_AddStringToObject(item, "{{{baseName}}}", {{{classname}}}->{{{name}}}) == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                    goto end;
                 }
             {{/isDateTime}}
         {{/isPrimitiveType}}
         {{^isPrimitiveType}}
             {{#isEnum}}
                 if (cJSON_AddStringToObject(item, "{{{baseName}}}", ogs_sbi_{{{complexType}}}_ToString({{{classname}}}->{{{name}}})) == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                    goto end;
                 }
             {{/isEnum}}
             {{^isEnum}}
                 {{#isModel}}
                     cJSON *{{{name}}}_local_JSON = ogs_sbi_{{complexType}}{{#isFreeFormObject}}object{{/isFreeFormObject}}_convertToJSON({{{classname}}}->{{{name}}});
                     if ({{{name}}}_local_JSON == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                     cJSON_AddItemToObject(item, "{{{baseName}}}", {{{name}}}_local_JSON);
                     if (item->child == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                 {{/isModel}}
                 {{#isUuid}}
                     if (cJSON_AddStringToObject(item, "{{{baseName}}}", {{{classname}}}->{{{name}}}) == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                 {{/isUuid}}
                 {{#isEmail}}
                     if (cJSON_AddStringToObject(item, "{{{baseName}}}", {{{classname}}}->{{{name}}}) == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                 {{/isEmail}}
                 {{#isFreeFormObject}}
                     cJSON *{{{name}}}_object = ogs_sbi_object_convertToJSON({{{classname}}}->{{{name}}});
                     if ({{{name}}}_object == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                     cJSON_AddItemToObject(item, "{{{baseName}}}", {{{name}}}_object);
                     if (item->child == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                 {{/isFreeFormObject}}
             {{/isEnum}}
@@ -303,25 +319,29 @@ cJSON *ogs_sbi_{{classname}}_convertToJSON(ogs_sbi_{{classname}}_t *{{classname}
                 {{^isEnum}}
                     cJSON *{{{name}}} = cJSON_AddArrayToObject(item, "{{{baseName}}}");
                     if ({{{name}}} == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
 
                     ogs_sbi_lnode_t *{{{name}}}_node;
-                    ogs_sbi_list_for_each({{{name}}}_node, {{{classname}}}->{{{name}}}) {
+                    ogs_sbi_list_for_each({{{classname}}}->{{{name}}}, {{{name}}}_node)  {
                     {{#items}}
                         {{#isString}}
                             if (cJSON_AddStringToObject({{{name}}}, "", (char*){{{name}}}_node->data) == NULL) {
-                                goto fail;
+                                ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                                goto end;
                             }
                         {{/isString}}
                         {{#isBoolean}}
                             if (cJSON_AddBoolToObject({{{name}}}, "", *(cJSON_bool *){{{name}}}_node->data) == NULL) {
-                                goto fail;
+                                ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                                goto end;
                             }
                         {{/isBoolean}}
                         {{#isNumeric}}
                             if (cJSON_AddNumberToObject({{{name}}}, "", *(double *){{{name}}}_node->data) == NULL) {
-                                goto fail;
+                                ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                                goto end;
                             }
                         {{/isNumeric}}
                     {{/items}}
@@ -332,15 +352,17 @@ cJSON *ogs_sbi_{{classname}}_convertToJSON(ogs_sbi_{{classname}}_t *{{classname}
                 {{^isEnum}}
                     cJSON *{{{name}}} = cJSON_AddArrayToObject(item, "{{{baseName}}}");
                     if ({{{name}}} == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
 
                     ogs_sbi_lnode_t *{{{name}}}_node;
                     if ({{{classname}}}->{{{name}}}) {
-                        ogs_sbi_list_for_each({{{name}}}_node, {{classname}}->{{{name}}}) {
+                        ogs_sbi_list_for_each({{classname}}->{{{name}}}, {{{name}}}_node) {
                             cJSON *itemLocal = ogs_sbi_{{complexType}}_convertToJSON({{#isEnum}}{{#items}}(ogs_sbi_{{classVarName}}_{{name}}_e){{/items}}{{/isEnum}}{{{name}}}_node->data);
                             if (itemLocal == NULL) {
-                                goto fail;
+                                ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                                goto end;
                             }
                             cJSON_AddItemToArray({{{name}}}, itemLocal);
                         }
@@ -349,12 +371,14 @@ cJSON *ogs_sbi_{{classname}}_convertToJSON(ogs_sbi_{{classname}}_t *{{classname}
                 {{#isEnum}}
                     cJSON *{{{name}}} = cJSON_AddArrayToObject(item, "{{{baseName}}}");
                     if ({{{name}}} == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                     ogs_sbi_lnode_t *{{{name}}}_node;
-                    ogs_sbi_list_for_each({{{name}}}_node, {{classname}}->{{{name}}}) {
+                    ogs_sbi_list_for_each({{classname}}->{{{name}}}, {{{name}}}_node) {
                         if (cJSON_AddStringToObject({{{name}}}, "", ogs_sbi_{{{complexType}}}_ToString((ogs_sbi_{{{complexType}}}_e){{{name}}}_node->data)) == NULL) {
-                            goto fail;
+                            ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                            goto end;
                         }
                     }
                 {{/isEnum}}
@@ -363,34 +387,39 @@ cJSON *ogs_sbi_{{classname}}_convertToJSON(ogs_sbi_{{classname}}_t *{{classname}
         {{#isMapContainer}}
             cJSON *{{{name}}} = cJSON_AddObjectToObject(item, "{{{baseName}}}");
             if ({{{name}}} == NULL) {
-                goto fail;
+                ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                goto end;
             }
             cJSON *localMapObject = {{{name}}};
             ogs_sbi_lnode_t *{{{name}}}_node;
             if ({{{classname}}}->{{{name}}}) {
-                ogs_sbi_list_for_each({{{name}}}_node, {{{classname}}}->{{{name}}}) {
+                ogs_sbi_list_for_each({{{classname}}}->{{{name}}}, {{{name}}}_node) {
                     ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*){{{name}}}_node->data;
                 {{#isPrimitiveType}}
                     {{#isString}}
                     if (cJSON_AddStringToObject(localMapObject, localKeyValue->key, (char*)localKeyValue->value) == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                     {{/isString}}
                     {{#isNumeric}}
                     if (cJSON_AddNumberToObject(localMapObject, localKeyValue->key, *(double *)localKeyValue->value) == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                     {{/isNumeric}}
                     {{#isBoolean}}
                     if (cJSON_AddBoolToObject(localMapObject, localKeyValue->key, *(cJSON_bool *)localKeyValue->value) == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                     {{/isBoolean}}
                 {{/isPrimitiveType}}
                 {{^isPrimitiveType}}
                     cJSON *itemLocal = ogs_sbi_{{complexType}}_convertToJSON(localKeyValue->value);
                     if (itemLocal == NULL) {
-                        goto fail;
+                        ogs_error("ogs_sbi_{{classname}}_convertToJSON() failed [{{{name}}}]");
+                        goto end;
                     }
                     cJSON_AddItemToObject({{{name}}}, localKeyValue->key, itemLocal);
                 {{/isPrimitiveType}}
@@ -403,12 +432,8 @@ cJSON *ogs_sbi_{{classname}}_convertToJSON(ogs_sbi_{{classname}}_t *{{classname}
     {{/required}}
 
 {{/vars}}
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}}JSON)
@@ -418,6 +443,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
     cJSON *{{{name}}} = cJSON_GetObjectItemCaseSensitive({{classname}}JSON, "{{{baseName}}}");
     {{#required}}
         if (!{{{name}}}) {
+            ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
             goto end;
         }
     {{/required}}
@@ -428,6 +454,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
                 ogs_sbi_{{classVarName}}_{{name}}_e {{name}}Variable;
                 {{^required}}if ({{{name}}}) { {{/required}}
                 if (!cJSON_IsString({{{name}}})) {
+                    ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                     goto end;
                 }
                 {{name}}Variable = ogs_sbi_{{name}}{{classname}}_FromString({{{name}}}->valuestring);
@@ -436,19 +463,21 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
                 {{#isNumeric}}
                     {{^required}}if ({{{name}}}) { {{/required}}
                     if (!cJSON_IsNumber({{{name}}})) {
+                        ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                         goto end;
                     }
                 {{/isNumeric}}
                 {{#isBoolean}}
                     {{^required}}if ({{{name}}}) { {{/required}}
                     if (!cJSON_IsBool({{{name}}})) {
+                        ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                         goto end;
                     }
                 {{/isBoolean}}
                 {{#isString}}
                     {{^required}}if ({{{name}}}) { {{/required}}
-                    if (!cJSON_IsString({{{name}}}))
-                    {
+                    if (!cJSON_IsString({{{name}}})) {
+                        ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                         goto end;
                     }
                 {{/isString}}
@@ -456,29 +485,34 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
             {{#isByteArray}}
                 {{^required}}if ({{{name}}}) { {{/required}}
                 if (!cJSON_IsNumber({{{name}}})) {
+                    ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                     goto end;
                 }
             {{/isByteArray}}
             {{#isBinary}}
-                ogs_sbi_binary_t* decoded_str_{{{name}}} = ogs_malloc(sizeof(struct binary_t));
+                ogs_sbi_binary_t* decoded_str_{{{name}}} = ogs_sbi_malloc(sizeof(struct binary_t));
                 {{^required}}if ({{{name}}}) { {{/required}}
                 if (!cJSON_IsString({{{name}}})) {
+                    ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                     goto end;
                 }
                 decoded_str_{{{name}}}->data = ogs_sbi_base64decode({{{name}}}->valuestring, strlen({{{name}}}->valuestring), &decoded_str_{{{name}}}->len);
                 if (!decoded_str_{{{name}}}->data) {
+                    ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                     goto end;
                 }
             {{/isBinary}}
             {{#isDate}}
                 {{^required}}if ({{{name}}}) { {{/required}}
                 if (!cJSON_IsString({{{name}}})) {
+                    ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                     goto end;
                 }
             {{/isDate}}
             {{#isDateTime}}
                 {{^required}}if ({{{name}}}) { {{/required}}
                 if (!cJSON_IsString({{{name}}})) {
+                    ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                     goto end;
                 }
             {{/isDateTime}}
@@ -488,6 +522,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
                 ogs_sbi_{{complexType}}_e {{name}}Variable;
                 {{^required}}if ({{{name}}}) { {{/required}}
                 if (!cJSON_IsString({{{name}}})) {
+                    ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                     goto end;
                 }
                 {{name}}Variable = ogs_sbi_{{complexType}}_FromString({{{name}}}->valuestring);
@@ -501,12 +536,14 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
                 {{#isUuid}}
                     {{^required}}if ({{{name}}}) { {{/required}}
                     if (!cJSON_IsString({{{name}}})) {
+                        ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                         goto end;
                     }
                 {{/isUuid}}
                 {{#isEmail}}
                     {{^required}}if ({{{name}}}) { {{/required}}
                     if (!cJSON_IsString({{{name}}})) {
+                        ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                         goto end;
                     }
                 {{/isEmail}}
@@ -526,6 +563,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
                     {{^required}}if ({{{name}}}) { {{/required}}
                     cJSON *{{{name}}}_local;
                     if (!cJSON_IsArray({{{name}}})) {
+                        ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                         goto end;
                     }
                     {{{name}}}List = ogs_sbi_list_create();
@@ -534,18 +572,21 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
                     {{#items}}
                         {{#isString}}
                             if (!cJSON_IsString({{{name}}}_local)) {
+                                ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                                 goto end;
                             }
                             ogs_sbi_list_add({{{name}}}List , ogs_strdup({{{name}}}_local->valuestring));
                         {{/isString}}
                         {{#isNumeric}}
                             if (!cJSON_IsNumber({{{name}}}_local)) {
+                                ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                                 goto end;
                             }
                             ogs_sbi_list_add({{{name}}}List , &{{{name}}}_local->valuedouble);
                         {{/isNumeric}}
                         {{#isBoolean}}
                             if (!cJSON_IsBool({{{name}}}_local)) {
+                                ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                                 goto end;
                             }
                             ogs_sbi_list_add({{{name}}}List , {{{name}}}_local->valueint);
@@ -560,13 +601,15 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
                     {{^required}}if ({{{name}}}) { {{/required}}
                     cJSON *{{{name}}}_local_nonprimitive;
                     if (!cJSON_IsArray({{{name}}})){
+                        ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                         goto end;
                     }
 
                     {{{name}}}List = ogs_sbi_list_create();
 
-                    cJSON_ArrayForEach({{{name}}}_local_nonprimitive,{{{name}}} ) {
+                    cJSON_ArrayForEach({{{name}}}_local_nonprimitive, {{{name}}} ) {
                         if (!cJSON_IsObject({{{name}}}_local_nonprimitive)) {
+                            ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                             goto end;
                         }
                         {{#isEnum}}{{#items}}{{datatypeWithEnum}}_e {{/items}}{{/isEnum}}{{^isEnum}}ogs_sbi_{{complexType}}_t *{{/isEnum}}{{{name}}}Item = ogs_sbi_{{complexType}}_parseFromJSON({{{name}}}_local_nonprimitive);
@@ -579,6 +622,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
                     {{^required}}if ({{{name}}}) { {{/required}}
                     cJSON *{{{name}}}_local_nonprimitive;
                     if (!cJSON_IsArray({{{name}}})) {
+                        ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                         goto end;
                     }
 
@@ -586,6 +630,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
 
                     cJSON_ArrayForEach({{{name}}}_local_nonprimitive, {{{name}}} ) {
                         if (!cJSON_IsString({{{name}}}_local_nonprimitive)){
+                            ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                             goto end;
                         }
 
@@ -599,6 +644,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
             {{^required}}if ({{{name}}}) { {{/required}}
             cJSON *{{{name}}}_local_map;
             if (!cJSON_IsObject({{{name}}})) {
+                ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                 goto end;
             }
             {{{name}}}List = ogs_sbi_list_create();
@@ -608,18 +654,21 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
                 {{#isPrimitiveType}}
                     {{#isString}}
                         if (!cJSON_IsString(localMapObject)) {
+                            ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                             goto end;
                         }
                         localMapKeyPair = ogs_sbi_map_create(ogs_strdup(localMapObject->string),ogs_strdup(localMapObject->valuestring));
                     {{/isString}}
                     {{#isBoolean}}
                         if (!cJSON_IsBool(localMapObject)) {
+                            ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                             goto end;
                         }
                         localMapKeyPair = ogs_sbi_map_create(ogs_strdup(localMapObject->string), &localMapObject->valueint);
                     {{/isBoolean}}
                     {{#isNumeric}}
                         if (!cJSON_IsNumber(localMapObject)) {
+                            ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                             goto end;
                         }
                         localMapKeyPair = ogs_sbi_map_create(ogs_strdup(localMapObject->string),&localMapObject->valuedouble );
@@ -627,6 +676,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
                 {{/isPrimitiveType}}
                 {{^isPrimitiveType}}
                     if (!cJSON_IsObject({{{name}}}_local_map)) {
+                        ogs_error("ogs_sbi_{{classname}}_parseFromJSON() failed [{{{name}}}]");
                         goto end;
                     }
                     localMapKeyPair = ogs_sbi_map_create(
@@ -646,7 +696,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
     {{^isContainer}}
         {{^isPrimitiveType}}
             {{#isEnum}}
-                {{^required}}{{{name}}} ? {{/required}}{{{name}}}Variable{{^required}} : -1{{/required}}{{#hasMore}},{{/hasMore}}
+                {{^required}}{{{name}}} ? {{/required}}{{{name}}}Variable{{^required}} : 0{{/required}}{{#hasMore}},{{/hasMore}}
             {{/isEnum}}
             {{^isEnum}}
                 {{#isModel}}
@@ -665,7 +715,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}
         {{/isPrimitiveType}}
         {{#isPrimitiveType}}
             {{#isEnum}}
-                {{^required}}{{{name}}} ? {{/required}}{{name}}Variable{{^required}} : -1{{/required}}{{#hasMore}},{{/hasMore}}
+                {{^required}}{{{name}}} ? {{/required}}{{name}}Variable{{^required}} : 0{{/required}}{{#hasMore}},{{/hasMore}}
             {{/isEnum}}
             {{^isEnum}}
                 {{#isNumeric}}

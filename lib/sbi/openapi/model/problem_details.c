@@ -15,7 +15,7 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_create(
     char *supported_features
     )
 {
-    ogs_sbi_problem_details_t *problem_details_local_var = ogs_malloc(sizeof(ogs_sbi_problem_details_t));
+    ogs_sbi_problem_details_t *problem_details_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_problem_details_t));
     if (!problem_details_local_var) {
         return NULL;
     }
@@ -42,7 +42,7 @@ void ogs_sbi_problem_details_free(ogs_sbi_problem_details_t *problem_details)
     ogs_free(problem_details->detail);
     ogs_free(problem_details->instance);
     ogs_free(problem_details->cause);
-    ogs_sbi_list_for_each(node, problem_details->invalid_params) {
+    ogs_sbi_list_for_each(problem_details->invalid_params, node) {
         ogs_sbi_invalid_param_free(node->data);
     }
     ogs_sbi_list_free(problem_details->invalid_params);
@@ -55,52 +55,60 @@ cJSON *ogs_sbi_problem_details_convertToJSON(ogs_sbi_problem_details_t *problem_
     cJSON *item = cJSON_CreateObject();
     if (problem_details->type) {
         if (cJSON_AddStringToObject(item, "type", problem_details->type) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [type]");
+            goto end;
         }
     }
 
     if (problem_details->title) {
         if (cJSON_AddStringToObject(item, "title", problem_details->title) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [title]");
+            goto end;
         }
     }
 
     if (problem_details->status) {
         if (cJSON_AddNumberToObject(item, "status", problem_details->status) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [status]");
+            goto end;
         }
     }
 
     if (problem_details->detail) {
         if (cJSON_AddStringToObject(item, "detail", problem_details->detail) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [detail]");
+            goto end;
         }
     }
 
     if (problem_details->instance) {
         if (cJSON_AddStringToObject(item, "instance", problem_details->instance) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [instance]");
+            goto end;
         }
     }
 
     if (problem_details->cause) {
         if (cJSON_AddStringToObject(item, "cause", problem_details->cause) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [cause]");
+            goto end;
         }
     }
 
     if (problem_details->invalid_params) {
         cJSON *invalid_params = cJSON_AddArrayToObject(item, "invalidParams");
         if (invalid_params == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [invalid_params]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *invalid_params_node;
         if (problem_details->invalid_params) {
-            ogs_sbi_list_for_each(invalid_params_node, problem_details->invalid_params) {
+            ogs_sbi_list_for_each(problem_details->invalid_params, invalid_params_node) {
                 cJSON *itemLocal = ogs_sbi_invalid_param_convertToJSON(invalid_params_node->data);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_problem_details_convertToJSON() failed [invalid_params]");
+                    goto end;
                 }
                 cJSON_AddItemToArray(invalid_params, itemLocal);
             }
@@ -109,16 +117,13 @@ cJSON *ogs_sbi_problem_details_convertToJSON(ogs_sbi_problem_details_t *problem_
 
     if (problem_details->supported_features) {
         if (cJSON_AddStringToObject(item, "supportedFeatures", problem_details->supported_features) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [supported_features]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_detailsJSON)
@@ -127,8 +132,8 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
     cJSON *type = cJSON_GetObjectItemCaseSensitive(problem_detailsJSON, "type");
 
     if (type) {
-        if (!cJSON_IsString(type))
-        {
+        if (!cJSON_IsString(type)) {
+            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [type]");
             goto end;
         }
     }
@@ -136,8 +141,8 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
     cJSON *title = cJSON_GetObjectItemCaseSensitive(problem_detailsJSON, "title");
 
     if (title) {
-        if (!cJSON_IsString(title))
-        {
+        if (!cJSON_IsString(title)) {
+            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [title]");
             goto end;
         }
     }
@@ -146,6 +151,7 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
 
     if (status) {
         if (!cJSON_IsNumber(status)) {
+            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [status]");
             goto end;
         }
     }
@@ -153,8 +159,8 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
     cJSON *detail = cJSON_GetObjectItemCaseSensitive(problem_detailsJSON, "detail");
 
     if (detail) {
-        if (!cJSON_IsString(detail))
-        {
+        if (!cJSON_IsString(detail)) {
+            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [detail]");
             goto end;
         }
     }
@@ -162,8 +168,8 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
     cJSON *instance = cJSON_GetObjectItemCaseSensitive(problem_detailsJSON, "instance");
 
     if (instance) {
-        if (!cJSON_IsString(instance))
-        {
+        if (!cJSON_IsString(instance)) {
+            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [instance]");
             goto end;
         }
     }
@@ -171,8 +177,8 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
     cJSON *cause = cJSON_GetObjectItemCaseSensitive(problem_detailsJSON, "cause");
 
     if (cause) {
-        if (!cJSON_IsString(cause))
-        {
+        if (!cJSON_IsString(cause)) {
+            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [cause]");
             goto end;
         }
     }
@@ -183,13 +189,15 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
     if (invalid_params) {
         cJSON *invalid_params_local_nonprimitive;
         if (!cJSON_IsArray(invalid_params)) {
+            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [invalid_params]");
             goto end;
         }
 
         invalid_paramsList = ogs_sbi_list_create();
 
-        cJSON_ArrayForEach(invalid_params_local_nonprimitive,invalid_params ) {
+        cJSON_ArrayForEach(invalid_params_local_nonprimitive, invalid_params ) {
             if (!cJSON_IsObject(invalid_params_local_nonprimitive)) {
+                ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [invalid_params]");
                 goto end;
             }
             ogs_sbi_invalid_param_t *invalid_paramsItem = ogs_sbi_invalid_param_parseFromJSON(invalid_params_local_nonprimitive);
@@ -201,8 +209,8 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
     cJSON *supported_features = cJSON_GetObjectItemCaseSensitive(problem_detailsJSON, "supportedFeatures");
 
     if (supported_features) {
-        if (!cJSON_IsString(supported_features))
-        {
+        if (!cJSON_IsString(supported_features)) {
+            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [supported_features]");
             goto end;
         }
     }

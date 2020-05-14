@@ -4,45 +4,23 @@
 #include <stdio.h>
 #include "nf_service_status.h"
 
-ogs_sbi_nf_service_status_t *ogs_sbi_nf_service_status_create(
-    )
+char* ogs_sbi_nf_service_status_ToString(ogs_sbi_nf_service_status_e nf_service_status)
 {
-    ogs_sbi_nf_service_status_t *nf_service_status_local_var = ogs_malloc(sizeof(ogs_sbi_nf_service_status_t));
-    if (!nf_service_status_local_var) {
-        return NULL;
-    }
-
-    return nf_service_status_local_var;
+    const char *nf_service_statusArray[] =  { "NULL", "REGISTERED", "SUSPENDED", "UNDISCOVERABLE" };
+    return (char *)nf_service_statusArray[nf_service_status];
 }
 
-void ogs_sbi_nf_service_status_free(ogs_sbi_nf_service_status_t *nf_service_status)
+ogs_sbi_nf_service_status_e ogs_sbi_nf_service_status_FromString(char* nf_service_status)
 {
-    if (NULL == nf_service_status) {
-        return;
+    int stringToReturn = 0;
+    const char *nf_service_statusArray[] =  { "NULL", "REGISTERED", "SUSPENDED", "UNDISCOVERABLE" };
+    size_t sizeofArray = sizeof(nf_service_statusArray) / sizeof(nf_service_statusArray[0]);
+    while (stringToReturn < sizeofArray) {
+        if (strcmp(nf_service_status, nf_service_statusArray[stringToReturn]) == 0) {
+            return stringToReturn;
+        }
+        stringToReturn++;
     }
-    ogs_sbi_lnode_t *node;
-    ogs_free(nf_service_status);
-}
-
-cJSON *ogs_sbi_nf_service_status_convertToJSON(ogs_sbi_nf_service_status_t *nf_service_status)
-{
-    cJSON *item = cJSON_CreateObject();
-    return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
-}
-
-ogs_sbi_nf_service_status_t *ogs_sbi_nf_service_status_parseFromJSON(cJSON *nf_service_statusJSON)
-{
-    ogs_sbi_nf_service_status_t *nf_service_status_local_var = NULL;
-    nf_service_status_local_var = ogs_sbi_nf_service_status_create (
-        );
-
-    return nf_service_status_local_var;
-end:
-    return NULL;
+    return 0;
 }
 

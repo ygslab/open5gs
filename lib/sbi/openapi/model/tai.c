@@ -9,7 +9,7 @@ ogs_sbi_tai_t *ogs_sbi_tai_create(
     char *tac
     )
 {
-    ogs_sbi_tai_t *tai_local_var = ogs_malloc(sizeof(ogs_sbi_tai_t));
+    ogs_sbi_tai_t *tai_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_tai_t));
     if (!tai_local_var) {
         return NULL;
     }
@@ -34,30 +34,31 @@ cJSON *ogs_sbi_tai_convertToJSON(ogs_sbi_tai_t *tai)
 {
     cJSON *item = cJSON_CreateObject();
     if (!tai->plmn_id) {
-        goto fail;
+        ogs_error("ogs_sbi_tai_convertToJSON() failed [plmn_id]");
+        goto end;
     }
     cJSON *plmn_id_local_JSON = ogs_sbi_plmn_id_convertToJSON(tai->plmn_id);
     if (plmn_id_local_JSON == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_tai_convertToJSON() failed [plmn_id]");
+        goto end;
     }
     cJSON_AddItemToObject(item, "plmnId", plmn_id_local_JSON);
     if (item->child == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_tai_convertToJSON() failed [plmn_id]");
+        goto end;
     }
 
     if (!tai->tac) {
-        goto fail;
+        ogs_error("ogs_sbi_tai_convertToJSON() failed [tac]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "tac", tai->tac) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_tai_convertToJSON() failed [tac]");
+        goto end;
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_tai_t *ogs_sbi_tai_parseFromJSON(cJSON *taiJSON)
@@ -65,6 +66,7 @@ ogs_sbi_tai_t *ogs_sbi_tai_parseFromJSON(cJSON *taiJSON)
     ogs_sbi_tai_t *tai_local_var = NULL;
     cJSON *plmn_id = cJSON_GetObjectItemCaseSensitive(taiJSON, "plmnId");
     if (!plmn_id) {
+        ogs_error("ogs_sbi_tai_parseFromJSON() failed [plmn_id]");
         goto end;
     }
 
@@ -74,12 +76,13 @@ ogs_sbi_tai_t *ogs_sbi_tai_parseFromJSON(cJSON *taiJSON)
 
     cJSON *tac = cJSON_GetObjectItemCaseSensitive(taiJSON, "tac");
     if (!tac) {
+        ogs_error("ogs_sbi_tai_parseFromJSON() failed [tac]");
         goto end;
     }
 
 
-    if (!cJSON_IsString(tac))
-    {
+    if (!cJSON_IsString(tac)) {
+        ogs_error("ogs_sbi_tai_parseFromJSON() failed [tac]");
         goto end;
     }
 

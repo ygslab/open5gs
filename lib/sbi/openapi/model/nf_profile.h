@@ -17,7 +17,6 @@
 #include "bsf_info.h"
 #include "chf_info.h"
 #include "default_notification_subscription.h"
-#include "ipv6_addr.h"
 #include "nf_service.h"
 #include "nf_status.h"
 #include "nf_type.h"

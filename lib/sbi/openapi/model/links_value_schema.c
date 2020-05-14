@@ -8,7 +8,7 @@ ogs_sbi_links_value_schema_t *ogs_sbi_links_value_schema_create(
     char *href
     )
 {
-    ogs_sbi_links_value_schema_t *links_value_schema_local_var = ogs_malloc(sizeof(ogs_sbi_links_value_schema_t));
+    ogs_sbi_links_value_schema_t *links_value_schema_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_links_value_schema_t));
     if (!links_value_schema_local_var) {
         return NULL;
     }
@@ -32,16 +32,13 @@ cJSON *ogs_sbi_links_value_schema_convertToJSON(ogs_sbi_links_value_schema_t *li
     cJSON *item = cJSON_CreateObject();
     if (links_value_schema->href) {
         if (cJSON_AddStringToObject(item, "href", links_value_schema->href) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_links_value_schema_convertToJSON() failed [href]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_links_value_schema_t *ogs_sbi_links_value_schema_parseFromJSON(cJSON *links_value_schemaJSON)
@@ -50,8 +47,8 @@ ogs_sbi_links_value_schema_t *ogs_sbi_links_value_schema_parseFromJSON(cJSON *li
     cJSON *href = cJSON_GetObjectItemCaseSensitive(links_value_schemaJSON, "href");
 
     if (href) {
-        if (!cJSON_IsString(href))
-        {
+        if (!cJSON_IsString(href)) {
+            ogs_error("ogs_sbi_links_value_schema_parseFromJSON() failed [href]");
             goto end;
         }
     }

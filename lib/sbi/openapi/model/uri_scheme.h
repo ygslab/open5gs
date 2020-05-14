@@ -17,15 +17,11 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_uri_scheme_s ogs_sbi_uri_scheme_t;
-typedef struct ogs_sbi_uri_scheme_s {
-} ogs_sbi_uri_scheme_t;
+typedef enum { ogs_sbi_uri_scheme_NULL = 0, ogs_sbi_uri_scheme_http, ogs_sbi_uri_scheme_https } ogs_sbi_uri_scheme_e;
 
-ogs_sbi_uri_scheme_t *ogs_sbi_uri_scheme_create(
-    );
-void ogs_sbi_uri_scheme_free(ogs_sbi_uri_scheme_t *uri_scheme);
-ogs_sbi_uri_scheme_t *ogs_sbi_uri_scheme_parseFromJSON(cJSON *uri_schemeJSON);
-cJSON *ogs_sbi_uri_scheme_convertToJSON(ogs_sbi_uri_scheme_t *uri_scheme);
+char* ogs_sbi_uri_scheme_ToString(ogs_sbi_uri_scheme_e uri_scheme);
+
+ogs_sbi_uri_scheme_e ogs_sbi_uri_scheme_FromString(char* uri_scheme);
 
 #ifdef __cplusplus
 }

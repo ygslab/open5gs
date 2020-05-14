@@ -28,15 +28,27 @@
 extern "C" {
 #endif
 
+typedef struct ogs_sbi_client_s ogs_sbi_client_t;
 typedef struct ogs_sbi_context_s {
-    ogs_pollset_t   *pollset;       /* Poll Set for I/O Multiplexing */
+    ogs_pollset_t       *pollset;       /* Poll Set for I/O Multiplexing */
+    ogs_timer_mgr_t     *timer_mgr;     /* Timer Manager */
 
-    uint32_t        http_port;      /* SBI HTTP local port */
-    uint32_t        https_port;     /* SBI HTTPS local port */
+    uint32_t            http_port;      /* SBI HTTP local port */
+    uint32_t            https_port;     /* SBI HTTPS local port */
 
+#define OGS_SBI_HEARTBEAT_RETRYCOUNT 4
+    int                 heart_beat_timer;
+
+    ogs_list_t          server_list;
+    ogs_list_t          client_list;
+
+    ogs_uuid_t          uuid;
+    char                nf_instance_id[OGS_UUID_FORMATTED_LENGTH + 1];
+
+    const char          *content_encoding;
 } ogs_sbi_context_t;
 
-void ogs_sbi_context_init(ogs_pollset_t *pollset);
+void ogs_sbi_context_init(ogs_pollset_t *pollset, ogs_timer_mgr_t *timer_mgr);
 void ogs_sbi_context_final(void);
 ogs_sbi_context_t *ogs_sbi_self(void);
 int ogs_sbi_context_parse_config(const char *local, const char *remote);

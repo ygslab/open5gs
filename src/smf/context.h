@@ -29,8 +29,12 @@
 #include "ogs-gtp.h"
 #include "ogs-diameter-gx.h"
 #include "ogs-pfcp.h"
+#include "ogs-sbi.h"
 #include "ogs-app.h"
 #include "ipfw/ogs-ipfw.h"
+
+#include "timer.h"
+#include "smf-sm.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,6 +48,8 @@ extern int __smf_log_domain;
 typedef struct smf_context_s {
     const char*         diam_conf_path;   /* SMF Diameter conf path */
     ogs_diam_config_t   *diam_config;     /* SMF Diameter config */
+
+    ogs_sbi_nf_type_e   nf_type;
 
     uint32_t        gtpc_port;      /* Default: SMF GTP-C local port */
 

@@ -12,7 +12,6 @@
 #include "../include/list.h"
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
-#include "service_name.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,11 +19,11 @@ extern "C" {
 
 typedef struct ogs_sbi_service_name_cond_s ogs_sbi_service_name_cond_t;
 typedef struct ogs_sbi_service_name_cond_s {
-    struct ogs_sbi_service_name_s *service_name;
+    char *service_name;
 } ogs_sbi_service_name_cond_t;
 
 ogs_sbi_service_name_cond_t *ogs_sbi_service_name_cond_create(
-    ogs_sbi_service_name_t *service_name
+    char *service_name
     );
 void ogs_sbi_service_name_cond_free(ogs_sbi_service_name_cond_t *service_name_cond);
 ogs_sbi_service_name_cond_t *ogs_sbi_service_name_cond_parseFromJSON(cJSON *service_name_condJSON);

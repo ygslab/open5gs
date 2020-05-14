@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+#define ogs_sbi_malloc(__sIZE) __sIZE == 0 ? NULL : ogs_malloc(__sIZE)
+
 typedef struct ogs_sbi_list_s ogs_sbi_list_t;
 
 typedef struct ogs_sbi_lnode_s ogs_sbi_lnode_t;
@@ -25,7 +27,7 @@ typedef struct ogs_sbi_list_s {
     long count;
 } ogs_sbi_list_t;
 
-#define ogs_sbi_list_for_each(element, list) for(element = (list != NULL) ? (list)->first : NULL; element != NULL; element = element->next)
+#define ogs_sbi_list_for_each(list, element) for(element = (list != NULL) ? (list)->first : NULL; element != NULL; element = element->next)
 
 ogs_sbi_list_t *ogs_sbi_list_create(void);
 void ogs_sbi_list_free(ogs_sbi_list_t *listToFree);

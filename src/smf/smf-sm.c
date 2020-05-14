@@ -17,12 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "smf-sm.h"
 #include "context.h"
-#include "event.h"
 #include "gtp-path.h"
 #include "fd-path.h"
 #include "pfcp-path.h"
+#include "sbi-path.h"
 #include "s5c-handler.h"
 #include "gx-handler.h"
 
@@ -58,6 +57,10 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
     ogs_pfcp_xact_t *pfcp_xact = NULL;
     ogs_pfcp_message_t pfcp_message;
 
+    ogs_sbi_client_t *client = NULL;
+    ogs_sbi_response_t *sbi_response = NULL;
+    ogs_sbi_message_t sbi_message;
+
     smf_sm_debug(e);
 
     ogs_assert(s);
@@ -74,27 +77,18 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             ogs_fatal("Can't establish N4-PFCP path");
         }
 
-        ogs_list_for_each(&ogs_pfcp_self()->n4_list, pfcp_node) {
-            smf_event_t e;
-            e.pfcp_node = pfcp_node;
-
-            ogs_fsm_create(&pfcp_node->sm,
-                    smf_pfcp_state_initial, smf_pfcp_state_final);
-            ogs_fsm_init(&pfcp_node->sm, &e);
+        rv = smf_sbi_open();
+        if (rv != OGS_OK) {
+            ogs_fatal("Can't establish SBI path");
         }
         break;
+
     case OGS_FSM_EXIT_SIG:
-        ogs_list_for_each(&ogs_pfcp_self()->n4_list, pfcp_node) {
-            smf_event_t e;
-            e.pfcp_node = pfcp_node;
-
-            ogs_fsm_fini(&pfcp_node->sm, &e);
-            ogs_fsm_delete(&pfcp_node->sm);
-        }
-
         smf_gtp_close();
         smf_pfcp_close();
+        smf_sbi_close();
         break;
+
     case SMF_EVT_S5C_MESSAGE:
         ogs_assert(e);
         recvbuf = e->pkbuf;
@@ -170,7 +164,6 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
 
     case SMF_EVT_GX_MESSAGE:
         ogs_assert(e);
-
         recvbuf = e->pkbuf;
         ogs_assert(recvbuf);
         gx_message = (ogs_diam_gx_message_t *)recvbuf->data;
@@ -242,11 +235,76 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
         break;
     case SMF_EVT_N4_TIMER:
     case SMF_EVT_N4_NO_HEARTBEAT:
+        ogs_assert(e);
         pfcp_node = e->pfcp_node;
         ogs_assert(pfcp_node);
         ogs_assert(OGS_FSM_STATE(&pfcp_node->sm));
 
         ogs_fsm_dispatch(&pfcp_node->sm, e);
+        break;
+
+    case SMF_EVT_SBI_CLIENT:
+        ogs_assert(e);
+
+        sbi_response = e->sbi.response;
+        ogs_assert(sbi_response);
+        rv = ogs_sbi_parse_response(&sbi_message, sbi_response);
+        if (rv != OGS_OK) {
+            ogs_error("cannot parse HTTP response");
+            ogs_sbi_message_free(&sbi_message);
+            ogs_sbi_response_free(sbi_response);
+            break;
+        }
+
+        if (strcmp(sbi_message.h.api.version, OGS_SBI_API_VERSION) != 0) {
+            ogs_error("Not supported version [%s]", sbi_message.h.api.version);
+            ogs_sbi_message_free(&sbi_message);
+            ogs_sbi_response_free(sbi_response);
+            break;
+        }
+
+        SWITCH(sbi_message.h.api.name)
+        CASE(OGS_SBI_API_NAME_NRF_NFM)
+
+            SWITCH(sbi_message.h.resource.name)
+            CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
+            CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS)
+
+                client = e->sbi.data;
+                ogs_assert(client);
+                e->sbi.message = &sbi_message;
+                ogs_fsm_dispatch(&client->sm, e);
+                if (OGS_FSM_CHECK(&client->sm, smf_nf_state_exception)) {
+                    ogs_error("State machine exception");
+                    ogs_sbi_message_free(&sbi_message);
+                    ogs_sbi_response_free(sbi_response);
+                }
+                break;
+            
+            DEFAULT
+                ogs_error("Invalid resource name [%s]",
+                        sbi_message.h.resource.name);
+            END
+            break;
+
+        DEFAULT
+            ogs_error("Invalid API name [%s]", sbi_message.h.api.name);
+        END
+
+        ogs_sbi_message_free(&sbi_message);
+        ogs_sbi_response_free(sbi_response);
+        break;
+    case SMF_EVT_SBI_TIMER:
+        ogs_assert(e);
+        client = e->sbi.data;
+        ogs_assert(client);
+        ogs_assert(OGS_FSM_STATE(&client->sm));
+
+        ogs_fsm_dispatch(&client->sm, e);
+        if (OGS_FSM_CHECK(&client->sm, smf_nf_state_exception)) {
+            ogs_error("State machine exception");
+            break;
+        }
         break;
     default:
         ogs_error("No handler for event %s", smf_event_get_name(e));

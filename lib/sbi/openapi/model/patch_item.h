@@ -20,14 +20,14 @@ extern "C" {
 
 typedef struct ogs_sbi_patch_item_s ogs_sbi_patch_item_t;
 typedef struct ogs_sbi_patch_item_s {
-    struct ogs_sbi_patch_operation_s *op;
+    ogs_sbi_patch_operation_e op;
     char *path;
     char *from;
     char *value;
 } ogs_sbi_patch_item_t;
 
 ogs_sbi_patch_item_t *ogs_sbi_patch_item_create(
-    ogs_sbi_patch_operation_t *op,
+    ogs_sbi_patch_operation_e op,
     char *path,
     char *from,
     char *value

@@ -19,9 +19,6 @@
 
 #include "context.h"
 
-#include "event.h"
-#include "smf-sm.h"
-
 #include "pfcp-path.h"
 #include "n4-build.h"
 
@@ -91,6 +88,7 @@ int smf_pfcp_open(void)
 {
     ogs_socknode_t *node = NULL;
     ogs_sock_t *sock = NULL;
+    ogs_pfcp_node_t *pfcp_node = NULL;
 
     /* PFCP Server */
     ogs_list_for_each(&ogs_pfcp_self()->pfcp_list, node) {
@@ -120,11 +118,30 @@ int smf_pfcp_open(void)
 
     ogs_assert(ogs_pfcp_self()->pfcp_addr || ogs_pfcp_self()->pfcp_addr6);
 
+    ogs_list_for_each(&ogs_pfcp_self()->n4_list, pfcp_node) {
+        smf_event_t e;
+        e.pfcp_node = pfcp_node;
+
+        ogs_fsm_create(&pfcp_node->sm,
+                smf_pfcp_state_initial, smf_pfcp_state_final);
+        ogs_fsm_init(&pfcp_node->sm, &e);
+    }
+
     return OGS_OK;
 }
 
 void smf_pfcp_close(void)
 {
+    ogs_pfcp_node_t *pfcp_node = NULL;
+
+    ogs_list_for_each(&ogs_pfcp_self()->n4_list, pfcp_node) {
+        smf_event_t e;
+        e.pfcp_node = pfcp_node;
+
+        ogs_fsm_fini(&pfcp_node->sm, &e);
+        ogs_fsm_delete(&pfcp_node->sm);
+    }
+
     ogs_socknode_remove_all(&ogs_pfcp_self()->pfcp_list);
     ogs_socknode_remove_all(&ogs_pfcp_self()->pfcp_list6);
 }

@@ -59,6 +59,8 @@ nrf_event_t *nrf_event_new(nrf_event_e id)
 
     ogs_pool_alloc(&pool, &e);
     ogs_assert(e);
+    memset(e, 0, sizeof(*e));
+
     e->id = id;
 
     return e;
@@ -81,8 +83,12 @@ const char *nrf_event_get_name(nrf_event_t *e)
     case OGS_FSM_EXIT_SIG: 
         return OGS_FSM_NAME_EXIT_SIG;
 
-    case NRF_EVT_SBI_MESSAGE:
-        return "NRF_EVT_SBI_MESSAGE";
+    case NRF_EVT_SBI_SERVER:
+        return "NRF_EVT_SBI_SERVER";
+    case NRF_EVT_SBI_CLIENT:
+        return "NRF_EVT_SBI_CLIENT";
+    case NRF_EVT_SBI_TIMER:
+        return "NRF_EVT_SBI_TIMER";
 
     default: 
        break;

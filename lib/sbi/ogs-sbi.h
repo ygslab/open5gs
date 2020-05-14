@@ -22,9 +22,6 @@
 
 #include "ogs-core.h"
 
-#define OGS_SBI_HTTP_PORT               80
-#define OGS_SBI_HTTPS_PORT              443
-
 #if defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstrict-prototypes"
@@ -33,6 +30,9 @@
 #include "model/nf_profile.h"
 #include "model/nf_group_cond.h"
 #include "model/smf_info.h"
+#include "model/problem_details.h"
+#include "model/patch_item.h"
+#include "model/subscription_data.h"
 
 #if defined(__GNUC__)
 #pragma GCC diagnostic pop
@@ -40,8 +40,12 @@
 
 #define OGS_SBI_INSIDE
 
-#include "sbi/context.h"
+#include "sbi/conv.h"
+#include "sbi/message.h"
+
 #include "sbi/server.h"
+#include "sbi/client.h"
+#include "sbi/context.h"
 
 #undef OGS_SBI_INSIDE
 

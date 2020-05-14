@@ -9,7 +9,7 @@ ogs_sbi_snssai_t *ogs_sbi_snssai_create(
     char *sd
     )
 {
-    ogs_sbi_snssai_t *snssai_local_var = ogs_malloc(sizeof(ogs_sbi_snssai_t));
+    ogs_sbi_snssai_t *snssai_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_snssai_t));
     if (!snssai_local_var) {
         return NULL;
     }
@@ -33,24 +33,23 @@ cJSON *ogs_sbi_snssai_convertToJSON(ogs_sbi_snssai_t *snssai)
 {
     cJSON *item = cJSON_CreateObject();
     if (!snssai->sst) {
-        goto fail;
+        ogs_error("ogs_sbi_snssai_convertToJSON() failed [sst]");
+        goto end;
     }
     if (cJSON_AddNumberToObject(item, "sst", snssai->sst) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_snssai_convertToJSON() failed [sst]");
+        goto end;
     }
 
     if (snssai->sd) {
         if (cJSON_AddStringToObject(item, "sd", snssai->sd) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_snssai_convertToJSON() failed [sd]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_snssai_t *ogs_sbi_snssai_parseFromJSON(cJSON *snssaiJSON)
@@ -58,19 +57,21 @@ ogs_sbi_snssai_t *ogs_sbi_snssai_parseFromJSON(cJSON *snssaiJSON)
     ogs_sbi_snssai_t *snssai_local_var = NULL;
     cJSON *sst = cJSON_GetObjectItemCaseSensitive(snssaiJSON, "sst");
     if (!sst) {
+        ogs_error("ogs_sbi_snssai_parseFromJSON() failed [sst]");
         goto end;
     }
 
 
     if (!cJSON_IsNumber(sst)) {
+        ogs_error("ogs_sbi_snssai_parseFromJSON() failed [sst]");
         goto end;
     }
 
     cJSON *sd = cJSON_GetObjectItemCaseSensitive(snssaiJSON, "sd");
 
     if (sd) {
-        if (!cJSON_IsString(sd))
-        {
+        if (!cJSON_IsString(sd)) {
+            ogs_error("ogs_sbi_snssai_parseFromJSON() failed [sd]");
             goto end;
         }
     }

@@ -17,9 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "context.h"
 #include "sbi-path.h"
-#include "nrf-sm.h"
+#include "nnrf-handler.h"
 
 void nrf_state_initial(ogs_fsm_t *s, nrf_event_t *e)
 {
@@ -40,13 +39,12 @@ void nrf_state_final(ogs_fsm_t *s, nrf_event_t *e)
 void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
 {
     int rv;
-#if 0
-    ogs_pkbuf_t *recvbuf = NULL;
+    ogs_sbi_session_t *session = NULL;
+    ogs_sbi_request_t *request = NULL;
+    ogs_sbi_message_t message;
+    nrf_nf_instance_t *nf_instance = NULL;
 
-    ogs_pfcp_message_t pfcp_message;
-    ogs_pfcp_node_t *node = NULL;
-    ogs_pfcp_xact_t *xact = NULL;
-#endif
+    ogs_assert(e);
 
     nrf_sm_debug(e);
 
@@ -58,69 +56,132 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
         if (rv != OGS_OK) {
             ogs_fatal("Can't establish SBI path");
         }
-#if 0
-        ogs_list_for_each(&ogs_pfcp_self()->n4_list, node) {
-            nrf_event_t e;
-            e.pfcp_node = node;
-
-            ogs_fsm_create(&node->sm,
-                    nrf_pfcp_state_initial, nrf_pfcp_state_final);
-            ogs_fsm_init(&node->sm, &e);
-        }
-#endif
         break;
+
     case OGS_FSM_EXIT_SIG:
-#if 0
-        ogs_list_for_each(&ogs_pfcp_self()->n4_list, node) {
-            nrf_event_t e;
-            e.pfcp_node = node;
-
-            ogs_fsm_fini(&node->sm, &e);
-            ogs_fsm_delete(&node->sm);
-        }
-
-#endif
         nrf_sbi_close();
         break;
-    case NRF_EVT_SBI_MESSAGE:
-        ogs_assert(e);
-        ogs_assert(e->server.connection);
-        {
-            const char *me = "<html><head><title>libmicrohttpd demo</title></head><body>libmicrohttpd demo</body></html>";
 
-            ogs_sbi_server_send_response(
-                    e->server.connection, (void*)me, strlen(me));
-        }
+    case NRF_EVT_SBI_SERVER:
+        request = e->sbi.request;
+        ogs_assert(request);
+        session = e->sbi.session;
+        ogs_assert(session);
 
-#if 0
-        ogs_assert(e);
-        recvbuf = e->pkbuf;
-        ogs_assert(recvbuf);
-        node = e->pfcp_node;
-        ogs_assert(node);
-
-        if (ogs_pfcp_parse_msg(&pfcp_message, recvbuf) != OGS_OK) {
-            ogs_error("ogs_pfcp_parse_msg() failed");
-            ogs_pkbuf_free(recvbuf);
-            break;
-        }
-
-        rv = ogs_pfcp_xact_receive(node, &pfcp_message.h, &xact);
+        rv = ogs_sbi_parse_request(&message, request);
         if (rv != OGS_OK) {
-            ogs_pkbuf_free(recvbuf);
+            /* 'message' buffer is released in ogs_sbi_parse_request() */
+            ogs_error("cannot parse HTTP message");
+            ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                    NULL, "cannot parse HTTP message", NULL);
             break;
         }
 
-        e->pfcp_message = &pfcp_message;
-        e->pfcp_xact = xact;
-        ogs_fsm_dispatch(&node->sm, e);
-        if (OGS_FSM_CHECK(&node->sm, nrf_pfcp_state_exception)) {
-            ogs_error("PFCP state machine exception");
+        if (strcmp(message.h.api.version, OGS_SBI_API_VERSION) != 0) {
+            ogs_error("Not supported version [%s]", message.h.api.version);
+            ogs_sbi_server_send_error(session, OGS_SBI_HTTP_STATUS_BAD_REQUEST,
+                    &message, "Not supported version", NULL);
+            ogs_sbi_message_free(&message);
             break;
         }
 
-        ogs_pkbuf_free(recvbuf);
-#endif
+        SWITCH(message.h.api.name)
+        CASE(OGS_SBI_API_NAME_NRF_NFM)
+
+            SWITCH(message.h.resource.name)
+            CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
+
+                nf_instance = nrf_nf_instance_find(message.h.resource.id);
+                if (!nf_instance) {
+                    SWITCH(message.h.method)
+                    CASE(OGS_SBI_HTTP_METHOD_PUT)
+                        nf_instance = 
+                            nrf_nf_instance_add(message.h.resource.id);
+                        ogs_assert(nf_instance);
+                        break;
+                    DEFAULT
+                        ogs_error("Not found [%s]", message.h.resource.id);
+                        ogs_sbi_server_send_error(session,
+                                OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                                &message, "Not found", message.h.resource.id);
+                    END
+                }
+
+                if (nf_instance) {
+                    e->nf_instance = nf_instance;
+                    e->sbi.message = &message;
+                    ogs_fsm_dispatch(&nf_instance->sm, e);
+                    if (OGS_FSM_CHECK(&nf_instance->sm,
+                                nrf_nf_state_exception)) {
+                        ogs_error("State machine exception");
+                        ogs_sbi_message_free(&message);
+                        nrf_nf_instance_remove(nf_instance);
+                    }
+                }
+                break;
+
+            CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS)
+                ogs_sbi_subscription_data_t *subscription_data =
+                    message.subscription_data;
+                char *req_nf_instance_id = NULL;
+                if (subscription_data) {
+                    req_nf_instance_id = subscription_data->req_nf_instance_id;
+                    if (req_nf_instance_id) 
+                        nf_instance = nrf_nf_instance_find(req_nf_instance_id);
+                }
+
+                if (nf_instance) {
+                    e->nf_instance = nf_instance;
+                    e->sbi.message = &message;
+                    ogs_fsm_dispatch(&nf_instance->sm, e);
+                    if (OGS_FSM_CHECK(&nf_instance->sm,
+                                nrf_nf_state_exception)) {
+                        ogs_error("State machine exception");
+                        ogs_sbi_message_free(&message);
+                        nrf_nf_instance_remove(nf_instance);
+                    }
+                } else {
+                    const char *detail = req_nf_instance_id ?
+                        req_nf_instance_id : "Unknown";
+                    ogs_error("Not found [%s]", detail);
+                    ogs_sbi_server_send_error(session,
+                            OGS_SBI_HTTP_STATUS_NOT_FOUND,
+                            &message, "Not found", detail);
+                }
+
+                break;
+
+            DEFAULT
+                ogs_error("Invalid resource name [%s]",
+                        message.h.resource.name);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
+                        "Unknown resource name", message.h.resource.name);
+            END
+            break;
+
+        DEFAULT
+            ogs_error("Invalid API name [%s]", message.h.api.name);
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
+                    "Invalid API name", message.h.resource.name);
+        END
+
+        /* In lib/sbi/server.c, notify_completed() releases 'request' buffer. */
+        ogs_sbi_message_free(&message);
+        break;
+    case NRF_EVT_SBI_TIMER:
+        nf_instance = e->nf_instance;
+        ogs_assert(nf_instance);
+
+        ogs_assert(OGS_FSM_STATE(&nf_instance->sm));
+        ogs_fsm_dispatch(&nf_instance->sm, e);
+        if (OGS_FSM_CHECK(&nf_instance->sm, nrf_nf_state_de_registered)) {
+            nrf_nf_instance_remove(nf_instance);
+        } else if (OGS_FSM_CHECK(&nf_instance->sm, nrf_nf_state_exception)) {
+            ogs_error("State machine exception");
+            nrf_nf_instance_remove(nf_instance);
+        }
         break;
     default:
         ogs_error("No handler for event %s", nrf_event_get_name(e));

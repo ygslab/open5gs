@@ -22,14 +22,14 @@ extern "C" {
 
 typedef struct ogs_sbi_notification_data_s ogs_sbi_notification_data_t;
 typedef struct ogs_sbi_notification_data_s {
-    struct ogs_sbi_notification_event_type_s *event;
+    ogs_sbi_notification_event_type_e event;
     char *nf_instance_uri;
     struct ogs_sbi_nf_profile_s *nf_profile;
     ogs_sbi_list_t *profile_changes;
 } ogs_sbi_notification_data_t;
 
 ogs_sbi_notification_data_t *ogs_sbi_notification_data_create(
-    ogs_sbi_notification_event_type_t *event,
+    ogs_sbi_notification_event_type_e event,
     char *nf_instance_uri,
     ogs_sbi_nf_profile_t *nf_profile,
     ogs_sbi_list_t *profile_changes

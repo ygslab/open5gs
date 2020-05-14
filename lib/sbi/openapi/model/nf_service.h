@@ -19,7 +19,6 @@
 #include "nf_service_version.h"
 #include "nf_type.h"
 #include "plmn_id.h"
-#include "service_name.h"
 #include "snssai.h"
 #include "uri_scheme.h"
 
@@ -30,10 +29,10 @@ extern "C" {
 typedef struct ogs_sbi_nf_service_s ogs_sbi_nf_service_t;
 typedef struct ogs_sbi_nf_service_s {
     char *service_instance_id;
-    struct ogs_sbi_service_name_s *service_name;
+    char *service_name;
     ogs_sbi_list_t *versions;
-    struct ogs_sbi_uri_scheme_s *scheme;
-    struct ogs_sbi_nf_service_status_s *nf_service_status;
+    ogs_sbi_uri_scheme_e scheme;
+    ogs_sbi_nf_service_status_e nf_service_status;
     char *fqdn;
     char *inter_plmn_fqdn;
     ogs_sbi_list_t *ip_end_points;
@@ -53,10 +52,10 @@ typedef struct ogs_sbi_nf_service_s {
 
 ogs_sbi_nf_service_t *ogs_sbi_nf_service_create(
     char *service_instance_id,
-    ogs_sbi_service_name_t *service_name,
+    char *service_name,
     ogs_sbi_list_t *versions,
-    ogs_sbi_uri_scheme_t *scheme,
-    ogs_sbi_nf_service_status_t *nf_service_status,
+    ogs_sbi_uri_scheme_e scheme,
+    ogs_sbi_nf_service_status_e nf_service_status,
     char *fqdn,
     char *inter_plmn_fqdn,
     ogs_sbi_list_t *ip_end_points,

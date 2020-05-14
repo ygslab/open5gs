@@ -17,15 +17,11 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_notification_type_s ogs_sbi_notification_type_t;
-typedef struct ogs_sbi_notification_type_s {
-} ogs_sbi_notification_type_t;
+typedef enum { ogs_sbi_notification_type_NULL = 0, ogs_sbi_notification_type_N1_MESSAGES, ogs_sbi_notification_type_N2_INFORMATION, ogs_sbi_notification_type_LOCATION_NOTIFICATION, ogs_sbi_notification_type_DATA_REMOVAL_NOTIFICATION, ogs_sbi_notification_type_DATA_CHANGE_NOTIFICATION } ogs_sbi_notification_type_e;
 
-ogs_sbi_notification_type_t *ogs_sbi_notification_type_create(
-    );
-void ogs_sbi_notification_type_free(ogs_sbi_notification_type_t *notification_type);
-ogs_sbi_notification_type_t *ogs_sbi_notification_type_parseFromJSON(cJSON *notification_typeJSON);
-cJSON *ogs_sbi_notification_type_convertToJSON(ogs_sbi_notification_type_t *notification_type);
+char* ogs_sbi_notification_type_ToString(ogs_sbi_notification_type_e notification_type);
+
+ogs_sbi_notification_type_e ogs_sbi_notification_type_FromString(char* notification_type);
 
 #ifdef __cplusplus
 }

@@ -8,7 +8,7 @@ ogs_sbi_link_t *ogs_sbi_link_create(
     char *href
     )
 {
-    ogs_sbi_link_t *link_local_var = ogs_malloc(sizeof(ogs_sbi_link_t));
+    ogs_sbi_link_t *link_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_link_t));
     if (!link_local_var) {
         return NULL;
     }
@@ -32,16 +32,13 @@ cJSON *ogs_sbi_link_convertToJSON(ogs_sbi_link_t *link)
     cJSON *item = cJSON_CreateObject();
     if (link->href) {
         if (cJSON_AddStringToObject(item, "href", link->href) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_link_convertToJSON() failed [href]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_link_t *ogs_sbi_link_parseFromJSON(cJSON *linkJSON)
@@ -50,8 +47,8 @@ ogs_sbi_link_t *ogs_sbi_link_parseFromJSON(cJSON *linkJSON)
     cJSON *href = cJSON_GetObjectItemCaseSensitive(linkJSON, "href");
 
     if (href) {
-        if (!cJSON_IsString(href))
-        {
+        if (!cJSON_IsString(href)) {
+            ogs_error("ogs_sbi_link_parseFromJSON() failed [href]");
             goto end;
         }
     }

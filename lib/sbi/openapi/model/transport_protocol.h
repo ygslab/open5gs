@@ -17,15 +17,11 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_transport_protocol_s ogs_sbi_transport_protocol_t;
-typedef struct ogs_sbi_transport_protocol_s {
-} ogs_sbi_transport_protocol_t;
+typedef enum { ogs_sbi_transport_protocol_NULL = 0, ogs_sbi_transport_protocol_TCP } ogs_sbi_transport_protocol_e;
 
-ogs_sbi_transport_protocol_t *ogs_sbi_transport_protocol_create(
-    );
-void ogs_sbi_transport_protocol_free(ogs_sbi_transport_protocol_t *transport_protocol);
-ogs_sbi_transport_protocol_t *ogs_sbi_transport_protocol_parseFromJSON(cJSON *transport_protocolJSON);
-cJSON *ogs_sbi_transport_protocol_convertToJSON(ogs_sbi_transport_protocol_t *transport_protocol);
+char* ogs_sbi_transport_protocol_ToString(ogs_sbi_transport_protocol_e transport_protocol);
+
+ogs_sbi_transport_protocol_e ogs_sbi_transport_protocol_FromString(char* transport_protocol);
 
 #ifdef __cplusplus
 }

@@ -9,7 +9,7 @@ ogs_sbi_atsss_capability_t *ogs_sbi_atsss_capability_create(
     int mptcp
     )
 {
-    ogs_sbi_atsss_capability_t *atsss_capability_local_var = ogs_malloc(sizeof(ogs_sbi_atsss_capability_t));
+    ogs_sbi_atsss_capability_t *atsss_capability_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_atsss_capability_t));
     if (!atsss_capability_local_var) {
         return NULL;
     }
@@ -33,22 +33,20 @@ cJSON *ogs_sbi_atsss_capability_convertToJSON(ogs_sbi_atsss_capability_t *atsss_
     cJSON *item = cJSON_CreateObject();
     if (atsss_capability->atsss_ll) {
         if (cJSON_AddBoolToObject(item, "atsssLL", atsss_capability->atsss_ll) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_atsss_capability_convertToJSON() failed [atsss_ll]");
+            goto end;
         }
     }
 
     if (atsss_capability->mptcp) {
         if (cJSON_AddBoolToObject(item, "mptcp", atsss_capability->mptcp) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_atsss_capability_convertToJSON() failed [mptcp]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_atsss_capability_t *ogs_sbi_atsss_capability_parseFromJSON(cJSON *atsss_capabilityJSON)
@@ -58,6 +56,7 @@ ogs_sbi_atsss_capability_t *ogs_sbi_atsss_capability_parseFromJSON(cJSON *atsss_
 
     if (atsss_ll) {
         if (!cJSON_IsBool(atsss_ll)) {
+            ogs_error("ogs_sbi_atsss_capability_parseFromJSON() failed [atsss_ll]");
             goto end;
         }
     }
@@ -66,6 +65,7 @@ ogs_sbi_atsss_capability_t *ogs_sbi_atsss_capability_parseFromJSON(cJSON *atsss_
 
     if (mptcp) {
         if (!cJSON_IsBool(mptcp)) {
+            ogs_error("ogs_sbi_atsss_capability_parseFromJSON() failed [mptcp]");
             goto end;
         }
     }

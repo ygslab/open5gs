@@ -14,7 +14,7 @@ ogs_sbi_upf_info_t *ogs_sbi_upf_info_create(
     int ue_ip_addr_ind
     )
 {
-    ogs_sbi_upf_info_t *upf_info_local_var = ogs_malloc(sizeof(ogs_sbi_upf_info_t));
+    ogs_sbi_upf_info_t *upf_info_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_upf_info_t));
     if (!upf_info_local_var) {
         return NULL;
     }
@@ -35,19 +35,19 @@ void ogs_sbi_upf_info_free(ogs_sbi_upf_info_t *upf_info)
         return;
     }
     ogs_sbi_lnode_t *node;
-    ogs_sbi_list_for_each(node, upf_info->s_nssai_upf_info_list) {
+    ogs_sbi_list_for_each(upf_info->s_nssai_upf_info_list, node) {
         ogs_sbi_snssai_upf_info_item_free(node->data);
     }
     ogs_sbi_list_free(upf_info->s_nssai_upf_info_list);
-    ogs_sbi_list_for_each(node, upf_info->smf_serving_area) {
+    ogs_sbi_list_for_each(upf_info->smf_serving_area, node) {
         ogs_free(node->data);
     }
     ogs_sbi_list_free(upf_info->smf_serving_area);
-    ogs_sbi_list_for_each(node, upf_info->interface_upf_info_list) {
+    ogs_sbi_list_for_each(upf_info->interface_upf_info_list, node) {
         ogs_sbi_interface_upf_info_item_free(node->data);
     }
     ogs_sbi_list_free(upf_info->interface_upf_info_list);
-    ogs_sbi_list_for_each(node, upf_info->pdu_session_types) {
+    ogs_sbi_list_for_each(upf_info->pdu_session_types, node) {
         ogs_sbi_pdu_session_type_free(node->data);
     }
     ogs_sbi_list_free(upf_info->pdu_session_types);
@@ -59,19 +59,22 @@ cJSON *ogs_sbi_upf_info_convertToJSON(ogs_sbi_upf_info_t *upf_info)
 {
     cJSON *item = cJSON_CreateObject();
     if (!upf_info->s_nssai_upf_info_list) {
-        goto fail;
+        ogs_error("ogs_sbi_upf_info_convertToJSON() failed [s_nssai_upf_info_list]");
+        goto end;
     }
     cJSON *s_nssai_upf_info_list = cJSON_AddArrayToObject(item, "sNssaiUpfInfoList");
     if (s_nssai_upf_info_list == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_upf_info_convertToJSON() failed [s_nssai_upf_info_list]");
+        goto end;
     }
 
     ogs_sbi_lnode_t *s_nssai_upf_info_list_node;
     if (upf_info->s_nssai_upf_info_list) {
-        ogs_sbi_list_for_each(s_nssai_upf_info_list_node, upf_info->s_nssai_upf_info_list) {
+        ogs_sbi_list_for_each(upf_info->s_nssai_upf_info_list, s_nssai_upf_info_list_node) {
             cJSON *itemLocal = ogs_sbi_snssai_upf_info_item_convertToJSON(s_nssai_upf_info_list_node->data);
             if (itemLocal == NULL) {
-                goto fail;
+                ogs_error("ogs_sbi_upf_info_convertToJSON() failed [s_nssai_upf_info_list]");
+                goto end;
             }
             cJSON_AddItemToArray(s_nssai_upf_info_list, itemLocal);
         }
@@ -80,13 +83,15 @@ cJSON *ogs_sbi_upf_info_convertToJSON(ogs_sbi_upf_info_t *upf_info)
     if (upf_info->smf_serving_area) {
         cJSON *smf_serving_area = cJSON_AddArrayToObject(item, "smfServingArea");
         if (smf_serving_area == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_upf_info_convertToJSON() failed [smf_serving_area]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *smf_serving_area_node;
-        ogs_sbi_list_for_each(smf_serving_area_node, upf_info->smf_serving_area) {
+        ogs_sbi_list_for_each(upf_info->smf_serving_area, smf_serving_area_node)  {
             if (cJSON_AddStringToObject(smf_serving_area, "", (char*)smf_serving_area_node->data) == NULL) {
-                goto fail;
+                ogs_error("ogs_sbi_upf_info_convertToJSON() failed [smf_serving_area]");
+                goto end;
             }
         }
     }
@@ -94,15 +99,17 @@ cJSON *ogs_sbi_upf_info_convertToJSON(ogs_sbi_upf_info_t *upf_info)
     if (upf_info->interface_upf_info_list) {
         cJSON *interface_upf_info_list = cJSON_AddArrayToObject(item, "interfaceUpfInfoList");
         if (interface_upf_info_list == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_upf_info_convertToJSON() failed [interface_upf_info_list]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *interface_upf_info_list_node;
         if (upf_info->interface_upf_info_list) {
-            ogs_sbi_list_for_each(interface_upf_info_list_node, upf_info->interface_upf_info_list) {
+            ogs_sbi_list_for_each(upf_info->interface_upf_info_list, interface_upf_info_list_node) {
                 cJSON *itemLocal = ogs_sbi_interface_upf_info_item_convertToJSON(interface_upf_info_list_node->data);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_upf_info_convertToJSON() failed [interface_upf_info_list]");
+                    goto end;
                 }
                 cJSON_AddItemToArray(interface_upf_info_list, itemLocal);
             }
@@ -111,22 +118,25 @@ cJSON *ogs_sbi_upf_info_convertToJSON(ogs_sbi_upf_info_t *upf_info)
 
     if (upf_info->iwk_eps_ind) {
         if (cJSON_AddBoolToObject(item, "iwkEpsInd", upf_info->iwk_eps_ind) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_upf_info_convertToJSON() failed [iwk_eps_ind]");
+            goto end;
         }
     }
 
     if (upf_info->pdu_session_types) {
         cJSON *pdu_session_types = cJSON_AddArrayToObject(item, "pduSessionTypes");
         if (pdu_session_types == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_upf_info_convertToJSON() failed [pdu_session_types]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *pdu_session_types_node;
         if (upf_info->pdu_session_types) {
-            ogs_sbi_list_for_each(pdu_session_types_node, upf_info->pdu_session_types) {
+            ogs_sbi_list_for_each(upf_info->pdu_session_types, pdu_session_types_node) {
                 cJSON *itemLocal = ogs_sbi_pdu_session_type_convertToJSON(pdu_session_types_node->data);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_upf_info_convertToJSON() failed [pdu_session_types]");
+                    goto end;
                 }
                 cJSON_AddItemToArray(pdu_session_types, itemLocal);
             }
@@ -136,26 +146,25 @@ cJSON *ogs_sbi_upf_info_convertToJSON(ogs_sbi_upf_info_t *upf_info)
     if (upf_info->atsss_capability) {
         cJSON *atsss_capability_local_JSON = ogs_sbi_atsss_capability_convertToJSON(upf_info->atsss_capability);
         if (atsss_capability_local_JSON == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_upf_info_convertToJSON() failed [atsss_capability]");
+            goto end;
         }
         cJSON_AddItemToObject(item, "atsssCapability", atsss_capability_local_JSON);
         if (item->child == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_upf_info_convertToJSON() failed [atsss_capability]");
+            goto end;
         }
     }
 
     if (upf_info->ue_ip_addr_ind) {
         if (cJSON_AddBoolToObject(item, "ueIpAddrInd", upf_info->ue_ip_addr_ind) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_upf_info_convertToJSON() failed [ue_ip_addr_ind]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_upf_info_t *ogs_sbi_upf_info_parseFromJSON(cJSON *upf_infoJSON)
@@ -163,6 +172,7 @@ ogs_sbi_upf_info_t *ogs_sbi_upf_info_parseFromJSON(cJSON *upf_infoJSON)
     ogs_sbi_upf_info_t *upf_info_local_var = NULL;
     cJSON *s_nssai_upf_info_list = cJSON_GetObjectItemCaseSensitive(upf_infoJSON, "sNssaiUpfInfoList");
     if (!s_nssai_upf_info_list) {
+        ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [s_nssai_upf_info_list]");
         goto end;
     }
 
@@ -170,13 +180,15 @@ ogs_sbi_upf_info_t *ogs_sbi_upf_info_parseFromJSON(cJSON *upf_infoJSON)
 
     cJSON *s_nssai_upf_info_list_local_nonprimitive;
     if (!cJSON_IsArray(s_nssai_upf_info_list)) {
+        ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [s_nssai_upf_info_list]");
         goto end;
     }
 
     s_nssai_upf_info_listList = ogs_sbi_list_create();
 
-    cJSON_ArrayForEach(s_nssai_upf_info_list_local_nonprimitive,s_nssai_upf_info_list ) {
+    cJSON_ArrayForEach(s_nssai_upf_info_list_local_nonprimitive, s_nssai_upf_info_list ) {
         if (!cJSON_IsObject(s_nssai_upf_info_list_local_nonprimitive)) {
+            ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [s_nssai_upf_info_list]");
             goto end;
         }
         ogs_sbi_snssai_upf_info_item_t *s_nssai_upf_info_listItem = ogs_sbi_snssai_upf_info_item_parseFromJSON(s_nssai_upf_info_list_local_nonprimitive);
@@ -190,12 +202,14 @@ ogs_sbi_upf_info_t *ogs_sbi_upf_info_parseFromJSON(cJSON *upf_infoJSON)
     if (smf_serving_area) {
         cJSON *smf_serving_area_local;
         if (!cJSON_IsArray(smf_serving_area)) {
+            ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [smf_serving_area]");
             goto end;
         }
         smf_serving_areaList = ogs_sbi_list_create();
 
         cJSON_ArrayForEach(smf_serving_area_local, smf_serving_area) {
             if (!cJSON_IsString(smf_serving_area_local)) {
+                ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [smf_serving_area]");
                 goto end;
             }
             ogs_sbi_list_add(smf_serving_areaList, ogs_strdup(smf_serving_area_local->valuestring));
@@ -208,13 +222,15 @@ ogs_sbi_upf_info_t *ogs_sbi_upf_info_parseFromJSON(cJSON *upf_infoJSON)
     if (interface_upf_info_list) {
         cJSON *interface_upf_info_list_local_nonprimitive;
         if (!cJSON_IsArray(interface_upf_info_list)) {
+            ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [interface_upf_info_list]");
             goto end;
         }
 
         interface_upf_info_listList = ogs_sbi_list_create();
 
-        cJSON_ArrayForEach(interface_upf_info_list_local_nonprimitive,interface_upf_info_list ) {
+        cJSON_ArrayForEach(interface_upf_info_list_local_nonprimitive, interface_upf_info_list ) {
             if (!cJSON_IsObject(interface_upf_info_list_local_nonprimitive)) {
+                ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [interface_upf_info_list]");
                 goto end;
             }
             ogs_sbi_interface_upf_info_item_t *interface_upf_info_listItem = ogs_sbi_interface_upf_info_item_parseFromJSON(interface_upf_info_list_local_nonprimitive);
@@ -227,6 +243,7 @@ ogs_sbi_upf_info_t *ogs_sbi_upf_info_parseFromJSON(cJSON *upf_infoJSON)
 
     if (iwk_eps_ind) {
         if (!cJSON_IsBool(iwk_eps_ind)) {
+            ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [iwk_eps_ind]");
             goto end;
         }
     }
@@ -237,13 +254,15 @@ ogs_sbi_upf_info_t *ogs_sbi_upf_info_parseFromJSON(cJSON *upf_infoJSON)
     if (pdu_session_types) {
         cJSON *pdu_session_types_local_nonprimitive;
         if (!cJSON_IsArray(pdu_session_types)) {
+            ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [pdu_session_types]");
             goto end;
         }
 
         pdu_session_typesList = ogs_sbi_list_create();
 
-        cJSON_ArrayForEach(pdu_session_types_local_nonprimitive,pdu_session_types ) {
+        cJSON_ArrayForEach(pdu_session_types_local_nonprimitive, pdu_session_types ) {
             if (!cJSON_IsObject(pdu_session_types_local_nonprimitive)) {
+                ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [pdu_session_types]");
                 goto end;
             }
             ogs_sbi_pdu_session_type_t *pdu_session_typesItem = ogs_sbi_pdu_session_type_parseFromJSON(pdu_session_types_local_nonprimitive);
@@ -263,6 +282,7 @@ ogs_sbi_upf_info_t *ogs_sbi_upf_info_parseFromJSON(cJSON *upf_infoJSON)
 
     if (ue_ip_addr_ind) {
         if (!cJSON_IsBool(ue_ip_addr_ind)) {
+            ogs_error("ogs_sbi_upf_info_parseFromJSON() failed [ue_ip_addr_ind]");
             goto end;
         }
     }

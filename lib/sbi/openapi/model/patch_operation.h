@@ -17,15 +17,11 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_patch_operation_s ogs_sbi_patch_operation_t;
-typedef struct ogs_sbi_patch_operation_s {
-} ogs_sbi_patch_operation_t;
+typedef enum { ogs_sbi_patch_operation_NULL = 0, ogs_sbi_patch_operation_add, ogs_sbi_patch_operation_copy, ogs_sbi_patch_operation_move, ogs_sbi_patch_operation__remove, ogs_sbi_patch_operation_replace, ogs_sbi_patch_operation_test } ogs_sbi_patch_operation_e;
 
-ogs_sbi_patch_operation_t *ogs_sbi_patch_operation_create(
-    );
-void ogs_sbi_patch_operation_free(ogs_sbi_patch_operation_t *patch_operation);
-ogs_sbi_patch_operation_t *ogs_sbi_patch_operation_parseFromJSON(cJSON *patch_operationJSON);
-cJSON *ogs_sbi_patch_operation_convertToJSON(ogs_sbi_patch_operation_t *patch_operation);
+char* ogs_sbi_patch_operation_ToString(ogs_sbi_patch_operation_e patch_operation);
+
+ogs_sbi_patch_operation_e ogs_sbi_patch_operation_FromString(char* patch_operation);
 
 #ifdef __cplusplus
 }

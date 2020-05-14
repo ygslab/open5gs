@@ -9,7 +9,7 @@ ogs_sbi_invalid_param_t *ogs_sbi_invalid_param_create(
     char *reason
     )
 {
-    ogs_sbi_invalid_param_t *invalid_param_local_var = ogs_malloc(sizeof(ogs_sbi_invalid_param_t));
+    ogs_sbi_invalid_param_t *invalid_param_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_invalid_param_t));
     if (!invalid_param_local_var) {
         return NULL;
     }
@@ -34,24 +34,23 @@ cJSON *ogs_sbi_invalid_param_convertToJSON(ogs_sbi_invalid_param_t *invalid_para
 {
     cJSON *item = cJSON_CreateObject();
     if (!invalid_param->param) {
-        goto fail;
+        ogs_error("ogs_sbi_invalid_param_convertToJSON() failed [param]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "param", invalid_param->param) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_invalid_param_convertToJSON() failed [param]");
+        goto end;
     }
 
     if (invalid_param->reason) {
         if (cJSON_AddStringToObject(item, "reason", invalid_param->reason) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_invalid_param_convertToJSON() failed [reason]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_invalid_param_t *ogs_sbi_invalid_param_parseFromJSON(cJSON *invalid_paramJSON)
@@ -59,20 +58,21 @@ ogs_sbi_invalid_param_t *ogs_sbi_invalid_param_parseFromJSON(cJSON *invalid_para
     ogs_sbi_invalid_param_t *invalid_param_local_var = NULL;
     cJSON *param = cJSON_GetObjectItemCaseSensitive(invalid_paramJSON, "param");
     if (!param) {
+        ogs_error("ogs_sbi_invalid_param_parseFromJSON() failed [param]");
         goto end;
     }
 
 
-    if (!cJSON_IsString(param))
-    {
+    if (!cJSON_IsString(param)) {
+        ogs_error("ogs_sbi_invalid_param_parseFromJSON() failed [param]");
         goto end;
     }
 
     cJSON *reason = cJSON_GetObjectItemCaseSensitive(invalid_paramJSON, "reason");
 
     if (reason) {
-        if (!cJSON_IsString(reason))
-        {
+        if (!cJSON_IsString(reason)) {
+            ogs_error("ogs_sbi_invalid_param_parseFromJSON() failed [reason]");
             goto end;
         }
     }

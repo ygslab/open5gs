@@ -10,7 +10,7 @@ ogs_sbi_nf_service_version_t *ogs_sbi_nf_service_version_create(
     char *expiry
     )
 {
-    ogs_sbi_nf_service_version_t *nf_service_version_local_var = ogs_malloc(sizeof(ogs_sbi_nf_service_version_t));
+    ogs_sbi_nf_service_version_t *nf_service_version_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_nf_service_version_t));
     if (!nf_service_version_local_var) {
         return NULL;
     }
@@ -37,31 +37,32 @@ cJSON *ogs_sbi_nf_service_version_convertToJSON(ogs_sbi_nf_service_version_t *nf
 {
     cJSON *item = cJSON_CreateObject();
     if (!nf_service_version->api_version_in_uri) {
-        goto fail;
+        ogs_error("ogs_sbi_nf_service_version_convertToJSON() failed [api_version_in_uri]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "apiVersionInUri", nf_service_version->api_version_in_uri) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_nf_service_version_convertToJSON() failed [api_version_in_uri]");
+        goto end;
     }
 
     if (!nf_service_version->api_full_version) {
-        goto fail;
+        ogs_error("ogs_sbi_nf_service_version_convertToJSON() failed [api_full_version]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "apiFullVersion", nf_service_version->api_full_version) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_nf_service_version_convertToJSON() failed [api_full_version]");
+        goto end;
     }
 
     if (nf_service_version->expiry) {
         if (cJSON_AddStringToObject(item, "expiry", nf_service_version->expiry) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nf_service_version_convertToJSON() failed [expiry]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_nf_service_version_t *ogs_sbi_nf_service_version_parseFromJSON(cJSON *nf_service_versionJSON)
@@ -69,23 +70,25 @@ ogs_sbi_nf_service_version_t *ogs_sbi_nf_service_version_parseFromJSON(cJSON *nf
     ogs_sbi_nf_service_version_t *nf_service_version_local_var = NULL;
     cJSON *api_version_in_uri = cJSON_GetObjectItemCaseSensitive(nf_service_versionJSON, "apiVersionInUri");
     if (!api_version_in_uri) {
+        ogs_error("ogs_sbi_nf_service_version_parseFromJSON() failed [api_version_in_uri]");
         goto end;
     }
 
 
-    if (!cJSON_IsString(api_version_in_uri))
-    {
+    if (!cJSON_IsString(api_version_in_uri)) {
+        ogs_error("ogs_sbi_nf_service_version_parseFromJSON() failed [api_version_in_uri]");
         goto end;
     }
 
     cJSON *api_full_version = cJSON_GetObjectItemCaseSensitive(nf_service_versionJSON, "apiFullVersion");
     if (!api_full_version) {
+        ogs_error("ogs_sbi_nf_service_version_parseFromJSON() failed [api_full_version]");
         goto end;
     }
 
 
-    if (!cJSON_IsString(api_full_version))
-    {
+    if (!cJSON_IsString(api_full_version)) {
+        ogs_error("ogs_sbi_nf_service_version_parseFromJSON() failed [api_full_version]");
         goto end;
     }
 
@@ -93,6 +96,7 @@ ogs_sbi_nf_service_version_t *ogs_sbi_nf_service_version_parseFromJSON(cJSON *nf
 
     if (expiry) {
         if (!cJSON_IsString(expiry)) {
+            ogs_error("ogs_sbi_nf_service_version_parseFromJSON() failed [expiry]");
             goto end;
         }
     }

@@ -28,7 +28,7 @@ ogs_sbi_nf_group_cond_t *ogs_sbi_nf_group_cond_create(
     char *nf_group_id
     )
 {
-    ogs_sbi_nf_group_cond_t *nf_group_cond_local_var = ogs_malloc(sizeof(ogs_sbi_nf_group_cond_t));
+    ogs_sbi_nf_group_cond_t *nf_group_cond_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_nf_group_cond_t));
     if (!nf_group_cond_local_var) {
         return NULL;
     }
@@ -52,25 +52,25 @@ cJSON *ogs_sbi_nf_group_cond_convertToJSON(ogs_sbi_nf_group_cond_t *nf_group_con
 {
     cJSON *item = cJSON_CreateObject();
     if (!nf_group_cond->nf_type) {
-        goto fail;
+        ogs_error("ogs_sbi_nf_group_cond_convertToJSON() failed [nf_type]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "nfType", ogs_sbi_nf_typenf_group_cond_ToString(nf_group_cond->nf_type)) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_nf_group_cond_convertToJSON() failed [nf_type]");
+        goto end;
     }
 
     if (!nf_group_cond->nf_group_id) {
-        goto fail;
+        ogs_error("ogs_sbi_nf_group_cond_convertToJSON() failed [nf_group_id]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "nfGroupId", nf_group_cond->nf_group_id) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_nf_group_cond_convertToJSON() failed [nf_group_id]");
+        goto end;
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_nf_group_cond_t *ogs_sbi_nf_group_cond_parseFromJSON(cJSON *nf_group_condJSON)
@@ -78,24 +78,27 @@ ogs_sbi_nf_group_cond_t *ogs_sbi_nf_group_cond_parseFromJSON(cJSON *nf_group_con
     ogs_sbi_nf_group_cond_t *nf_group_cond_local_var = NULL;
     cJSON *nf_type = cJSON_GetObjectItemCaseSensitive(nf_group_condJSON, "nfType");
     if (!nf_type) {
+        ogs_error("ogs_sbi_nf_group_cond_parseFromJSON() failed [nf_type]");
         goto end;
     }
 
     ogs_sbi_nf_group_cond_nf_type_e nf_typeVariable;
 
     if (!cJSON_IsString(nf_type)) {
+        ogs_error("ogs_sbi_nf_group_cond_parseFromJSON() failed [nf_type]");
         goto end;
     }
     nf_typeVariable = ogs_sbi_nf_typenf_group_cond_FromString(nf_type->valuestring);
 
     cJSON *nf_group_id = cJSON_GetObjectItemCaseSensitive(nf_group_condJSON, "nfGroupId");
     if (!nf_group_id) {
+        ogs_error("ogs_sbi_nf_group_cond_parseFromJSON() failed [nf_group_id]");
         goto end;
     }
 
 
-    if (!cJSON_IsString(nf_group_id))
-    {
+    if (!cJSON_IsString(nf_group_id)) {
+        ogs_error("ogs_sbi_nf_group_cond_parseFromJSON() failed [nf_group_id]");
         goto end;
     }
 

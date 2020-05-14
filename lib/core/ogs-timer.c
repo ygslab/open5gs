@@ -117,7 +117,7 @@ void ogs_timer_start(ogs_timer_t *timer, ogs_time_t duration)
 {
     ogs_timer_mgr_t *manager = NULL;
     ogs_assert(timer);
-    ogs_assert(duration > 0);
+    ogs_assert(duration);
 
     manager = timer->manager;
     ogs_assert(manager);

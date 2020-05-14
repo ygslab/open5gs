@@ -4,45 +4,23 @@
 #include <stdio.h>
 #include "patch_operation.h"
 
-ogs_sbi_patch_operation_t *ogs_sbi_patch_operation_create(
-    )
+char* ogs_sbi_patch_operation_ToString(ogs_sbi_patch_operation_e patch_operation)
 {
-    ogs_sbi_patch_operation_t *patch_operation_local_var = ogs_malloc(sizeof(ogs_sbi_patch_operation_t));
-    if (!patch_operation_local_var) {
-        return NULL;
-    }
-
-    return patch_operation_local_var;
+    const char *patch_operationArray[] =  { "NULL", "add", "copy", "move", "_remove", "replace", "test" };
+    return (char *)patch_operationArray[patch_operation];
 }
 
-void ogs_sbi_patch_operation_free(ogs_sbi_patch_operation_t *patch_operation)
+ogs_sbi_patch_operation_e ogs_sbi_patch_operation_FromString(char* patch_operation)
 {
-    if (NULL == patch_operation) {
-        return;
+    int stringToReturn = 0;
+    const char *patch_operationArray[] =  { "NULL", "add", "copy", "move", "_remove", "replace", "test" };
+    size_t sizeofArray = sizeof(patch_operationArray) / sizeof(patch_operationArray[0]);
+    while (stringToReturn < sizeofArray) {
+        if (strcmp(patch_operation, patch_operationArray[stringToReturn]) == 0) {
+            return stringToReturn;
+        }
+        stringToReturn++;
     }
-    ogs_sbi_lnode_t *node;
-    ogs_free(patch_operation);
-}
-
-cJSON *ogs_sbi_patch_operation_convertToJSON(ogs_sbi_patch_operation_t *patch_operation)
-{
-    cJSON *item = cJSON_CreateObject();
-    return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
-}
-
-ogs_sbi_patch_operation_t *ogs_sbi_patch_operation_parseFromJSON(cJSON *patch_operationJSON)
-{
-    ogs_sbi_patch_operation_t *patch_operation_local_var = NULL;
-    patch_operation_local_var = ogs_sbi_patch_operation_create (
-        );
-
-    return patch_operation_local_var;
-end:
-    return NULL;
+    return 0;
 }
 

@@ -4,45 +4,23 @@
 #include <stdio.h>
 #include "notification_type.h"
 
-ogs_sbi_notification_type_t *ogs_sbi_notification_type_create(
-    )
+char* ogs_sbi_notification_type_ToString(ogs_sbi_notification_type_e notification_type)
 {
-    ogs_sbi_notification_type_t *notification_type_local_var = ogs_malloc(sizeof(ogs_sbi_notification_type_t));
-    if (!notification_type_local_var) {
-        return NULL;
-    }
-
-    return notification_type_local_var;
+    const char *notification_typeArray[] =  { "NULL", "N1_MESSAGES", "N2_INFORMATION", "LOCATION_NOTIFICATION", "DATA_REMOVAL_NOTIFICATION", "DATA_CHANGE_NOTIFICATION" };
+    return (char *)notification_typeArray[notification_type];
 }
 
-void ogs_sbi_notification_type_free(ogs_sbi_notification_type_t *notification_type)
+ogs_sbi_notification_type_e ogs_sbi_notification_type_FromString(char* notification_type)
 {
-    if (NULL == notification_type) {
-        return;
+    int stringToReturn = 0;
+    const char *notification_typeArray[] =  { "NULL", "N1_MESSAGES", "N2_INFORMATION", "LOCATION_NOTIFICATION", "DATA_REMOVAL_NOTIFICATION", "DATA_CHANGE_NOTIFICATION" };
+    size_t sizeofArray = sizeof(notification_typeArray) / sizeof(notification_typeArray[0]);
+    while (stringToReturn < sizeofArray) {
+        if (strcmp(notification_type, notification_typeArray[stringToReturn]) == 0) {
+            return stringToReturn;
+        }
+        stringToReturn++;
     }
-    ogs_sbi_lnode_t *node;
-    ogs_free(notification_type);
-}
-
-cJSON *ogs_sbi_notification_type_convertToJSON(ogs_sbi_notification_type_t *notification_type)
-{
-    cJSON *item = cJSON_CreateObject();
-    return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
-}
-
-ogs_sbi_notification_type_t *ogs_sbi_notification_type_parseFromJSON(cJSON *notification_typeJSON)
-{
-    ogs_sbi_notification_type_t *notification_type_local_var = NULL;
-    notification_type_local_var = ogs_sbi_notification_type_create (
-        );
-
-    return notification_type_local_var;
-end:
-    return NULL;
+    return 0;
 }
 

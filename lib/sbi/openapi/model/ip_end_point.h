@@ -12,7 +12,6 @@
 #include "../include/list.h"
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
-#include "ipv6_addr.h"
 #include "transport_protocol.h"
 
 #ifdef __cplusplus
@@ -22,15 +21,15 @@ extern "C" {
 typedef struct ogs_sbi_ip_end_point_s ogs_sbi_ip_end_point_t;
 typedef struct ogs_sbi_ip_end_point_s {
     char *ipv4_address;
-    struct ogs_sbi_ipv6_addr_s *ipv6_address;
-    struct ogs_sbi_transport_protocol_s *transport;
+    char *ipv6_address;
+    ogs_sbi_transport_protocol_e transport;
     int port;
 } ogs_sbi_ip_end_point_t;
 
 ogs_sbi_ip_end_point_t *ogs_sbi_ip_end_point_create(
     char *ipv4_address,
-    ogs_sbi_ipv6_addr_t *ipv6_address,
-    ogs_sbi_transport_protocol_t *transport,
+    char *ipv6_address,
+    ogs_sbi_transport_protocol_e transport,
     int port
     );
 void ogs_sbi_ip_end_point_free(ogs_sbi_ip_end_point_t *ip_end_point);

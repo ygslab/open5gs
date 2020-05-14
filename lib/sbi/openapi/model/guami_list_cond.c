@@ -8,7 +8,7 @@ ogs_sbi_guami_list_cond_t *ogs_sbi_guami_list_cond_create(
     ogs_sbi_list_t *guami_list
     )
 {
-    ogs_sbi_guami_list_cond_t *guami_list_cond_local_var = ogs_malloc(sizeof(ogs_sbi_guami_list_cond_t));
+    ogs_sbi_guami_list_cond_t *guami_list_cond_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_guami_list_cond_t));
     if (!guami_list_cond_local_var) {
         return NULL;
     }
@@ -23,7 +23,7 @@ void ogs_sbi_guami_list_cond_free(ogs_sbi_guami_list_cond_t *guami_list_cond)
         return;
     }
     ogs_sbi_lnode_t *node;
-    ogs_sbi_list_for_each(node, guami_list_cond->guami_list) {
+    ogs_sbi_list_for_each(guami_list_cond->guami_list, node) {
         ogs_sbi_guami_free(node->data);
     }
     ogs_sbi_list_free(guami_list_cond->guami_list);
@@ -34,30 +34,29 @@ cJSON *ogs_sbi_guami_list_cond_convertToJSON(ogs_sbi_guami_list_cond_t *guami_li
 {
     cJSON *item = cJSON_CreateObject();
     if (!guami_list_cond->guami_list) {
-        goto fail;
+        ogs_error("ogs_sbi_guami_list_cond_convertToJSON() failed [guami_list]");
+        goto end;
     }
     cJSON *guami_list = cJSON_AddArrayToObject(item, "guamiList");
     if (guami_list == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_guami_list_cond_convertToJSON() failed [guami_list]");
+        goto end;
     }
 
     ogs_sbi_lnode_t *guami_list_node;
     if (guami_list_cond->guami_list) {
-        ogs_sbi_list_for_each(guami_list_node, guami_list_cond->guami_list) {
+        ogs_sbi_list_for_each(guami_list_cond->guami_list, guami_list_node) {
             cJSON *itemLocal = ogs_sbi_guami_convertToJSON(guami_list_node->data);
             if (itemLocal == NULL) {
-                goto fail;
+                ogs_error("ogs_sbi_guami_list_cond_convertToJSON() failed [guami_list]");
+                goto end;
             }
             cJSON_AddItemToArray(guami_list, itemLocal);
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_guami_list_cond_t *ogs_sbi_guami_list_cond_parseFromJSON(cJSON *guami_list_condJSON)
@@ -65,6 +64,7 @@ ogs_sbi_guami_list_cond_t *ogs_sbi_guami_list_cond_parseFromJSON(cJSON *guami_li
     ogs_sbi_guami_list_cond_t *guami_list_cond_local_var = NULL;
     cJSON *guami_list = cJSON_GetObjectItemCaseSensitive(guami_list_condJSON, "guamiList");
     if (!guami_list) {
+        ogs_error("ogs_sbi_guami_list_cond_parseFromJSON() failed [guami_list]");
         goto end;
     }
 
@@ -72,13 +72,15 @@ ogs_sbi_guami_list_cond_t *ogs_sbi_guami_list_cond_parseFromJSON(cJSON *guami_li
 
     cJSON *guami_list_local_nonprimitive;
     if (!cJSON_IsArray(guami_list)) {
+        ogs_error("ogs_sbi_guami_list_cond_parseFromJSON() failed [guami_list]");
         goto end;
     }
 
     guami_listList = ogs_sbi_list_create();
 
-    cJSON_ArrayForEach(guami_list_local_nonprimitive,guami_list ) {
+    cJSON_ArrayForEach(guami_list_local_nonprimitive, guami_list ) {
         if (!cJSON_IsObject(guami_list_local_nonprimitive)) {
+            ogs_error("ogs_sbi_guami_list_cond_parseFromJSON() failed [guami_list]");
             goto end;
         }
         ogs_sbi_guami_t *guami_listItem = ogs_sbi_guami_parseFromJSON(guami_list_local_nonprimitive);

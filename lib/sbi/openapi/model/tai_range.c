@@ -9,7 +9,7 @@ ogs_sbi_tai_range_t *ogs_sbi_tai_range_create(
     ogs_sbi_list_t *tac_range_list
     )
 {
-    ogs_sbi_tai_range_t *tai_range_local_var = ogs_malloc(sizeof(ogs_sbi_tai_range_t));
+    ogs_sbi_tai_range_t *tai_range_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_tai_range_t));
     if (!tai_range_local_var) {
         return NULL;
     }
@@ -26,7 +26,7 @@ void ogs_sbi_tai_range_free(ogs_sbi_tai_range_t *tai_range)
     }
     ogs_sbi_lnode_t *node;
     ogs_sbi_plmn_id_free(tai_range->plmn_id);
-    ogs_sbi_list_for_each(node, tai_range->tac_range_list) {
+    ogs_sbi_list_for_each(tai_range->tac_range_list, node) {
         ogs_sbi_tac_range_free(node->data);
     }
     ogs_sbi_list_free(tai_range->tac_range_list);
@@ -37,42 +37,44 @@ cJSON *ogs_sbi_tai_range_convertToJSON(ogs_sbi_tai_range_t *tai_range)
 {
     cJSON *item = cJSON_CreateObject();
     if (!tai_range->plmn_id) {
-        goto fail;
+        ogs_error("ogs_sbi_tai_range_convertToJSON() failed [plmn_id]");
+        goto end;
     }
     cJSON *plmn_id_local_JSON = ogs_sbi_plmn_id_convertToJSON(tai_range->plmn_id);
     if (plmn_id_local_JSON == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_tai_range_convertToJSON() failed [plmn_id]");
+        goto end;
     }
     cJSON_AddItemToObject(item, "plmnId", plmn_id_local_JSON);
     if (item->child == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_tai_range_convertToJSON() failed [plmn_id]");
+        goto end;
     }
 
     if (!tai_range->tac_range_list) {
-        goto fail;
+        ogs_error("ogs_sbi_tai_range_convertToJSON() failed [tac_range_list]");
+        goto end;
     }
     cJSON *tac_range_list = cJSON_AddArrayToObject(item, "tacRangeList");
     if (tac_range_list == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_tai_range_convertToJSON() failed [tac_range_list]");
+        goto end;
     }
 
     ogs_sbi_lnode_t *tac_range_list_node;
     if (tai_range->tac_range_list) {
-        ogs_sbi_list_for_each(tac_range_list_node, tai_range->tac_range_list) {
+        ogs_sbi_list_for_each(tai_range->tac_range_list, tac_range_list_node) {
             cJSON *itemLocal = ogs_sbi_tac_range_convertToJSON(tac_range_list_node->data);
             if (itemLocal == NULL) {
-                goto fail;
+                ogs_error("ogs_sbi_tai_range_convertToJSON() failed [tac_range_list]");
+                goto end;
             }
             cJSON_AddItemToArray(tac_range_list, itemLocal);
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_tai_range_t *ogs_sbi_tai_range_parseFromJSON(cJSON *tai_rangeJSON)
@@ -80,6 +82,7 @@ ogs_sbi_tai_range_t *ogs_sbi_tai_range_parseFromJSON(cJSON *tai_rangeJSON)
     ogs_sbi_tai_range_t *tai_range_local_var = NULL;
     cJSON *plmn_id = cJSON_GetObjectItemCaseSensitive(tai_rangeJSON, "plmnId");
     if (!plmn_id) {
+        ogs_error("ogs_sbi_tai_range_parseFromJSON() failed [plmn_id]");
         goto end;
     }
 
@@ -89,6 +92,7 @@ ogs_sbi_tai_range_t *ogs_sbi_tai_range_parseFromJSON(cJSON *tai_rangeJSON)
 
     cJSON *tac_range_list = cJSON_GetObjectItemCaseSensitive(tai_rangeJSON, "tacRangeList");
     if (!tac_range_list) {
+        ogs_error("ogs_sbi_tai_range_parseFromJSON() failed [tac_range_list]");
         goto end;
     }
 
@@ -96,13 +100,15 @@ ogs_sbi_tai_range_t *ogs_sbi_tai_range_parseFromJSON(cJSON *tai_rangeJSON)
 
     cJSON *tac_range_list_local_nonprimitive;
     if (!cJSON_IsArray(tac_range_list)) {
+        ogs_error("ogs_sbi_tai_range_parseFromJSON() failed [tac_range_list]");
         goto end;
     }
 
     tac_range_listList = ogs_sbi_list_create();
 
-    cJSON_ArrayForEach(tac_range_list_local_nonprimitive,tac_range_list ) {
+    cJSON_ArrayForEach(tac_range_list_local_nonprimitive, tac_range_list ) {
         if (!cJSON_IsObject(tac_range_list_local_nonprimitive)) {
+            ogs_error("ogs_sbi_tai_range_parseFromJSON() failed [tac_range_list]");
             goto end;
         }
         ogs_sbi_tac_range_t *tac_range_listItem = ogs_sbi_tac_range_parseFromJSON(tac_range_list_local_nonprimitive);

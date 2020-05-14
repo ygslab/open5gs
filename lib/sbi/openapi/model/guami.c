@@ -9,7 +9,7 @@ ogs_sbi_guami_t *ogs_sbi_guami_create(
     char *amf_id
     )
 {
-    ogs_sbi_guami_t *guami_local_var = ogs_malloc(sizeof(ogs_sbi_guami_t));
+    ogs_sbi_guami_t *guami_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_guami_t));
     if (!guami_local_var) {
         return NULL;
     }
@@ -34,30 +34,31 @@ cJSON *ogs_sbi_guami_convertToJSON(ogs_sbi_guami_t *guami)
 {
     cJSON *item = cJSON_CreateObject();
     if (!guami->plmn_id) {
-        goto fail;
+        ogs_error("ogs_sbi_guami_convertToJSON() failed [plmn_id]");
+        goto end;
     }
     cJSON *plmn_id_local_JSON = ogs_sbi_plmn_id_convertToJSON(guami->plmn_id);
     if (plmn_id_local_JSON == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_guami_convertToJSON() failed [plmn_id]");
+        goto end;
     }
     cJSON_AddItemToObject(item, "plmnId", plmn_id_local_JSON);
     if (item->child == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_guami_convertToJSON() failed [plmn_id]");
+        goto end;
     }
 
     if (!guami->amf_id) {
-        goto fail;
+        ogs_error("ogs_sbi_guami_convertToJSON() failed [amf_id]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "amfId", guami->amf_id) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_guami_convertToJSON() failed [amf_id]");
+        goto end;
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_guami_t *ogs_sbi_guami_parseFromJSON(cJSON *guamiJSON)
@@ -65,6 +66,7 @@ ogs_sbi_guami_t *ogs_sbi_guami_parseFromJSON(cJSON *guamiJSON)
     ogs_sbi_guami_t *guami_local_var = NULL;
     cJSON *plmn_id = cJSON_GetObjectItemCaseSensitive(guamiJSON, "plmnId");
     if (!plmn_id) {
+        ogs_error("ogs_sbi_guami_parseFromJSON() failed [plmn_id]");
         goto end;
     }
 
@@ -74,12 +76,13 @@ ogs_sbi_guami_t *ogs_sbi_guami_parseFromJSON(cJSON *guamiJSON)
 
     cJSON *amf_id = cJSON_GetObjectItemCaseSensitive(guamiJSON, "amfId");
     if (!amf_id) {
+        ogs_error("ogs_sbi_guami_parseFromJSON() failed [amf_id]");
         goto end;
     }
 
 
-    if (!cJSON_IsString(amf_id))
-    {
+    if (!cJSON_IsString(amf_id)) {
+        ogs_error("ogs_sbi_guami_parseFromJSON() failed [amf_id]");
         goto end;
     }
 

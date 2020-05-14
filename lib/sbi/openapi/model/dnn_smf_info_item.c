@@ -8,7 +8,7 @@ ogs_sbi_dnn_smf_info_item_t *ogs_sbi_dnn_smf_info_item_create(
     char *dnn
     )
 {
-    ogs_sbi_dnn_smf_info_item_t *dnn_smf_info_item_local_var = ogs_malloc(sizeof(ogs_sbi_dnn_smf_info_item_t));
+    ogs_sbi_dnn_smf_info_item_t *dnn_smf_info_item_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_dnn_smf_info_item_t));
     if (!dnn_smf_info_item_local_var) {
         return NULL;
     }
@@ -31,18 +31,16 @@ cJSON *ogs_sbi_dnn_smf_info_item_convertToJSON(ogs_sbi_dnn_smf_info_item_t *dnn_
 {
     cJSON *item = cJSON_CreateObject();
     if (!dnn_smf_info_item->dnn) {
-        goto fail;
+        ogs_error("ogs_sbi_dnn_smf_info_item_convertToJSON() failed [dnn]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "dnn", dnn_smf_info_item->dnn) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_dnn_smf_info_item_convertToJSON() failed [dnn]");
+        goto end;
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_dnn_smf_info_item_t *ogs_sbi_dnn_smf_info_item_parseFromJSON(cJSON *dnn_smf_info_itemJSON)
@@ -50,12 +48,13 @@ ogs_sbi_dnn_smf_info_item_t *ogs_sbi_dnn_smf_info_item_parseFromJSON(cJSON *dnn_
     ogs_sbi_dnn_smf_info_item_t *dnn_smf_info_item_local_var = NULL;
     cJSON *dnn = cJSON_GetObjectItemCaseSensitive(dnn_smf_info_itemJSON, "dnn");
     if (!dnn) {
+        ogs_error("ogs_sbi_dnn_smf_info_item_parseFromJSON() failed [dnn]");
         goto end;
     }
 
 
-    if (!cJSON_IsString(dnn))
-    {
+    if (!cJSON_IsString(dnn)) {
+        ogs_error("ogs_sbi_dnn_smf_info_item_parseFromJSON() failed [dnn]");
         goto end;
     }
 

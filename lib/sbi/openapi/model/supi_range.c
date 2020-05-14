@@ -10,7 +10,7 @@ ogs_sbi_supi_range_t *ogs_sbi_supi_range_create(
     char *pattern
     )
 {
-    ogs_sbi_supi_range_t *supi_range_local_var = ogs_malloc(sizeof(ogs_sbi_supi_range_t));
+    ogs_sbi_supi_range_t *supi_range_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_supi_range_t));
     if (!supi_range_local_var) {
         return NULL;
     }
@@ -38,28 +38,27 @@ cJSON *ogs_sbi_supi_range_convertToJSON(ogs_sbi_supi_range_t *supi_range)
     cJSON *item = cJSON_CreateObject();
     if (supi_range->start) {
         if (cJSON_AddStringToObject(item, "start", supi_range->start) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_supi_range_convertToJSON() failed [start]");
+            goto end;
         }
     }
 
     if (supi_range->end) {
         if (cJSON_AddStringToObject(item, "end", supi_range->end) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_supi_range_convertToJSON() failed [end]");
+            goto end;
         }
     }
 
     if (supi_range->pattern) {
         if (cJSON_AddStringToObject(item, "pattern", supi_range->pattern) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_supi_range_convertToJSON() failed [pattern]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_supi_range_t *ogs_sbi_supi_range_parseFromJSON(cJSON *supi_rangeJSON)
@@ -68,8 +67,8 @@ ogs_sbi_supi_range_t *ogs_sbi_supi_range_parseFromJSON(cJSON *supi_rangeJSON)
     cJSON *start = cJSON_GetObjectItemCaseSensitive(supi_rangeJSON, "start");
 
     if (start) {
-        if (!cJSON_IsString(start))
-        {
+        if (!cJSON_IsString(start)) {
+            ogs_error("ogs_sbi_supi_range_parseFromJSON() failed [start]");
             goto end;
         }
     }
@@ -77,8 +76,8 @@ ogs_sbi_supi_range_t *ogs_sbi_supi_range_parseFromJSON(cJSON *supi_rangeJSON)
     cJSON *end = cJSON_GetObjectItemCaseSensitive(supi_rangeJSON, "end");
 
     if (end) {
-        if (!cJSON_IsString(end))
-        {
+        if (!cJSON_IsString(end)) {
+            ogs_error("ogs_sbi_supi_range_parseFromJSON() failed [end]");
             goto end;
         }
     }
@@ -86,8 +85,8 @@ ogs_sbi_supi_range_t *ogs_sbi_supi_range_parseFromJSON(cJSON *supi_rangeJSON)
     cJSON *pattern = cJSON_GetObjectItemCaseSensitive(supi_rangeJSON, "pattern");
 
     if (pattern) {
-        if (!cJSON_IsString(pattern))
-        {
+        if (!cJSON_IsString(pattern)) {
+            ogs_error("ogs_sbi_supi_range_parseFromJSON() failed [pattern]");
             goto end;
         }
     }

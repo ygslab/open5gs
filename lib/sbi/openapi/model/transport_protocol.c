@@ -4,45 +4,23 @@
 #include <stdio.h>
 #include "transport_protocol.h"
 
-ogs_sbi_transport_protocol_t *ogs_sbi_transport_protocol_create(
-    )
+char* ogs_sbi_transport_protocol_ToString(ogs_sbi_transport_protocol_e transport_protocol)
 {
-    ogs_sbi_transport_protocol_t *transport_protocol_local_var = ogs_malloc(sizeof(ogs_sbi_transport_protocol_t));
-    if (!transport_protocol_local_var) {
-        return NULL;
-    }
-
-    return transport_protocol_local_var;
+    const char *transport_protocolArray[] =  { "NULL", "TCP" };
+    return (char *)transport_protocolArray[transport_protocol];
 }
 
-void ogs_sbi_transport_protocol_free(ogs_sbi_transport_protocol_t *transport_protocol)
+ogs_sbi_transport_protocol_e ogs_sbi_transport_protocol_FromString(char* transport_protocol)
 {
-    if (NULL == transport_protocol) {
-        return;
+    int stringToReturn = 0;
+    const char *transport_protocolArray[] =  { "NULL", "TCP" };
+    size_t sizeofArray = sizeof(transport_protocolArray) / sizeof(transport_protocolArray[0]);
+    while (stringToReturn < sizeofArray) {
+        if (strcmp(transport_protocol, transport_protocolArray[stringToReturn]) == 0) {
+            return stringToReturn;
+        }
+        stringToReturn++;
     }
-    ogs_sbi_lnode_t *node;
-    ogs_free(transport_protocol);
-}
-
-cJSON *ogs_sbi_transport_protocol_convertToJSON(ogs_sbi_transport_protocol_t *transport_protocol)
-{
-    cJSON *item = cJSON_CreateObject();
-    return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
-}
-
-ogs_sbi_transport_protocol_t *ogs_sbi_transport_protocol_parseFromJSON(cJSON *transport_protocolJSON)
-{
-    ogs_sbi_transport_protocol_t *transport_protocol_local_var = NULL;
-    transport_protocol_local_var = ogs_sbi_transport_protocol_create (
-        );
-
-    return transport_protocol_local_var;
-end:
-    return NULL;
+    return 0;
 }
 

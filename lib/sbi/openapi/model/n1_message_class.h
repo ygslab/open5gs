@@ -17,15 +17,11 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_n1_message_class_s ogs_sbi_n1_message_class_t;
-typedef struct ogs_sbi_n1_message_class_s {
-} ogs_sbi_n1_message_class_t;
+typedef enum { ogs_sbi_n1_message_class_NULL = 0, ogs_sbi_n1_message_class_5GMM, ogs_sbi_n1_message_class_SM, ogs_sbi_n1_message_class_LPP, ogs_sbi_n1_message_class_SMS, ogs_sbi_n1_message_class_UPDP } ogs_sbi_n1_message_class_e;
 
-ogs_sbi_n1_message_class_t *ogs_sbi_n1_message_class_create(
-    );
-void ogs_sbi_n1_message_class_free(ogs_sbi_n1_message_class_t *n1_message_class);
-ogs_sbi_n1_message_class_t *ogs_sbi_n1_message_class_parseFromJSON(cJSON *n1_message_classJSON);
-cJSON *ogs_sbi_n1_message_class_convertToJSON(ogs_sbi_n1_message_class_t *n1_message_class);
+char* ogs_sbi_n1_message_class_ToString(ogs_sbi_n1_message_class_e n1_message_class);
+
+ogs_sbi_n1_message_class_e ogs_sbi_n1_message_class_FromString(char* n1_message_class);
 
 #ifdef __cplusplus
 }

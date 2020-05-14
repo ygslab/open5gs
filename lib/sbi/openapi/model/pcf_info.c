@@ -13,7 +13,7 @@ ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_create(
     char *rx_diam_realm
     )
 {
-    ogs_sbi_pcf_info_t *pcf_info_local_var = ogs_malloc(sizeof(ogs_sbi_pcf_info_t));
+    ogs_sbi_pcf_info_t *pcf_info_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_pcf_info_t));
     if (!pcf_info_local_var) {
         return NULL;
     }
@@ -34,15 +34,15 @@ void ogs_sbi_pcf_info_free(ogs_sbi_pcf_info_t *pcf_info)
     }
     ogs_sbi_lnode_t *node;
     ogs_free(pcf_info->group_id);
-    ogs_sbi_list_for_each(node, pcf_info->dnn_list) {
+    ogs_sbi_list_for_each(pcf_info->dnn_list, node) {
         ogs_free(node->data);
     }
     ogs_sbi_list_free(pcf_info->dnn_list);
-    ogs_sbi_list_for_each(node, pcf_info->supi_ranges) {
+    ogs_sbi_list_for_each(pcf_info->supi_ranges, node) {
         ogs_sbi_supi_range_free(node->data);
     }
     ogs_sbi_list_free(pcf_info->supi_ranges);
-    ogs_sbi_list_for_each(node, pcf_info->gpsi_ranges) {
+    ogs_sbi_list_for_each(pcf_info->gpsi_ranges, node) {
         ogs_sbi_identity_range_free(node->data);
     }
     ogs_sbi_list_free(pcf_info->gpsi_ranges);
@@ -56,20 +56,23 @@ cJSON *ogs_sbi_pcf_info_convertToJSON(ogs_sbi_pcf_info_t *pcf_info)
     cJSON *item = cJSON_CreateObject();
     if (pcf_info->group_id) {
         if (cJSON_AddStringToObject(item, "groupId", pcf_info->group_id) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [group_id]");
+            goto end;
         }
     }
 
     if (pcf_info->dnn_list) {
         cJSON *dnn_list = cJSON_AddArrayToObject(item, "dnnList");
         if (dnn_list == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [dnn_list]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *dnn_list_node;
-        ogs_sbi_list_for_each(dnn_list_node, pcf_info->dnn_list) {
+        ogs_sbi_list_for_each(pcf_info->dnn_list, dnn_list_node)  {
             if (cJSON_AddStringToObject(dnn_list, "", (char*)dnn_list_node->data) == NULL) {
-                goto fail;
+                ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [dnn_list]");
+                goto end;
             }
         }
     }
@@ -77,15 +80,17 @@ cJSON *ogs_sbi_pcf_info_convertToJSON(ogs_sbi_pcf_info_t *pcf_info)
     if (pcf_info->supi_ranges) {
         cJSON *supi_ranges = cJSON_AddArrayToObject(item, "supiRanges");
         if (supi_ranges == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [supi_ranges]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *supi_ranges_node;
         if (pcf_info->supi_ranges) {
-            ogs_sbi_list_for_each(supi_ranges_node, pcf_info->supi_ranges) {
+            ogs_sbi_list_for_each(pcf_info->supi_ranges, supi_ranges_node) {
                 cJSON *itemLocal = ogs_sbi_supi_range_convertToJSON(supi_ranges_node->data);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [supi_ranges]");
+                    goto end;
                 }
                 cJSON_AddItemToArray(supi_ranges, itemLocal);
             }
@@ -95,15 +100,17 @@ cJSON *ogs_sbi_pcf_info_convertToJSON(ogs_sbi_pcf_info_t *pcf_info)
     if (pcf_info->gpsi_ranges) {
         cJSON *gpsi_ranges = cJSON_AddArrayToObject(item, "gpsiRanges");
         if (gpsi_ranges == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [gpsi_ranges]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *gpsi_ranges_node;
         if (pcf_info->gpsi_ranges) {
-            ogs_sbi_list_for_each(gpsi_ranges_node, pcf_info->gpsi_ranges) {
+            ogs_sbi_list_for_each(pcf_info->gpsi_ranges, gpsi_ranges_node) {
                 cJSON *itemLocal = ogs_sbi_identity_range_convertToJSON(gpsi_ranges_node->data);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [gpsi_ranges]");
+                    goto end;
                 }
                 cJSON_AddItemToArray(gpsi_ranges, itemLocal);
             }
@@ -112,22 +119,20 @@ cJSON *ogs_sbi_pcf_info_convertToJSON(ogs_sbi_pcf_info_t *pcf_info)
 
     if (pcf_info->rx_diam_host) {
         if (cJSON_AddStringToObject(item, "rxDiamHost", pcf_info->rx_diam_host) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [rx_diam_host]");
+            goto end;
         }
     }
 
     if (pcf_info->rx_diam_realm) {
         if (cJSON_AddStringToObject(item, "rxDiamRealm", pcf_info->rx_diam_realm) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [rx_diam_realm]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
@@ -136,8 +141,8 @@ ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
     cJSON *group_id = cJSON_GetObjectItemCaseSensitive(pcf_infoJSON, "groupId");
 
     if (group_id) {
-        if (!cJSON_IsString(group_id))
-        {
+        if (!cJSON_IsString(group_id)) {
+            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [group_id]");
             goto end;
         }
     }
@@ -148,12 +153,14 @@ ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
     if (dnn_list) {
         cJSON *dnn_list_local;
         if (!cJSON_IsArray(dnn_list)) {
+            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [dnn_list]");
             goto end;
         }
         dnn_listList = ogs_sbi_list_create();
 
         cJSON_ArrayForEach(dnn_list_local, dnn_list) {
             if (!cJSON_IsString(dnn_list_local)) {
+                ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [dnn_list]");
                 goto end;
             }
             ogs_sbi_list_add(dnn_listList, ogs_strdup(dnn_list_local->valuestring));
@@ -166,13 +173,15 @@ ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
     if (supi_ranges) {
         cJSON *supi_ranges_local_nonprimitive;
         if (!cJSON_IsArray(supi_ranges)) {
+            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [supi_ranges]");
             goto end;
         }
 
         supi_rangesList = ogs_sbi_list_create();
 
-        cJSON_ArrayForEach(supi_ranges_local_nonprimitive,supi_ranges ) {
+        cJSON_ArrayForEach(supi_ranges_local_nonprimitive, supi_ranges ) {
             if (!cJSON_IsObject(supi_ranges_local_nonprimitive)) {
+                ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [supi_ranges]");
                 goto end;
             }
             ogs_sbi_supi_range_t *supi_rangesItem = ogs_sbi_supi_range_parseFromJSON(supi_ranges_local_nonprimitive);
@@ -187,13 +196,15 @@ ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
     if (gpsi_ranges) {
         cJSON *gpsi_ranges_local_nonprimitive;
         if (!cJSON_IsArray(gpsi_ranges)) {
+            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [gpsi_ranges]");
             goto end;
         }
 
         gpsi_rangesList = ogs_sbi_list_create();
 
-        cJSON_ArrayForEach(gpsi_ranges_local_nonprimitive,gpsi_ranges ) {
+        cJSON_ArrayForEach(gpsi_ranges_local_nonprimitive, gpsi_ranges ) {
             if (!cJSON_IsObject(gpsi_ranges_local_nonprimitive)) {
+                ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [gpsi_ranges]");
                 goto end;
             }
             ogs_sbi_identity_range_t *gpsi_rangesItem = ogs_sbi_identity_range_parseFromJSON(gpsi_ranges_local_nonprimitive);
@@ -205,8 +216,8 @@ ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
     cJSON *rx_diam_host = cJSON_GetObjectItemCaseSensitive(pcf_infoJSON, "rxDiamHost");
 
     if (rx_diam_host) {
-        if (!cJSON_IsString(rx_diam_host))
-        {
+        if (!cJSON_IsString(rx_diam_host)) {
+            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [rx_diam_host]");
             goto end;
         }
     }
@@ -214,8 +225,8 @@ ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
     cJSON *rx_diam_realm = cJSON_GetObjectItemCaseSensitive(pcf_infoJSON, "rxDiamRealm");
 
     if (rx_diam_realm) {
-        if (!cJSON_IsString(rx_diam_realm))
-        {
+        if (!cJSON_IsString(rx_diam_realm)) {
+            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [rx_diam_realm]");
             goto end;
         }
     }

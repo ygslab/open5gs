@@ -9,7 +9,7 @@ ogs_sbi_amf_cond_t *ogs_sbi_amf_cond_create(
     char *amf_region_id
     )
 {
-    ogs_sbi_amf_cond_t *amf_cond_local_var = ogs_malloc(sizeof(ogs_sbi_amf_cond_t));
+    ogs_sbi_amf_cond_t *amf_cond_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_amf_cond_t));
     if (!amf_cond_local_var) {
         return NULL;
     }
@@ -35,22 +35,20 @@ cJSON *ogs_sbi_amf_cond_convertToJSON(ogs_sbi_amf_cond_t *amf_cond)
     cJSON *item = cJSON_CreateObject();
     if (amf_cond->amf_set_id) {
         if (cJSON_AddStringToObject(item, "amfSetId", amf_cond->amf_set_id) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_amf_cond_convertToJSON() failed [amf_set_id]");
+            goto end;
         }
     }
 
     if (amf_cond->amf_region_id) {
         if (cJSON_AddStringToObject(item, "amfRegionId", amf_cond->amf_region_id) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_amf_cond_convertToJSON() failed [amf_region_id]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_amf_cond_t *ogs_sbi_amf_cond_parseFromJSON(cJSON *amf_condJSON)
@@ -59,8 +57,8 @@ ogs_sbi_amf_cond_t *ogs_sbi_amf_cond_parseFromJSON(cJSON *amf_condJSON)
     cJSON *amf_set_id = cJSON_GetObjectItemCaseSensitive(amf_condJSON, "amfSetId");
 
     if (amf_set_id) {
-        if (!cJSON_IsString(amf_set_id))
-        {
+        if (!cJSON_IsString(amf_set_id)) {
+            ogs_error("ogs_sbi_amf_cond_parseFromJSON() failed [amf_set_id]");
             goto end;
         }
     }
@@ -68,8 +66,8 @@ ogs_sbi_amf_cond_t *ogs_sbi_amf_cond_parseFromJSON(cJSON *amf_condJSON)
     cJSON *amf_region_id = cJSON_GetObjectItemCaseSensitive(amf_condJSON, "amfRegionId");
 
     if (amf_region_id) {
-        if (!cJSON_IsString(amf_region_id))
-        {
+        if (!cJSON_IsString(amf_region_id)) {
+            ogs_error("ogs_sbi_amf_cond_parseFromJSON() failed [amf_region_id]");
             goto end;
         }
     }

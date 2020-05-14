@@ -12,7 +12,6 @@
 #include "../include/list.h"
 #include "../include/keyValuePair.h"
 #include "../include/binary.h"
-#include "ipv6_addr.h"
 
 #ifdef __cplusplus
 extern "C" {

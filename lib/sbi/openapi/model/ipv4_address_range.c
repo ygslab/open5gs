@@ -9,7 +9,7 @@ ogs_sbi_ipv4_address_range_t *ogs_sbi_ipv4_address_range_create(
     char *end
     )
 {
-    ogs_sbi_ipv4_address_range_t *ipv4_address_range_local_var = ogs_malloc(sizeof(ogs_sbi_ipv4_address_range_t));
+    ogs_sbi_ipv4_address_range_t *ipv4_address_range_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_ipv4_address_range_t));
     if (!ipv4_address_range_local_var) {
         return NULL;
     }
@@ -35,22 +35,20 @@ cJSON *ogs_sbi_ipv4_address_range_convertToJSON(ogs_sbi_ipv4_address_range_t *ip
     cJSON *item = cJSON_CreateObject();
     if (ipv4_address_range->start) {
         if (cJSON_AddStringToObject(item, "start", ipv4_address_range->start) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_ipv4_address_range_convertToJSON() failed [start]");
+            goto end;
         }
     }
 
     if (ipv4_address_range->end) {
         if (cJSON_AddStringToObject(item, "end", ipv4_address_range->end) == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_ipv4_address_range_convertToJSON() failed [end]");
+            goto end;
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_ipv4_address_range_t *ogs_sbi_ipv4_address_range_parseFromJSON(cJSON *ipv4_address_rangeJSON)
@@ -59,8 +57,8 @@ ogs_sbi_ipv4_address_range_t *ogs_sbi_ipv4_address_range_parseFromJSON(cJSON *ip
     cJSON *start = cJSON_GetObjectItemCaseSensitive(ipv4_address_rangeJSON, "start");
 
     if (start) {
-        if (!cJSON_IsString(start))
-        {
+        if (!cJSON_IsString(start)) {
+            ogs_error("ogs_sbi_ipv4_address_range_parseFromJSON() failed [start]");
             goto end;
         }
     }
@@ -68,8 +66,8 @@ ogs_sbi_ipv4_address_range_t *ogs_sbi_ipv4_address_range_parseFromJSON(cJSON *ip
     cJSON *end = cJSON_GetObjectItemCaseSensitive(ipv4_address_rangeJSON, "end");
 
     if (end) {
-        if (!cJSON_IsString(end))
-        {
+        if (!cJSON_IsString(end)) {
+            ogs_error("ogs_sbi_ipv4_address_range_parseFromJSON() failed [end]");
             goto end;
         }
     }

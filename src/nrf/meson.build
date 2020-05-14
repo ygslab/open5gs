@@ -18,7 +18,12 @@
 libnrf_sources = files('''
     context.c
     event.c
+    timer.c
+
+    nnrf-handler.c
     sbi-path.c
+
+    nf-sm.c
     nrf-sm.c
 
     init.c

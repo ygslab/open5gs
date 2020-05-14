@@ -17,7 +17,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_create(
     ogs_sbi_list_t* served_nwdaf_info
     )
 {
-    ogs_sbi_nrf_info_t *nrf_info_local_var = ogs_malloc(sizeof(ogs_sbi_nrf_info_t));
+    ogs_sbi_nrf_info_t *nrf_info_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_nrf_info_t));
     if (!nrf_info_local_var) {
         return NULL;
     }
@@ -41,61 +41,61 @@ void ogs_sbi_nrf_info_free(ogs_sbi_nrf_info_t *nrf_info)
         return;
     }
     ogs_sbi_lnode_t *node;
-    ogs_sbi_list_for_each(node, nrf_info->served_udr_info) {
+    ogs_sbi_list_for_each(nrf_info->served_udr_info, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_udr_info_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     ogs_sbi_list_free(nrf_info->served_udr_info);
-    ogs_sbi_list_for_each(node, nrf_info->served_udm_info) {
+    ogs_sbi_list_for_each(nrf_info->served_udm_info, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_udm_info_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     ogs_sbi_list_free(nrf_info->served_udm_info);
-    ogs_sbi_list_for_each(node, nrf_info->served_ausf_info) {
+    ogs_sbi_list_for_each(nrf_info->served_ausf_info, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_ausf_info_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     ogs_sbi_list_free(nrf_info->served_ausf_info);
-    ogs_sbi_list_for_each(node, nrf_info->served_amf_info) {
+    ogs_sbi_list_for_each(nrf_info->served_amf_info, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_amf_info_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     ogs_sbi_list_free(nrf_info->served_amf_info);
-    ogs_sbi_list_for_each(node, nrf_info->served_smf_info) {
+    ogs_sbi_list_for_each(nrf_info->served_smf_info, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_smf_info_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     ogs_sbi_list_free(nrf_info->served_smf_info);
-    ogs_sbi_list_for_each(node, nrf_info->served_upf_info) {
+    ogs_sbi_list_for_each(nrf_info->served_upf_info, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_upf_info_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     ogs_sbi_list_free(nrf_info->served_upf_info);
-    ogs_sbi_list_for_each(node, nrf_info->served_pcf_info) {
+    ogs_sbi_list_for_each(nrf_info->served_pcf_info, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_pcf_info_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     ogs_sbi_list_free(nrf_info->served_pcf_info);
-    ogs_sbi_list_for_each(node, nrf_info->served_bsf_info) {
+    ogs_sbi_list_for_each(nrf_info->served_bsf_info, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_bsf_info_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     ogs_sbi_list_free(nrf_info->served_bsf_info);
-    ogs_sbi_list_for_each(node, nrf_info->served_chf_info) {
+    ogs_sbi_list_for_each(nrf_info->served_chf_info, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_chf_info_free(localKeyValue->value);
         ogs_free(localKeyValue);
     }
     ogs_sbi_list_free(nrf_info->served_chf_info);
-    ogs_sbi_list_for_each(node, nrf_info->served_nwdaf_info) {
+    ogs_sbi_list_for_each(nrf_info->served_nwdaf_info, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_nwdaf_info_free(localKeyValue->value);
         ogs_free(localKeyValue);
@@ -110,16 +110,18 @@ cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info)
     if (nrf_info->served_udr_info) {
         cJSON *served_udr_info = cJSON_AddObjectToObject(item, "servedUdrInfo");
         if (served_udr_info == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_udr_info]");
+            goto end;
         }
         cJSON *localMapObject = served_udr_info;
         ogs_sbi_lnode_t *served_udr_info_node;
         if (nrf_info->served_udr_info) {
-            ogs_sbi_list_for_each(served_udr_info_node, nrf_info->served_udr_info) {
+            ogs_sbi_list_for_each(nrf_info->served_udr_info, served_udr_info_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)served_udr_info_node->data;
                 cJSON *itemLocal = ogs_sbi_udr_info_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_udr_info]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(served_udr_info, localKeyValue->key, itemLocal);
             }
@@ -129,16 +131,18 @@ cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info)
     if (nrf_info->served_udm_info) {
         cJSON *served_udm_info = cJSON_AddObjectToObject(item, "servedUdmInfo");
         if (served_udm_info == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_udm_info]");
+            goto end;
         }
         cJSON *localMapObject = served_udm_info;
         ogs_sbi_lnode_t *served_udm_info_node;
         if (nrf_info->served_udm_info) {
-            ogs_sbi_list_for_each(served_udm_info_node, nrf_info->served_udm_info) {
+            ogs_sbi_list_for_each(nrf_info->served_udm_info, served_udm_info_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)served_udm_info_node->data;
                 cJSON *itemLocal = ogs_sbi_udm_info_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_udm_info]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(served_udm_info, localKeyValue->key, itemLocal);
             }
@@ -148,16 +152,18 @@ cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info)
     if (nrf_info->served_ausf_info) {
         cJSON *served_ausf_info = cJSON_AddObjectToObject(item, "servedAusfInfo");
         if (served_ausf_info == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_ausf_info]");
+            goto end;
         }
         cJSON *localMapObject = served_ausf_info;
         ogs_sbi_lnode_t *served_ausf_info_node;
         if (nrf_info->served_ausf_info) {
-            ogs_sbi_list_for_each(served_ausf_info_node, nrf_info->served_ausf_info) {
+            ogs_sbi_list_for_each(nrf_info->served_ausf_info, served_ausf_info_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)served_ausf_info_node->data;
                 cJSON *itemLocal = ogs_sbi_ausf_info_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_ausf_info]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(served_ausf_info, localKeyValue->key, itemLocal);
             }
@@ -167,16 +173,18 @@ cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info)
     if (nrf_info->served_amf_info) {
         cJSON *served_amf_info = cJSON_AddObjectToObject(item, "servedAmfInfo");
         if (served_amf_info == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_amf_info]");
+            goto end;
         }
         cJSON *localMapObject = served_amf_info;
         ogs_sbi_lnode_t *served_amf_info_node;
         if (nrf_info->served_amf_info) {
-            ogs_sbi_list_for_each(served_amf_info_node, nrf_info->served_amf_info) {
+            ogs_sbi_list_for_each(nrf_info->served_amf_info, served_amf_info_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)served_amf_info_node->data;
                 cJSON *itemLocal = ogs_sbi_amf_info_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_amf_info]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(served_amf_info, localKeyValue->key, itemLocal);
             }
@@ -186,16 +194,18 @@ cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info)
     if (nrf_info->served_smf_info) {
         cJSON *served_smf_info = cJSON_AddObjectToObject(item, "servedSmfInfo");
         if (served_smf_info == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_smf_info]");
+            goto end;
         }
         cJSON *localMapObject = served_smf_info;
         ogs_sbi_lnode_t *served_smf_info_node;
         if (nrf_info->served_smf_info) {
-            ogs_sbi_list_for_each(served_smf_info_node, nrf_info->served_smf_info) {
+            ogs_sbi_list_for_each(nrf_info->served_smf_info, served_smf_info_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)served_smf_info_node->data;
                 cJSON *itemLocal = ogs_sbi_smf_info_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_smf_info]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(served_smf_info, localKeyValue->key, itemLocal);
             }
@@ -205,16 +215,18 @@ cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info)
     if (nrf_info->served_upf_info) {
         cJSON *served_upf_info = cJSON_AddObjectToObject(item, "servedUpfInfo");
         if (served_upf_info == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_upf_info]");
+            goto end;
         }
         cJSON *localMapObject = served_upf_info;
         ogs_sbi_lnode_t *served_upf_info_node;
         if (nrf_info->served_upf_info) {
-            ogs_sbi_list_for_each(served_upf_info_node, nrf_info->served_upf_info) {
+            ogs_sbi_list_for_each(nrf_info->served_upf_info, served_upf_info_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)served_upf_info_node->data;
                 cJSON *itemLocal = ogs_sbi_upf_info_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_upf_info]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(served_upf_info, localKeyValue->key, itemLocal);
             }
@@ -224,16 +236,18 @@ cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info)
     if (nrf_info->served_pcf_info) {
         cJSON *served_pcf_info = cJSON_AddObjectToObject(item, "servedPcfInfo");
         if (served_pcf_info == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_pcf_info]");
+            goto end;
         }
         cJSON *localMapObject = served_pcf_info;
         ogs_sbi_lnode_t *served_pcf_info_node;
         if (nrf_info->served_pcf_info) {
-            ogs_sbi_list_for_each(served_pcf_info_node, nrf_info->served_pcf_info) {
+            ogs_sbi_list_for_each(nrf_info->served_pcf_info, served_pcf_info_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)served_pcf_info_node->data;
                 cJSON *itemLocal = ogs_sbi_pcf_info_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_pcf_info]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(served_pcf_info, localKeyValue->key, itemLocal);
             }
@@ -243,16 +257,18 @@ cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info)
     if (nrf_info->served_bsf_info) {
         cJSON *served_bsf_info = cJSON_AddObjectToObject(item, "servedBsfInfo");
         if (served_bsf_info == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_bsf_info]");
+            goto end;
         }
         cJSON *localMapObject = served_bsf_info;
         ogs_sbi_lnode_t *served_bsf_info_node;
         if (nrf_info->served_bsf_info) {
-            ogs_sbi_list_for_each(served_bsf_info_node, nrf_info->served_bsf_info) {
+            ogs_sbi_list_for_each(nrf_info->served_bsf_info, served_bsf_info_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)served_bsf_info_node->data;
                 cJSON *itemLocal = ogs_sbi_bsf_info_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_bsf_info]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(served_bsf_info, localKeyValue->key, itemLocal);
             }
@@ -262,16 +278,18 @@ cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info)
     if (nrf_info->served_chf_info) {
         cJSON *served_chf_info = cJSON_AddObjectToObject(item, "servedChfInfo");
         if (served_chf_info == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_chf_info]");
+            goto end;
         }
         cJSON *localMapObject = served_chf_info;
         ogs_sbi_lnode_t *served_chf_info_node;
         if (nrf_info->served_chf_info) {
-            ogs_sbi_list_for_each(served_chf_info_node, nrf_info->served_chf_info) {
+            ogs_sbi_list_for_each(nrf_info->served_chf_info, served_chf_info_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)served_chf_info_node->data;
                 cJSON *itemLocal = ogs_sbi_chf_info_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_chf_info]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(served_chf_info, localKeyValue->key, itemLocal);
             }
@@ -281,28 +299,26 @@ cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info)
     if (nrf_info->served_nwdaf_info) {
         cJSON *served_nwdaf_info = cJSON_AddObjectToObject(item, "servedNwdafInfo");
         if (served_nwdaf_info == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_nwdaf_info]");
+            goto end;
         }
         cJSON *localMapObject = served_nwdaf_info;
         ogs_sbi_lnode_t *served_nwdaf_info_node;
         if (nrf_info->served_nwdaf_info) {
-            ogs_sbi_list_for_each(served_nwdaf_info_node, nrf_info->served_nwdaf_info) {
+            ogs_sbi_list_for_each(nrf_info->served_nwdaf_info, served_nwdaf_info_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)served_nwdaf_info_node->data;
                 cJSON *itemLocal = ogs_sbi_nwdaf_info_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_nrf_info_convertToJSON() failed [served_nwdaf_info]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(served_nwdaf_info, localKeyValue->key, itemLocal);
             }
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
@@ -314,6 +330,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
     if (served_udr_info) {
         cJSON *served_udr_info_local_map;
         if (!cJSON_IsObject(served_udr_info)) {
+            ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_udr_info]");
             goto end;
         }
         served_udr_infoList = ogs_sbi_list_create();
@@ -321,6 +338,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
         cJSON_ArrayForEach(served_udr_info_local_map, served_udr_info) {
             cJSON *localMapObject = served_udr_info_local_map;
             if (!cJSON_IsObject(served_udr_info_local_map)) {
+                ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_udr_info]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(
@@ -335,6 +353,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
     if (served_udm_info) {
         cJSON *served_udm_info_local_map;
         if (!cJSON_IsObject(served_udm_info)) {
+            ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_udm_info]");
             goto end;
         }
         served_udm_infoList = ogs_sbi_list_create();
@@ -342,6 +361,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
         cJSON_ArrayForEach(served_udm_info_local_map, served_udm_info) {
             cJSON *localMapObject = served_udm_info_local_map;
             if (!cJSON_IsObject(served_udm_info_local_map)) {
+                ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_udm_info]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(
@@ -356,6 +376,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
     if (served_ausf_info) {
         cJSON *served_ausf_info_local_map;
         if (!cJSON_IsObject(served_ausf_info)) {
+            ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_ausf_info]");
             goto end;
         }
         served_ausf_infoList = ogs_sbi_list_create();
@@ -363,6 +384,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
         cJSON_ArrayForEach(served_ausf_info_local_map, served_ausf_info) {
             cJSON *localMapObject = served_ausf_info_local_map;
             if (!cJSON_IsObject(served_ausf_info_local_map)) {
+                ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_ausf_info]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(
@@ -377,6 +399,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
     if (served_amf_info) {
         cJSON *served_amf_info_local_map;
         if (!cJSON_IsObject(served_amf_info)) {
+            ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_amf_info]");
             goto end;
         }
         served_amf_infoList = ogs_sbi_list_create();
@@ -384,6 +407,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
         cJSON_ArrayForEach(served_amf_info_local_map, served_amf_info) {
             cJSON *localMapObject = served_amf_info_local_map;
             if (!cJSON_IsObject(served_amf_info_local_map)) {
+                ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_amf_info]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(
@@ -398,6 +422,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
     if (served_smf_info) {
         cJSON *served_smf_info_local_map;
         if (!cJSON_IsObject(served_smf_info)) {
+            ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_smf_info]");
             goto end;
         }
         served_smf_infoList = ogs_sbi_list_create();
@@ -405,6 +430,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
         cJSON_ArrayForEach(served_smf_info_local_map, served_smf_info) {
             cJSON *localMapObject = served_smf_info_local_map;
             if (!cJSON_IsObject(served_smf_info_local_map)) {
+                ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_smf_info]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(
@@ -419,6 +445,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
     if (served_upf_info) {
         cJSON *served_upf_info_local_map;
         if (!cJSON_IsObject(served_upf_info)) {
+            ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_upf_info]");
             goto end;
         }
         served_upf_infoList = ogs_sbi_list_create();
@@ -426,6 +453,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
         cJSON_ArrayForEach(served_upf_info_local_map, served_upf_info) {
             cJSON *localMapObject = served_upf_info_local_map;
             if (!cJSON_IsObject(served_upf_info_local_map)) {
+                ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_upf_info]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(
@@ -440,6 +468,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
     if (served_pcf_info) {
         cJSON *served_pcf_info_local_map;
         if (!cJSON_IsObject(served_pcf_info)) {
+            ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_pcf_info]");
             goto end;
         }
         served_pcf_infoList = ogs_sbi_list_create();
@@ -447,6 +476,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
         cJSON_ArrayForEach(served_pcf_info_local_map, served_pcf_info) {
             cJSON *localMapObject = served_pcf_info_local_map;
             if (!cJSON_IsObject(served_pcf_info_local_map)) {
+                ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_pcf_info]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(
@@ -461,6 +491,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
     if (served_bsf_info) {
         cJSON *served_bsf_info_local_map;
         if (!cJSON_IsObject(served_bsf_info)) {
+            ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_bsf_info]");
             goto end;
         }
         served_bsf_infoList = ogs_sbi_list_create();
@@ -468,6 +499,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
         cJSON_ArrayForEach(served_bsf_info_local_map, served_bsf_info) {
             cJSON *localMapObject = served_bsf_info_local_map;
             if (!cJSON_IsObject(served_bsf_info_local_map)) {
+                ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_bsf_info]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(
@@ -482,6 +514,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
     if (served_chf_info) {
         cJSON *served_chf_info_local_map;
         if (!cJSON_IsObject(served_chf_info)) {
+            ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_chf_info]");
             goto end;
         }
         served_chf_infoList = ogs_sbi_list_create();
@@ -489,6 +522,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
         cJSON_ArrayForEach(served_chf_info_local_map, served_chf_info) {
             cJSON *localMapObject = served_chf_info_local_map;
             if (!cJSON_IsObject(served_chf_info_local_map)) {
+                ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_chf_info]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(
@@ -503,6 +537,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
     if (served_nwdaf_info) {
         cJSON *served_nwdaf_info_local_map;
         if (!cJSON_IsObject(served_nwdaf_info)) {
+            ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_nwdaf_info]");
             goto end;
         }
         served_nwdaf_infoList = ogs_sbi_list_create();
@@ -510,6 +545,7 @@ ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON)
         cJSON_ArrayForEach(served_nwdaf_info_local_map, served_nwdaf_info) {
             cJSON *localMapObject = served_nwdaf_info_local_map;
             if (!cJSON_IsObject(served_nwdaf_info_local_map)) {
+                ogs_error("ogs_sbi_nrf_info_parseFromJSON() failed [served_nwdaf_info]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(

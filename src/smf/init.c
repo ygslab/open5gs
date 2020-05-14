@@ -18,9 +18,6 @@
  */
 
 #include "context.h"
-#include "event.h"
-#include "smf-sm.h"
-
 #include "fd-path.h"
 
 static ogs_thread_t *thread;
@@ -34,7 +31,8 @@ int smf_initialize()
 
     ogs_pfcp_context_init(ogs_config()->max.upf * OGS_MAX_NUM_OF_GTPU_RESOURCE);
     smf_context_init();
-    smf_event_init();
+    smf_event_init(); /* Create event with poll, timer */
+    ogs_sbi_context_init(smf_self()->pollset, smf_self()->timer_mgr); 
 
     rv = ogs_gtp_xact_init(smf_self()->timer_mgr, 512);
     if (rv != OGS_OK) return rv;
@@ -43,6 +41,9 @@ int smf_initialize()
     if (rv != OGS_OK) return rv;
 
     rv = ogs_pfcp_context_parse_config("smf", "upf");
+    if (rv != OGS_OK) return rv;
+
+    rv = ogs_sbi_context_parse_config("smf", "nrf");
     if (rv != OGS_OK) return rv;
 
     rv = smf_context_parse_config();
@@ -70,11 +71,13 @@ void smf_terminate(void)
 {
     if (!initialized) return;
 
-    smf_event_term();
+    smf_event_term(); /* Terminate event */
 
     ogs_thread_destroy(thread);
 
     smf_fd_final();
+
+    ogs_sbi_context_final();
 
     smf_context_final();
     ogs_pfcp_context_final();
@@ -82,7 +85,7 @@ void smf_terminate(void)
     ogs_pfcp_xact_final();
     ogs_gtp_xact_final();
 
-    smf_event_final();
+    smf_event_final(); /* Destroy event */
 }
 
 static void smf_main(void *data)

@@ -9,7 +9,7 @@ ogs_sbi_plmn_id_t *ogs_sbi_plmn_id_create(
     char *mnc
     )
 {
-    ogs_sbi_plmn_id_t *plmn_id_local_var = ogs_malloc(sizeof(ogs_sbi_plmn_id_t));
+    ogs_sbi_plmn_id_t *plmn_id_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_plmn_id_t));
     if (!plmn_id_local_var) {
         return NULL;
     }
@@ -34,25 +34,25 @@ cJSON *ogs_sbi_plmn_id_convertToJSON(ogs_sbi_plmn_id_t *plmn_id)
 {
     cJSON *item = cJSON_CreateObject();
     if (!plmn_id->mcc) {
-        goto fail;
+        ogs_error("ogs_sbi_plmn_id_convertToJSON() failed [mcc]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "mcc", plmn_id->mcc) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_plmn_id_convertToJSON() failed [mcc]");
+        goto end;
     }
 
     if (!plmn_id->mnc) {
-        goto fail;
+        ogs_error("ogs_sbi_plmn_id_convertToJSON() failed [mnc]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "mnc", plmn_id->mnc) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_plmn_id_convertToJSON() failed [mnc]");
+        goto end;
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_plmn_id_t *ogs_sbi_plmn_id_parseFromJSON(cJSON *plmn_idJSON)
@@ -60,23 +60,25 @@ ogs_sbi_plmn_id_t *ogs_sbi_plmn_id_parseFromJSON(cJSON *plmn_idJSON)
     ogs_sbi_plmn_id_t *plmn_id_local_var = NULL;
     cJSON *mcc = cJSON_GetObjectItemCaseSensitive(plmn_idJSON, "mcc");
     if (!mcc) {
+        ogs_error("ogs_sbi_plmn_id_parseFromJSON() failed [mcc]");
         goto end;
     }
 
 
-    if (!cJSON_IsString(mcc))
-    {
+    if (!cJSON_IsString(mcc)) {
+        ogs_error("ogs_sbi_plmn_id_parseFromJSON() failed [mcc]");
         goto end;
     }
 
     cJSON *mnc = cJSON_GetObjectItemCaseSensitive(plmn_idJSON, "mnc");
     if (!mnc) {
+        ogs_error("ogs_sbi_plmn_id_parseFromJSON() failed [mnc]");
         goto end;
     }
 
 
-    if (!cJSON_IsString(mnc))
-    {
+    if (!cJSON_IsString(mnc)) {
+        ogs_error("ogs_sbi_plmn_id_parseFromJSON() failed [mnc]");
         goto end;
     }
 

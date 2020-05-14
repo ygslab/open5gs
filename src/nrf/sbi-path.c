@@ -20,16 +20,20 @@
 #include "sbi-path.h"
 #include "context.h"
 #include "event.h"
-#include "microhttpd.h"
 
-static int sbi_recv_cb(void *data)
+static int server_cb(ogs_sbi_session_t *session, ogs_sbi_request_t *request)
 {
     nrf_event_t *e = NULL;
     int rv;
 
-    e = nrf_event_new(NRF_EVT_SBI_MESSAGE);
+    ogs_assert(session);
+    ogs_assert(request);
+
+    e = nrf_event_new(NRF_EVT_SBI_SERVER);
     ogs_assert(e);
-    e->server.connection = data;
+
+    e->sbi.session = session;
+    e->sbi.request = request;
 
     rv = ogs_queue_push(nrf_self()->queue, e);
     if (rv != OGS_OK) {
@@ -43,12 +47,12 @@ static int sbi_recv_cb(void *data)
 
 int nrf_sbi_open(void)
 {
-    ogs_sbi_server_add(NULL, sbi_recv_cb);
+    ogs_sbi_server_start_all(server_cb);
 
     return OGS_OK;
 }
 
 void nrf_sbi_close(void)
 {
-    ogs_sbi_server_remove_all();
+    ogs_sbi_server_stop_all();
 }

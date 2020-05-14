@@ -18,7 +18,6 @@
  */
 
 #include "context.h"
-#include "nrf-sm.h"
 
 static ogs_thread_t *thread;
 static void nrf_main(void *data);
@@ -29,8 +28,8 @@ int nrf_initialize()
     int rv;
 
     nrf_context_init();
-    nrf_event_init(); /* Create event with timer, poll */
-    ogs_sbi_context_init(nrf_self()->pollset); 
+    nrf_event_init(); /* Create event with poll, timer */
+    ogs_sbi_context_init(nrf_self()->pollset, nrf_self()->timer_mgr); 
 
     rv = ogs_sbi_context_parse_config("nrf", NULL);
     if (rv != OGS_OK) return rv;
@@ -40,9 +39,6 @@ int nrf_initialize()
 
     rv = ogs_log_config_domain(
             ogs_config()->logger.domain, ogs_config()->logger.level);
-    if (rv != OGS_OK) return rv;
-
-    rv = nrf_db_init();
     if (rv != OGS_OK) return rv;
 
     thread = ogs_thread_create(nrf_main, NULL);
@@ -61,9 +57,8 @@ void nrf_terminate(void)
 
     ogs_thread_destroy(thread);
 
-    nrf_db_final();
-
     ogs_sbi_context_final();
+
     nrf_context_final();
 
     nrf_event_final(); /* Destroy event */
@@ -72,10 +67,11 @@ void nrf_terminate(void)
 static void nrf_main(void *data)
 {
     ogs_fsm_t nrf_sm;
+    nrf_event_t e;
     int rv;
 
     ogs_fsm_create(&nrf_sm, nrf_state_initial, nrf_state_final);
-    ogs_fsm_init(&nrf_sm, 0);
+    ogs_fsm_init(&nrf_sm, &e);
 
     for ( ;; ) {
         ogs_pollset_poll(nrf_self()->pollset,

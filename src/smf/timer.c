@@ -22,9 +22,15 @@
 #include "context.h"
 
 static smf_timer_cfg_t g_smf_timer_cfg[MAX_NUM_OF_SMF_TIMER] = {
-    [SMF_TIMER_ASSOCIATION] = 
+    [SMF_TIMER_PFCP_ASSOCIATION] =
         { .duration = ogs_time_from_sec(12) },
-    [SMF_TIMER_HEARTBEAT] =
+    [SMF_TIMER_PFCP_HEARTBEAT] =
+        { .duration = ogs_time_from_sec(12) },
+    [SMF_TIMER_SBI_REGISTRATION] =
+        { .duration = ogs_time_from_sec(3) },
+    [SMF_TIMER_SBI_HEARTBEAT] =
+        { .duration = ogs_time_from_sec(3) },
+    [SMF_TIMER_SBI_NO_HEARTBEAT] =
         { .duration = ogs_time_from_sec(12) },
 };
 
@@ -37,10 +43,16 @@ smf_timer_cfg_t *smf_timer_cfg(smf_timer_e id)
 const char *smf_timer_get_name(smf_timer_e id)
 {
     switch (id) {
-    case SMF_TIMER_ASSOCIATION:
-        return "SMF_TIMER_ASSOCIATION";
-    case SMF_TIMER_HEARTBEAT:
-        return "SMF_TIMER_HEARTBEAT";
+    case SMF_TIMER_PFCP_ASSOCIATION:
+        return "SMF_TIMER_PFCP_ASSOCIATION";
+    case SMF_TIMER_PFCP_HEARTBEAT:
+        return "SMF_TIMER_PFCP_HEARTBEAT";
+    case SMF_TIMER_SBI_REGISTRATION:
+        return "SMF_TIMER_SBI_REGISTRATION";
+    case SMF_TIMER_SBI_HEARTBEAT:
+        return "SMF_TIMER_SBI_HEARTBEAT";
+    case SMF_TIMER_SBI_NO_HEARTBEAT:
+        return "SMF_TIMER_SBI_NO_HEARTBEAT";
     default: 
        break;
     }
@@ -54,9 +66,25 @@ static void timer_send_event(int timer_id, void *data)
     smf_event_t *e = NULL;
     ogs_assert(data);
 
-    e = smf_event_new(SMF_EVT_N4_TIMER);
-    e->timer_id = timer_id;
-    e->pfcp_node = data;
+    switch (timer_id) {
+    case SMF_TIMER_PFCP_ASSOCIATION:
+    case SMF_TIMER_PFCP_HEARTBEAT:
+        e = smf_event_new(SMF_EVT_N4_TIMER);
+        e->timer_id = timer_id;
+        e->pfcp_node = data;
+        break;
+    case SMF_TIMER_SBI_REGISTRATION:
+    case SMF_TIMER_SBI_HEARTBEAT:
+    case SMF_TIMER_SBI_NO_HEARTBEAT:
+        e = smf_event_new(SMF_EVT_SBI_TIMER);
+        e->timer_id = timer_id;
+        e->sbi.data = data;
+        break;
+    default:
+        ogs_fatal("Unknown timer id[%d]", timer_id);
+        ogs_assert_if_reached();
+        break;
+    }
 
     rv = ogs_queue_push(smf_self()->queue, e);
     if (rv != OGS_OK) {
@@ -65,12 +93,27 @@ static void timer_send_event(int timer_id, void *data)
     }
 }
 
-void smf_timer_association(void *data)
+void smf_timer_pfcp_association(void *data)
 {
-    timer_send_event(SMF_TIMER_ASSOCIATION, data);
+    timer_send_event(SMF_TIMER_PFCP_ASSOCIATION, data);
 }
 
-void smf_timer_heartbeat(void *data)
+void smf_timer_pfcp_heartbeat(void *data)
 {
-    timer_send_event(SMF_TIMER_HEARTBEAT, data);
+    timer_send_event(SMF_TIMER_PFCP_HEARTBEAT, data);
+}
+
+void smf_timer_sbi_registration(void *data)
+{
+    timer_send_event(SMF_TIMER_SBI_REGISTRATION, data);
+}
+
+void smf_timer_sbi_heartbeat(void *data)
+{
+    timer_send_event(SMF_TIMER_SBI_HEARTBEAT, data);
+}
+
+void smf_timer_sbi_no_heartbeat(void *data)
+{
+    timer_send_event(SMF_TIMER_SBI_NO_HEARTBEAT, data);
 }

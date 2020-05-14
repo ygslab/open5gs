@@ -8,7 +8,7 @@ ogs_sbi_inline_response_200_t *ogs_sbi_inline_response_200_create(
     ogs_sbi_list_t* _links
     )
 {
-    ogs_sbi_inline_response_200_t *inline_response_200_local_var = ogs_malloc(sizeof(ogs_sbi_inline_response_200_t));
+    ogs_sbi_inline_response_200_t *inline_response_200_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_inline_response_200_t));
     if (!inline_response_200_local_var) {
         return NULL;
     }
@@ -23,7 +23,7 @@ void ogs_sbi_inline_response_200_free(ogs_sbi_inline_response_200_t *inline_resp
         return;
     }
     ogs_sbi_lnode_t *node;
-    ogs_sbi_list_for_each(node, inline_response_200->_links) {
+    ogs_sbi_list_for_each(inline_response_200->_links, node) {
         ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)node->data;
         ogs_sbi_links_value_schema_free(localKeyValue->value);
         ogs_free(localKeyValue);
@@ -38,28 +38,26 @@ cJSON *ogs_sbi_inline_response_200_convertToJSON(ogs_sbi_inline_response_200_t *
     if (inline_response_200->_links) {
         cJSON *_links = cJSON_AddObjectToObject(item, "_links");
         if (_links == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_inline_response_200_convertToJSON() failed [_links]");
+            goto end;
         }
         cJSON *localMapObject = _links;
         ogs_sbi_lnode_t *_links_node;
         if (inline_response_200->_links) {
-            ogs_sbi_list_for_each(_links_node, inline_response_200->_links) {
+            ogs_sbi_list_for_each(inline_response_200->_links, _links_node) {
                 ogs_sbi_map_t *localKeyValue = (ogs_sbi_map_t*)_links_node->data;
                 cJSON *itemLocal = ogs_sbi_links_value_schema_convertToJSON(localKeyValue->value);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_inline_response_200_convertToJSON() failed [_links]");
+                    goto end;
                 }
                 cJSON_AddItemToObject(_links, localKeyValue->key, itemLocal);
             }
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_inline_response_200_t *ogs_sbi_inline_response_200_parseFromJSON(cJSON *inline_response_200JSON)
@@ -71,6 +69,7 @@ ogs_sbi_inline_response_200_t *ogs_sbi_inline_response_200_parseFromJSON(cJSON *
     if (_links) {
         cJSON *_links_local_map;
         if (!cJSON_IsObject(_links)) {
+            ogs_error("ogs_sbi_inline_response_200_parseFromJSON() failed [_links]");
             goto end;
         }
         _linksList = ogs_sbi_list_create();
@@ -78,6 +77,7 @@ ogs_sbi_inline_response_200_t *ogs_sbi_inline_response_200_parseFromJSON(cJSON *
         cJSON_ArrayForEach(_links_local_map, _links) {
             cJSON *localMapObject = _links_local_map;
             if (!cJSON_IsObject(_links_local_map)) {
+                ogs_error("ogs_sbi_inline_response_200_parseFromJSON() failed [_links]");
                 goto end;
             }
             localMapKeyPair = ogs_sbi_map_create(

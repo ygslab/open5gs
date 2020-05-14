@@ -11,7 +11,7 @@ ogs_sbi_bsf_info_t *ogs_sbi_bsf_info_create(
     ogs_sbi_list_t *ipv6_prefix_ranges
     )
 {
-    ogs_sbi_bsf_info_t *bsf_info_local_var = ogs_malloc(sizeof(ogs_sbi_bsf_info_t));
+    ogs_sbi_bsf_info_t *bsf_info_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_bsf_info_t));
     if (!bsf_info_local_var) {
         return NULL;
     }
@@ -29,19 +29,19 @@ void ogs_sbi_bsf_info_free(ogs_sbi_bsf_info_t *bsf_info)
         return;
     }
     ogs_sbi_lnode_t *node;
-    ogs_sbi_list_for_each(node, bsf_info->dnn_list) {
+    ogs_sbi_list_for_each(bsf_info->dnn_list, node) {
         ogs_free(node->data);
     }
     ogs_sbi_list_free(bsf_info->dnn_list);
-    ogs_sbi_list_for_each(node, bsf_info->ip_domain_list) {
+    ogs_sbi_list_for_each(bsf_info->ip_domain_list, node) {
         ogs_free(node->data);
     }
     ogs_sbi_list_free(bsf_info->ip_domain_list);
-    ogs_sbi_list_for_each(node, bsf_info->ipv4_address_ranges) {
+    ogs_sbi_list_for_each(bsf_info->ipv4_address_ranges, node) {
         ogs_sbi_ipv4_address_range_free(node->data);
     }
     ogs_sbi_list_free(bsf_info->ipv4_address_ranges);
-    ogs_sbi_list_for_each(node, bsf_info->ipv6_prefix_ranges) {
+    ogs_sbi_list_for_each(bsf_info->ipv6_prefix_ranges, node) {
         ogs_sbi_ipv6_prefix_range_free(node->data);
     }
     ogs_sbi_list_free(bsf_info->ipv6_prefix_ranges);
@@ -54,13 +54,15 @@ cJSON *ogs_sbi_bsf_info_convertToJSON(ogs_sbi_bsf_info_t *bsf_info)
     if (bsf_info->dnn_list) {
         cJSON *dnn_list = cJSON_AddArrayToObject(item, "dnnList");
         if (dnn_list == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_bsf_info_convertToJSON() failed [dnn_list]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *dnn_list_node;
-        ogs_sbi_list_for_each(dnn_list_node, bsf_info->dnn_list) {
+        ogs_sbi_list_for_each(bsf_info->dnn_list, dnn_list_node)  {
             if (cJSON_AddStringToObject(dnn_list, "", (char*)dnn_list_node->data) == NULL) {
-                goto fail;
+                ogs_error("ogs_sbi_bsf_info_convertToJSON() failed [dnn_list]");
+                goto end;
             }
         }
     }
@@ -68,13 +70,15 @@ cJSON *ogs_sbi_bsf_info_convertToJSON(ogs_sbi_bsf_info_t *bsf_info)
     if (bsf_info->ip_domain_list) {
         cJSON *ip_domain_list = cJSON_AddArrayToObject(item, "ipDomainList");
         if (ip_domain_list == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_bsf_info_convertToJSON() failed [ip_domain_list]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *ip_domain_list_node;
-        ogs_sbi_list_for_each(ip_domain_list_node, bsf_info->ip_domain_list) {
+        ogs_sbi_list_for_each(bsf_info->ip_domain_list, ip_domain_list_node)  {
             if (cJSON_AddStringToObject(ip_domain_list, "", (char*)ip_domain_list_node->data) == NULL) {
-                goto fail;
+                ogs_error("ogs_sbi_bsf_info_convertToJSON() failed [ip_domain_list]");
+                goto end;
             }
         }
     }
@@ -82,15 +86,17 @@ cJSON *ogs_sbi_bsf_info_convertToJSON(ogs_sbi_bsf_info_t *bsf_info)
     if (bsf_info->ipv4_address_ranges) {
         cJSON *ipv4_address_ranges = cJSON_AddArrayToObject(item, "ipv4AddressRanges");
         if (ipv4_address_ranges == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_bsf_info_convertToJSON() failed [ipv4_address_ranges]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *ipv4_address_ranges_node;
         if (bsf_info->ipv4_address_ranges) {
-            ogs_sbi_list_for_each(ipv4_address_ranges_node, bsf_info->ipv4_address_ranges) {
+            ogs_sbi_list_for_each(bsf_info->ipv4_address_ranges, ipv4_address_ranges_node) {
                 cJSON *itemLocal = ogs_sbi_ipv4_address_range_convertToJSON(ipv4_address_ranges_node->data);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_bsf_info_convertToJSON() failed [ipv4_address_ranges]");
+                    goto end;
                 }
                 cJSON_AddItemToArray(ipv4_address_ranges, itemLocal);
             }
@@ -100,27 +106,25 @@ cJSON *ogs_sbi_bsf_info_convertToJSON(ogs_sbi_bsf_info_t *bsf_info)
     if (bsf_info->ipv6_prefix_ranges) {
         cJSON *ipv6_prefix_ranges = cJSON_AddArrayToObject(item, "ipv6PrefixRanges");
         if (ipv6_prefix_ranges == NULL) {
-            goto fail;
+            ogs_error("ogs_sbi_bsf_info_convertToJSON() failed [ipv6_prefix_ranges]");
+            goto end;
         }
 
         ogs_sbi_lnode_t *ipv6_prefix_ranges_node;
         if (bsf_info->ipv6_prefix_ranges) {
-            ogs_sbi_list_for_each(ipv6_prefix_ranges_node, bsf_info->ipv6_prefix_ranges) {
+            ogs_sbi_list_for_each(bsf_info->ipv6_prefix_ranges, ipv6_prefix_ranges_node) {
                 cJSON *itemLocal = ogs_sbi_ipv6_prefix_range_convertToJSON(ipv6_prefix_ranges_node->data);
                 if (itemLocal == NULL) {
-                    goto fail;
+                    ogs_error("ogs_sbi_bsf_info_convertToJSON() failed [ipv6_prefix_ranges]");
+                    goto end;
                 }
                 cJSON_AddItemToArray(ipv6_prefix_ranges, itemLocal);
             }
         }
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_bsf_info_t *ogs_sbi_bsf_info_parseFromJSON(cJSON *bsf_infoJSON)
@@ -132,12 +136,14 @@ ogs_sbi_bsf_info_t *ogs_sbi_bsf_info_parseFromJSON(cJSON *bsf_infoJSON)
     if (dnn_list) {
         cJSON *dnn_list_local;
         if (!cJSON_IsArray(dnn_list)) {
+            ogs_error("ogs_sbi_bsf_info_parseFromJSON() failed [dnn_list]");
             goto end;
         }
         dnn_listList = ogs_sbi_list_create();
 
         cJSON_ArrayForEach(dnn_list_local, dnn_list) {
             if (!cJSON_IsString(dnn_list_local)) {
+                ogs_error("ogs_sbi_bsf_info_parseFromJSON() failed [dnn_list]");
                 goto end;
             }
             ogs_sbi_list_add(dnn_listList, ogs_strdup(dnn_list_local->valuestring));
@@ -150,12 +156,14 @@ ogs_sbi_bsf_info_t *ogs_sbi_bsf_info_parseFromJSON(cJSON *bsf_infoJSON)
     if (ip_domain_list) {
         cJSON *ip_domain_list_local;
         if (!cJSON_IsArray(ip_domain_list)) {
+            ogs_error("ogs_sbi_bsf_info_parseFromJSON() failed [ip_domain_list]");
             goto end;
         }
         ip_domain_listList = ogs_sbi_list_create();
 
         cJSON_ArrayForEach(ip_domain_list_local, ip_domain_list) {
             if (!cJSON_IsString(ip_domain_list_local)) {
+                ogs_error("ogs_sbi_bsf_info_parseFromJSON() failed [ip_domain_list]");
                 goto end;
             }
             ogs_sbi_list_add(ip_domain_listList, ogs_strdup(ip_domain_list_local->valuestring));
@@ -168,13 +176,15 @@ ogs_sbi_bsf_info_t *ogs_sbi_bsf_info_parseFromJSON(cJSON *bsf_infoJSON)
     if (ipv4_address_ranges) {
         cJSON *ipv4_address_ranges_local_nonprimitive;
         if (!cJSON_IsArray(ipv4_address_ranges)) {
+            ogs_error("ogs_sbi_bsf_info_parseFromJSON() failed [ipv4_address_ranges]");
             goto end;
         }
 
         ipv4_address_rangesList = ogs_sbi_list_create();
 
-        cJSON_ArrayForEach(ipv4_address_ranges_local_nonprimitive,ipv4_address_ranges ) {
+        cJSON_ArrayForEach(ipv4_address_ranges_local_nonprimitive, ipv4_address_ranges ) {
             if (!cJSON_IsObject(ipv4_address_ranges_local_nonprimitive)) {
+                ogs_error("ogs_sbi_bsf_info_parseFromJSON() failed [ipv4_address_ranges]");
                 goto end;
             }
             ogs_sbi_ipv4_address_range_t *ipv4_address_rangesItem = ogs_sbi_ipv4_address_range_parseFromJSON(ipv4_address_ranges_local_nonprimitive);
@@ -189,13 +199,15 @@ ogs_sbi_bsf_info_t *ogs_sbi_bsf_info_parseFromJSON(cJSON *bsf_infoJSON)
     if (ipv6_prefix_ranges) {
         cJSON *ipv6_prefix_ranges_local_nonprimitive;
         if (!cJSON_IsArray(ipv6_prefix_ranges)) {
+            ogs_error("ogs_sbi_bsf_info_parseFromJSON() failed [ipv6_prefix_ranges]");
             goto end;
         }
 
         ipv6_prefix_rangesList = ogs_sbi_list_create();
 
-        cJSON_ArrayForEach(ipv6_prefix_ranges_local_nonprimitive,ipv6_prefix_ranges ) {
+        cJSON_ArrayForEach(ipv6_prefix_ranges_local_nonprimitive, ipv6_prefix_ranges ) {
             if (!cJSON_IsObject(ipv6_prefix_ranges_local_nonprimitive)) {
+                ogs_error("ogs_sbi_bsf_info_parseFromJSON() failed [ipv6_prefix_ranges]");
                 goto end;
             }
             ogs_sbi_ipv6_prefix_range_t *ipv6_prefix_rangesItem = ogs_sbi_ipv6_prefix_range_parseFromJSON(ipv6_prefix_ranges_local_nonprimitive);

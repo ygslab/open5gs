@@ -24,31 +24,54 @@ logger:
     file: @localstatedir@/log/open5gs/nrf.log
 
 #
-# sbi:
-#
-#  o SBI Server(all address avaiable)
-#
-#  o SBI Server(0.0.0.0:80)
-#    addr: 0.0.0.0
-#
-#  o SBI Server(127.0.0.1:80, [::1]:80)
-#    - addr: 127.0.0.1
-#    - addr: ::1
-#
-#  o SBI Server(different port)
-#    - addr: 127.0.0.1
-#      port: 8080
-#
-#  o SBI Server(address avaiable in `eth0` interface)
-#    dev: eth0
-#
-sbi:
-    addr: 127.0.0.1
-
-#
 # nrf:
 #
+#  <SBI Server>
+#
+#  o SBI Server(http://<all address available>:80)
+#    sbi:
+#
+#  o SBI Server(http://<any address>:7777)
+#    sbi:
+#      - addr:
+#          - 0.0.0.0
+#          - ::0
+#        port: 7777
+#
+#  o SBI Server(https://<all address avaiable>:443)
+#    sbi:
+#        tls:
+#          key: nrf.key
+#          pem: nrf.pem
+#
+#  o SBI Server(https://127.0.0.1:443, http://[::1]:80)
+#    sbi:
+#      - addr: 127.0.0.1
+#        tls:
+#          key: nrf.key
+#          pem: nrf.pem
+#      - addr: ::1
+#
+#  o SBI Server(http://nrf.open5gs.org:80)
+#    sbi:
+#      name: nrf.open5gs.org
+#
+#  o SBI Server(http://127.0.0.1:7777)
+#    sbi:
+#      - addr: 127.0.0.1
+#        port: 7777
+#
+#  o SBI Server(http://<eth0 IP address>:80)
+#    sbi:
+#      dev: eth0
+#
+#
 nrf:
+    sbi:
+      addr:
+        - 127.0.0.1
+        - ::1
+      port: 7777
 
 #
 # parameter:

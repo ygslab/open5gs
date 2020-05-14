@@ -7,7 +7,7 @@
 ogs_sbi_pdu_session_type_t *ogs_sbi_pdu_session_type_create(
     )
 {
-    ogs_sbi_pdu_session_type_t *pdu_session_type_local_var = ogs_malloc(sizeof(ogs_sbi_pdu_session_type_t));
+    ogs_sbi_pdu_session_type_t *pdu_session_type_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_pdu_session_type_t));
     if (!pdu_session_type_local_var) {
         return NULL;
     }
@@ -27,12 +27,8 @@ void ogs_sbi_pdu_session_type_free(ogs_sbi_pdu_session_type_t *pdu_session_type)
 cJSON *ogs_sbi_pdu_session_type_convertToJSON(ogs_sbi_pdu_session_type_t *pdu_session_type)
 {
     cJSON *item = cJSON_CreateObject();
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_pdu_session_type_t *ogs_sbi_pdu_session_type_parseFromJSON(cJSON *pdu_session_typeJSON)

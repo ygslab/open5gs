@@ -4,45 +4,23 @@
 #include <stdio.h>
 #include "n1_message_class.h"
 
-ogs_sbi_n1_message_class_t *ogs_sbi_n1_message_class_create(
-    )
+char* ogs_sbi_n1_message_class_ToString(ogs_sbi_n1_message_class_e n1_message_class)
 {
-    ogs_sbi_n1_message_class_t *n1_message_class_local_var = ogs_malloc(sizeof(ogs_sbi_n1_message_class_t));
-    if (!n1_message_class_local_var) {
-        return NULL;
-    }
-
-    return n1_message_class_local_var;
+    const char *n1_message_classArray[] =  { "NULL", "5GMM", "SM", "LPP", "SMS", "UPDP" };
+    return (char *)n1_message_classArray[n1_message_class];
 }
 
-void ogs_sbi_n1_message_class_free(ogs_sbi_n1_message_class_t *n1_message_class)
+ogs_sbi_n1_message_class_e ogs_sbi_n1_message_class_FromString(char* n1_message_class)
 {
-    if (NULL == n1_message_class) {
-        return;
+    int stringToReturn = 0;
+    const char *n1_message_classArray[] =  { "NULL", "5GMM", "SM", "LPP", "SMS", "UPDP" };
+    size_t sizeofArray = sizeof(n1_message_classArray) / sizeof(n1_message_classArray[0]);
+    while (stringToReturn < sizeofArray) {
+        if (strcmp(n1_message_class, n1_message_classArray[stringToReturn]) == 0) {
+            return stringToReturn;
+        }
+        stringToReturn++;
     }
-    ogs_sbi_lnode_t *node;
-    ogs_free(n1_message_class);
-}
-
-cJSON *ogs_sbi_n1_message_class_convertToJSON(ogs_sbi_n1_message_class_t *n1_message_class)
-{
-    cJSON *item = cJSON_CreateObject();
-    return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
-}
-
-ogs_sbi_n1_message_class_t *ogs_sbi_n1_message_class_parseFromJSON(cJSON *n1_message_classJSON)
-{
-    ogs_sbi_n1_message_class_t *n1_message_class_local_var = NULL;
-    n1_message_class_local_var = ogs_sbi_n1_message_class_create (
-        );
-
-    return n1_message_class_local_var;
-end:
-    return NULL;
+    return 0;
 }
 

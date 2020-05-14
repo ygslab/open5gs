@@ -19,25 +19,21 @@
 
 #include "ogs-app.h"
 #include "ogs-sbi.h"
+
+#include "sbi-private.h"
 #include "microhttpd.h"
 
-typedef struct request_s {
-    char                    *content;
-    size_t                  content_length;
-    bool                    suspended;
-} request_t;
-
-typedef struct connection_s {
+typedef struct ogs_sbi_session_s {
     ogs_lnode_t             lnode;
 
     struct MHD_Connection   *connection;
-    ogs_sbi_server_t        *server;
-} connection_t;
 
-OGS_LIST(server_list);
-OGS_POOL(server_pool, ogs_sbi_server_t);
-OGS_POOL(request_pool, request_t);
-OGS_POOL(connection_pool, connection_t);
+    ogs_sbi_request_t       *request;
+    ogs_sbi_server_t        *server;
+} ogs_sbi_session_t;
+
+static OGS_POOL(server_pool, ogs_sbi_server_t);
+static OGS_POOL(session_pool, ogs_sbi_session_t);
 
 static void run(short when, ogs_socket_t fd, void *data);
 static void notify_connection(void *cls,
@@ -59,122 +55,87 @@ static void notify_completed(
         void **con_cls,
         enum MHD_RequestTerminationCode toe);
 
-void ogs_sbi_server_init(void)
+void ogs_sbi_server_init(int num_of_session_pool)
 {
-    ogs_list_init(&server_list);
+    ogs_list_init(&ogs_sbi_self()->server_list);
     ogs_pool_init(&server_pool, ogs_config()->pool.sbi);
 
-    ogs_pool_init(&request_pool, 512); /* FIXME */
-    ogs_pool_init(&connection_pool, 512); /* FIXME */
+    ogs_pool_init(&session_pool, num_of_session_pool);
 }
 void ogs_sbi_server_final(void)
 {
+    ogs_sbi_server_remove_all();
+
     ogs_pool_final(&server_pool);
-    ogs_pool_final(&request_pool);
-    ogs_pool_final(&connection_pool);
+    ogs_pool_final(&session_pool);
 }
 
-static request_t *request_new(void)
+static ogs_sbi_session_t *session_add(ogs_sbi_server_t *server,
+        ogs_sbi_request_t *request, struct MHD_Connection *connection)
 {
-    request_t *req = NULL;
-
-    ogs_pool_alloc(&request_pool, &req);
-    ogs_assert(req);
-    memset(req, 0, sizeof(request_t));
-
-    return req;
-}
-
-static void request_free(request_t *req)
-{
-    ogs_pool_free(&request_pool, req);
-}
-
-static connection_t *connection_add(ogs_sbi_server_t *server,
-        struct MHD_Connection *connection)
-{
-    connection_t *conn = NULL;
+    ogs_sbi_session_t *session = NULL;
 
     ogs_assert(server);
+    ogs_assert(request);
     ogs_assert(connection);
 
-    ogs_pool_alloc(&connection_pool, &conn);
-    ogs_assert(conn);
-    memset(conn, 0, sizeof(connection_t));
+    ogs_pool_alloc(&session_pool, &session);
+    ogs_assert(session);
+    memset(session, 0, sizeof(ogs_sbi_session_t));
 
-    conn->connection = connection;
-    conn->server = server;
+    session->server = server;
+    session->request = request;
+    session->connection = connection;
 
-    ogs_list_add(&server->suspended_conn_list, conn);
+    ogs_list_add(&server->suspended_session_list, session);
 
-    return conn;
+    return session;
 }
 
-static void connection_remove(connection_t *conn)
+static void session_remove(ogs_sbi_session_t *session)
+{
+    struct MHD_Connection *connection;
+    ogs_sbi_server_t *server = NULL;
+
+    ogs_assert(session);
+    server = session->server;
+    ogs_assert(server);
+
+    ogs_list_remove(&server->suspended_session_list, session);
+
+    connection = session->connection;
+    ogs_assert(connection);
+
+    MHD_resume_connection(connection);
+
+    ogs_pool_free(&session_pool, session);
+}
+
+static void session_remove_all(ogs_sbi_server_t *server)
+{
+    ogs_sbi_session_t *session = NULL, *next_session = NULL;
+
+    ogs_assert(server);
+
+    ogs_list_for_each_safe(
+            &server->suspended_session_list, next_session, session)
+        session_remove(session);
+}
+
+ogs_sbi_server_t *ogs_sbi_server_add(ogs_sockaddr_t *addr)
 {
     ogs_sbi_server_t *server = NULL;
 
-    ogs_assert(conn);
-    server = conn->server;
-    ogs_assert(server);
-
-    ogs_list_remove(&server->suspended_conn_list, conn);
-    ogs_pool_free(&connection_pool, conn);
-}
-
-static void connection_remove_all(ogs_sbi_server_t *server)
-{
-    connection_t *conn = NULL, *next_conn = NULL;
-
-    ogs_assert(server);
-
-    ogs_list_for_each_safe(&server->suspended_conn_list, next_conn, conn)
-        connection_remove(conn);
-}
-
-ogs_sbi_server_t *ogs_sbi_server_add(
-        ogs_sockaddr_t *addr, int (*cb)(void *data))
-{
-    const union MHD_DaemonInfo *info = NULL;
-    ogs_sbi_server_t *server = NULL;
+    ogs_assert(addr);
 
     ogs_pool_alloc(&server_pool, &server);
     ogs_assert(server);
     memset(server, 0, sizeof(ogs_sbi_server_t));
 
-    /* Initialize Suspended MHD Connection List */
-    ogs_list_init(&server->suspended_conn_list);
+    ogs_list_init(&server->suspended_session_list);
+    ogs_copyaddrinfo(&server->addr, addr);
 
-    /* Setup callback function */
-    server->cb = cb;
-
-    server->mhd = MHD_start_daemon(
-#if MHD_VERSION >= 0x00095300
-                MHD_ALLOW_SUSPEND_RESUME,
-#elif MHD_VERSION >= 0x00093400
-                MHD_USE_SUSPEND_RESUME,
-#else
-                MHD_USE_PIPE_FOR_SHUTDOWN,
-#endif
-                8080,
-                NULL, NULL,
-                access_handler, server,
-                MHD_OPTION_NOTIFY_COMPLETED, notify_completed, server,
-                MHD_OPTION_NOTIFY_CONNECTION, &notify_connection, NULL,
-                MHD_OPTION_END);
-    if (!server->mhd) {
-        ogs_error("Cannot start SBI server");
-        return NULL;
-    }
-
-    info = MHD_get_daemon_info(server->mhd, MHD_DAEMON_INFO_LISTEN_FD);
-    ogs_assert(info);
-
-    server->poll = ogs_pollset_add(ogs_sbi_self()->pollset,
-            OGS_POLLIN, info->listen_fd, run, server->mhd);
-    ogs_assert(server->poll);
-
-    ogs_list_add(&server_list, server);
+    ogs_list_add(&ogs_sbi_self()->server_list, server);
 
     return server;
 }
@@ -183,15 +144,12 @@ void ogs_sbi_server_remove(ogs_sbi_server_t *server)
 {
     ogs_assert(server);
 
-    ogs_list_remove(&server_list, server);
+    ogs_list_remove(&ogs_sbi_self()->server_list, server);
 
-    ogs_assert(server->poll);
-    ogs_pollset_remove(server->poll);
+    ogs_sbi_server_stop(server);
 
-    connection_remove_all(server);
-
-    ogs_assert(server->mhd);
-    MHD_stop_daemon(server->mhd);
+    ogs_assert(server->addr);
+    ogs_freeaddrinfo(server->addr);
 
     ogs_pool_free(&server_pool, server);
 }
@@ -200,37 +158,249 @@ void ogs_sbi_server_remove_all(void)
 {
     ogs_sbi_server_t *server = NULL, *next_server = NULL;
 
-    ogs_list_for_each_safe(&server_list, next_server, server)
+    ogs_list_for_each_safe(&ogs_sbi_self()->server_list, next_server, server)
         ogs_sbi_server_remove(server);
 }
 
-void ogs_sbi_server_send_response(void *node, void *buffer, size_t size)
+void ogs_sbi_server_start(ogs_sbi_server_t *server,
+        int (*cb)(ogs_sbi_session_t *session, ogs_sbi_request_t *request))
 {
-    struct MHD_Connection *connection = NULL;
-    struct MHD_Response *response;
+    char buf[OGS_ADDRSTRLEN];
+    ogs_sockaddr_t *addr = NULL;
+
+    unsigned int mhd_flags = MHD_USE_ERROR_LOG;
+    const union MHD_DaemonInfo *mhd_info = NULL;
+#define MAX_NUM_OF_MHD_OPTION_ITEM 8
+    struct MHD_OptionItem mhd_ops[MAX_NUM_OF_MHD_OPTION_ITEM];
+    int index = 0;
+
+    ogs_assert(server);
+
+#if MHD_VERSION >= 0x00095300
+    mhd_flags |= MHD_ALLOW_SUSPEND_RESUME;
+#elif MHD_VERSION >= 0x00093400
+    mhd_flags |= MHD_USE_SUSPEND_RESUME;
+#else
+    mhd_flags |= MHD_USE_PIPE_FOR_SHUTDOWN;
+#endif
+
+    /* Setup callback function */
+    server->cb = cb;
+
+    mhd_ops[index].option = MHD_OPTION_NOTIFY_COMPLETED;
+    mhd_ops[index].value = (intptr_t)notify_completed;
+    mhd_ops[index].ptr_value = server;
+    index++;
+
+    mhd_ops[index].option = MHD_OPTION_NOTIFY_CONNECTION;
+    mhd_ops[index].value = (intptr_t)&notify_connection;
+    mhd_ops[index].ptr_value = NULL;
+    index++;
+
+    addr = server->addr;
+    ogs_assert(addr);
+#if MHD_VERSION >= 0x00095208
+    if (addr->ogs_sa_family == AF_INET6)
+        mhd_flags |= MHD_USE_IPv6;
+#endif
+    mhd_ops[index].option = MHD_OPTION_SOCK_ADDR;
+    mhd_ops[index].value = 0;
+    mhd_ops[index].ptr_value = (void *)&addr->sa;
+    index++;
+
+    mhd_ops[index].option = MHD_OPTION_END;
+    mhd_ops[index].value = 0;
+    mhd_ops[index].ptr_value = NULL;
+    index++;
+
+    server->mhd = MHD_start_daemon(
+                mhd_flags,
+                0,
+                NULL, NULL,
+                access_handler, server,
+                MHD_OPTION_ARRAY, mhd_ops,
+                MHD_OPTION_END);
+    if (!server->mhd) {
+        ogs_error("Cannot start SBI server");
+        return;
+    }
+
+    /* Setup poll for server listening socket */
+    mhd_info = MHD_get_daemon_info(server->mhd, MHD_DAEMON_INFO_LISTEN_FD);
+    ogs_assert(mhd_info);
+
+    server->poll = ogs_pollset_add(ogs_sbi_self()->pollset,
+            OGS_POLLIN, mhd_info->listen_fd, run, server->mhd);
+    ogs_assert(server->poll);
+
+    if (addr) {
+        char *hostname = ogs_gethostname(addr);
+        if (hostname)
+            ogs_info("sbi_server() [%s]:%d",
+                    hostname, OGS_PORT(addr));
+        else
+            ogs_info("sbi_server() [%s]:%d",
+                    OGS_ADDR(addr, buf), OGS_PORT(addr));
+    } else
+        ogs_info("sbi_server() [any]:any");
+}
+
+void ogs_sbi_server_start_all(
+        int (*cb)(ogs_sbi_session_t *session, ogs_sbi_request_t *request))
+{
+    ogs_sbi_server_t *server = NULL, *next_server = NULL;
+
+    ogs_list_for_each_safe(&ogs_sbi_self()->server_list, next_server, server)
+        ogs_sbi_server_start(server, cb);
+}
+
+void ogs_sbi_server_stop(ogs_sbi_server_t *server)
+{
+    ogs_assert(server);
+
+    if (server->poll) {
+        ogs_pollset_remove(server->poll);
+        server->poll = NULL;
+    }
+
+    session_remove_all(server);
+
+    if (server->mhd) {
+        MHD_stop_daemon(server->mhd);
+        server->mhd = NULL;
+    }
+}
+
+void ogs_sbi_server_stop_all(void)
+{
+    ogs_sbi_server_t *server = NULL, *next_server = NULL;
+
+    ogs_list_for_each_safe(&ogs_sbi_self()->server_list, next_server, server)
+        ogs_sbi_server_stop(server);
+}
+
+void ogs_sbi_server_send_response(ogs_sbi_session_t *session,
+        ogs_sbi_response_t *response, uint32_t status)
+{
     int ret;
 
-    connection_t *conn = node;
+    struct MHD_Connection *connection = NULL;
+    struct MHD_Response *mhd_response;
+    struct MHD_Daemon *mhd_daemon = NULL;
+    const union MHD_ConnectionInfo *mhd_info = NULL;
+    MHD_socket mhd_socket = INVALID_SOCKET;
 
-    ogs_assert(conn);
-    connection = conn->connection;
+    ogs_hash_index_t *hi;
+    ogs_sbi_request_t *request = NULL;
+
+    ogs_assert(response);
+    ogs_assert(status);
+
+    ogs_assert(session);
+    connection = session->connection;
     ogs_assert(connection);
 
-    response = MHD_create_response_from_buffer(
-            size, buffer, MHD_RESPMEM_PERSISTENT);
+    mhd_info = MHD_get_connection_info(
+            connection, MHD_CONNECTION_INFO_DAEMON);
+    ogs_assert(mhd_info);
+    mhd_daemon = mhd_info->daemon;
+    ogs_assert(mhd_daemon);
 
-    MHD_resume_connection(connection);
-    ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
+    mhd_info = MHD_get_connection_info(
+            connection, MHD_CONNECTION_INFO_CONNECTION_FD);
+    ogs_assert(mhd_info);
+    mhd_socket = mhd_info->connect_fd;
+    ogs_assert(mhd_socket != INVALID_SOCKET);
+
+    if (response->http.content) {
+        mhd_response = MHD_create_response_from_buffer(
+                strlen(response->http.content), response->http.content,
+                MHD_RESPMEM_PERSISTENT);
+        ogs_assert(mhd_response);
+    } else {
+        mhd_response = MHD_create_response_from_buffer(
+                0, NULL, MHD_RESPMEM_PERSISTENT);
+        ogs_assert(mhd_response);
+    }
+
+    for (hi = ogs_hash_first(response->http.headers);
+            hi; hi = ogs_hash_next(hi)) {
+        const char *key = ogs_hash_this_key(hi);
+        char *val = ogs_hash_this_val(hi);
+        MHD_add_response_header(mhd_response, key, val);
+    }
+
+    ogs_sbi_response_free(response);
+    session_remove(session);
+
+    request = session->request;
+    ogs_assert(request);
+    request->poll = ogs_pollset_add(ogs_sbi_self()->pollset,
+                    OGS_POLLOUT, mhd_socket, run, mhd_daemon);
+    ogs_assert(request->poll);
+
+    ret = MHD_queue_response(connection, status, mhd_response);
     ogs_assert(ret == MHD_YES);
-    MHD_destroy_response(response);
+    MHD_destroy_response(mhd_response);
+}
+
+void ogs_sbi_server_send_problem(
+        ogs_sbi_session_t *session, ogs_sbi_problem_details_t *problem)
+{
+    ogs_sbi_message_t message;
+    ogs_sbi_response_t *response = NULL;
+
+    ogs_assert(session);
+    ogs_assert(problem);
+
+    memset(&message, 0, sizeof(message));
+
+    message.http.content_type = (char*)"application/problem+json";
+    message.problem_details = problem;
+
+    response = ogs_sbi_build_response(&message);
+    ogs_assert(response);
+
+    ogs_sbi_server_send_response(session, response, problem->status);
+}
+
+void ogs_sbi_server_send_error(ogs_sbi_session_t *session,
+        int status, ogs_sbi_message_t *message,
+        const char *title, const char *detail)
+{
+    ogs_sbi_problem_details_t problem;
+
+    ogs_assert(session);
+
+    memset(&problem, 0, sizeof(problem));
+
+    if (message) {
+        problem.type = ogs_msprintf("/%s/%s",
+                message->h.api.name, message->h.api.version);
+        if (message->h.resource.id)
+            problem.instance = ogs_msprintf("/%s/%s",
+                    message->h.resource.name, message->h.resource.id);
+        else
+            problem.instance = ogs_msprintf("/%s", message->h.resource.name);
+    }
+    problem.status = status;
+    problem.title = (char*)title;
+    problem.detail = (char*)detail;
+
+    ogs_sbi_server_send_problem(session, &problem);
+
+    if (problem.type)
+        ogs_free(problem.type);
+    if (problem.instance)
+        ogs_free(problem.instance);
 }
 
 static void run(short when, ogs_socket_t fd, void *data)
 {
-    struct MHD_Daemon *mhd = data;
+    struct MHD_Daemon *mhd_daemon = data;
 
-    ogs_assert(mhd);
-    MHD_run(mhd);
+    ogs_assert(mhd_daemon);
+    MHD_run(mhd_daemon);
 }
 
 static void notify_connection(void *cls,
@@ -238,28 +408,28 @@ static void notify_connection(void *cls,
         void **socket_context,
         enum MHD_ConnectionNotificationCode toe)
 {
-    struct MHD_Daemon *mhd = NULL;
-    MHD_socket connect_fd = INVALID_SOCKET;
+    struct MHD_Daemon *mhd_daemon = NULL;
+    MHD_socket mhd_socket = INVALID_SOCKET;
 
-    const union MHD_ConnectionInfo *info = NULL;
+    const union MHD_ConnectionInfo *mhd_info = NULL;
     ogs_poll_t *poll = NULL;
 
     switch (toe) {
         case MHD_CONNECTION_NOTIFY_STARTED:
-            info = MHD_get_connection_info(
+            mhd_info = MHD_get_connection_info(
                     connection, MHD_CONNECTION_INFO_DAEMON);
-            ogs_assert(info);
-            mhd = info->daemon;
-            ogs_assert(mhd);
+            ogs_assert(mhd_info);
+            mhd_daemon = mhd_info->daemon;
+            ogs_assert(mhd_daemon);
 
-            info = MHD_get_connection_info(
+            mhd_info = MHD_get_connection_info(
                     connection, MHD_CONNECTION_INFO_CONNECTION_FD);
-            ogs_assert(info);
-            connect_fd = info->connect_fd;
-            ogs_assert(connect_fd != INVALID_SOCKET);
+            ogs_assert(mhd_info);
+            mhd_socket = mhd_info->connect_fd;
+            ogs_assert(mhd_socket != INVALID_SOCKET);
 
             poll = ogs_pollset_add(ogs_sbi_self()->pollset,
-                    OGS_POLLIN|OGS_POLLOUT, connect_fd, run, mhd);
+                    OGS_POLLIN, mhd_socket, run, mhd_daemon);
             ogs_assert(poll);
             *socket_context = poll;
             break;
@@ -268,6 +438,19 @@ static void notify_connection(void *cls,
             ogs_pollset_remove(poll);
             break;
     }
+}
+
+static int add_headers(ogs_hash_t *headers,
+        enum MHD_ValueKind kind, const char *key, const char *value)
+{
+    ogs_assert(headers);
+
+    if (!key || !value)
+        return MHD_YES;     //  Ignore connection value if invalid!
+
+    ogs_sbi_header_set(headers, key, value);
+
+    return MHD_YES;
 }
 
 static int access_handler(
@@ -281,69 +464,81 @@ static int access_handler(
         void **con_cls)
 {
     ogs_sbi_server_t *server = NULL;
-    request_t *req = NULL;
-    connection_t *conn = NULL;
+    ogs_sbi_request_t *request = NULL;
+    ogs_sbi_session_t *session = NULL;
 
     server = cls;
     ogs_assert(server);
 
-    req = *con_cls;
+    request = *con_cls;
 
-    if (req && req->suspended) {
+    if (request && request->suspended) {
         ogs_error("Suspended Request");
         return MHD_YES;
     }
 
-    if (!req) {
-        req = request_new();
-        ogs_assert(req);
-        *con_cls = req;
+    if (!request) {
+        request = ogs_sbi_request_new();
+        ogs_assert(request);
+        *con_cls = request;
 
-        /* Handle Content-Length Transfer-Encoding */
-        
-        MHD_suspend_connection(connection);
-        req->suspended = true;
+        ogs_assert(request->http.headers);
+        MHD_get_connection_values(connection, MHD_HEADER_KIND,
+                (MHD_KeyValueIterator)add_headers, request->http.headers);
 
-        conn = connection_add(server, connection);
-        ogs_assert(conn);
+        request->h.method = ogs_strdup(method);
+        request->h.url = ogs_strdup(url);
 
-        if (server->cb(conn) != OGS_OK) {
-            ogs_error("server callback error");
-            return MHD_NO;
+        if (ogs_sbi_header_get(request->http.headers, "Content-Length") ||
+            ogs_sbi_header_get(request->http.headers, "Transfer-Encoding")) {
+
+            // FIXME : check if POST_DATA is on MHD_POSTDATA_KIND
+
+            return MHD_YES;
         }
 
-        return MHD_YES;
+        goto suspend;
     }
 
     if (*upload_data_size != 0) {
         size_t offset = 0;
 
-        if (req->content == NULL) {
-            req->content_length = *upload_data_size;
-            req->content = (char*)ogs_malloc(req->content_length + 1);
-            ogs_assert(req->content);
+        if (request->http.content == NULL) {
+            request->http.content_length = *upload_data_size;
+            request->http.content =
+                (char*)ogs_malloc(request->http.content_length + 1);
+            ogs_assert(request->http.content);
         } else {
-            offset = req->content_length;
-            req->content_length += *upload_data_size;
-            req->content = (char *)ogs_realloc(
-                    req->content, req->content_length + 1);
-            ogs_assert(req->content);
+            offset = request->http.content_length;
+            if ((request->http.content_length +
+                        *upload_data_size) > OGS_HUGE_LEN) {
+                ogs_error("Overflow : Content-Length[%d], upload_data_size[%d]",
+                            (int)request->http.content_length,
+                            (int)*upload_data_size);
+                *upload_data_size = 0;
+                return MHD_YES;
+            }
+            request->http.content_length += *upload_data_size;
+            request->http.content = (char *)ogs_realloc(
+                    request->http.content, request->http.content_length + 1);
+            ogs_assert(request->http.content);
         }
 
-        memcpy(req->content + offset, upload_data, *upload_data_size);
-        req->content[req->content_length] = '\0';
+        memcpy(request->http.content + offset, upload_data, *upload_data_size);
+        request->http.content[request->http.content_length] = '\0';
         *upload_data_size = 0;
 
         return MHD_YES;
     }
 
+suspend:
     MHD_suspend_connection(connection);
-    req->suspended = true;
+    request->suspended = true;
 
-    conn = connection_add(server, connection);
-    ogs_assert(conn);
+    session = session_add(server, request, connection);
+    ogs_assert(session);
 
-    if (server->cb(conn) != OGS_OK) {
+    if (server->cb(session, request) != OGS_OK) {
         ogs_error("server callback error");
         return MHD_NO;
     }
@@ -357,7 +552,13 @@ static void notify_completed(
         void **con_cls,
         enum MHD_RequestTerminationCode toe)
 {
-    request_t *req = *con_cls;
-    ogs_assert(req);
-    request_free(req);
+    ogs_sbi_request_t *request = *con_cls;
+    ogs_poll_t *poll = NULL;
+
+    ogs_assert(request);
+    poll = request->poll;
+    if (poll)
+        ogs_pollset_remove(poll);
+
+    ogs_sbi_request_free(request);
 }

@@ -8,7 +8,7 @@ ogs_sbi_nf_instance_id_cond_t *ogs_sbi_nf_instance_id_cond_create(
     char *nf_instance_id
     )
 {
-    ogs_sbi_nf_instance_id_cond_t *nf_instance_id_cond_local_var = ogs_malloc(sizeof(ogs_sbi_nf_instance_id_cond_t));
+    ogs_sbi_nf_instance_id_cond_t *nf_instance_id_cond_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_nf_instance_id_cond_t));
     if (!nf_instance_id_cond_local_var) {
         return NULL;
     }
@@ -31,18 +31,16 @@ cJSON *ogs_sbi_nf_instance_id_cond_convertToJSON(ogs_sbi_nf_instance_id_cond_t *
 {
     cJSON *item = cJSON_CreateObject();
     if (!nf_instance_id_cond->nf_instance_id) {
-        goto fail;
+        ogs_error("ogs_sbi_nf_instance_id_cond_convertToJSON() failed [nf_instance_id]");
+        goto end;
     }
     if (cJSON_AddStringToObject(item, "nfInstanceId", nf_instance_id_cond->nf_instance_id) == NULL) {
-        goto fail;
+        ogs_error("ogs_sbi_nf_instance_id_cond_convertToJSON() failed [nf_instance_id]");
+        goto end;
     }
 
+end:
     return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
 }
 
 ogs_sbi_nf_instance_id_cond_t *ogs_sbi_nf_instance_id_cond_parseFromJSON(cJSON *nf_instance_id_condJSON)
@@ -50,12 +48,13 @@ ogs_sbi_nf_instance_id_cond_t *ogs_sbi_nf_instance_id_cond_parseFromJSON(cJSON *
     ogs_sbi_nf_instance_id_cond_t *nf_instance_id_cond_local_var = NULL;
     cJSON *nf_instance_id = cJSON_GetObjectItemCaseSensitive(nf_instance_id_condJSON, "nfInstanceId");
     if (!nf_instance_id) {
+        ogs_error("ogs_sbi_nf_instance_id_cond_parseFromJSON() failed [nf_instance_id]");
         goto end;
     }
 
 
-    if (!cJSON_IsString(nf_instance_id))
-    {
+    if (!cJSON_IsString(nf_instance_id)) {
+        ogs_error("ogs_sbi_nf_instance_id_cond_parseFromJSON() failed [nf_instance_id]");
         goto end;
     }
 

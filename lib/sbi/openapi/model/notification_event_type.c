@@ -4,45 +4,23 @@
 #include <stdio.h>
 #include "notification_event_type.h"
 
-ogs_sbi_notification_event_type_t *ogs_sbi_notification_event_type_create(
-    )
+char* ogs_sbi_notification_event_type_ToString(ogs_sbi_notification_event_type_e notification_event_type)
 {
-    ogs_sbi_notification_event_type_t *notification_event_type_local_var = ogs_malloc(sizeof(ogs_sbi_notification_event_type_t));
-    if (!notification_event_type_local_var) {
-        return NULL;
-    }
-
-    return notification_event_type_local_var;
+    const char *notification_event_typeArray[] =  { "NULL", "NF_REGISTERED", "NF_DEREGISTERED", "NF_PROFILE_CHANGED" };
+    return (char *)notification_event_typeArray[notification_event_type];
 }
 
-void ogs_sbi_notification_event_type_free(ogs_sbi_notification_event_type_t *notification_event_type)
+ogs_sbi_notification_event_type_e ogs_sbi_notification_event_type_FromString(char* notification_event_type)
 {
-    if (NULL == notification_event_type) {
-        return;
+    int stringToReturn = 0;
+    const char *notification_event_typeArray[] =  { "NULL", "NF_REGISTERED", "NF_DEREGISTERED", "NF_PROFILE_CHANGED" };
+    size_t sizeofArray = sizeof(notification_event_typeArray) / sizeof(notification_event_typeArray[0]);
+    while (stringToReturn < sizeofArray) {
+        if (strcmp(notification_event_type, notification_event_typeArray[stringToReturn]) == 0) {
+            return stringToReturn;
+        }
+        stringToReturn++;
     }
-    ogs_sbi_lnode_t *node;
-    ogs_free(notification_event_type);
-}
-
-cJSON *ogs_sbi_notification_event_type_convertToJSON(ogs_sbi_notification_event_type_t *notification_event_type)
-{
-    cJSON *item = cJSON_CreateObject();
-    return item;
-fail:
-    if (item) {
-        cJSON_Delete(item);
-    }
-    return NULL;
-}
-
-ogs_sbi_notification_event_type_t *ogs_sbi_notification_event_type_parseFromJSON(cJSON *notification_event_typeJSON)
-{
-    ogs_sbi_notification_event_type_t *notification_event_type_local_var = NULL;
-    notification_event_type_local_var = ogs_sbi_notification_event_type_create (
-        );
-
-    return notification_event_type_local_var;
-end:
-    return NULL;
+    return 0;
 }
 

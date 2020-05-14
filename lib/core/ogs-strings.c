@@ -155,47 +155,33 @@ char *ogs_cpystrn(char *dst, const char *src, size_t dst_size)
     return (d);
 }
 
-int ogs_strcmp(const char *s1, const char *s2)
+/*
+ * char *ogs_msprintf(const char *message, ...)
+ *
+ * Orcania library
+ * Copyright 2015-2018 Nicolas Mora <mail@babelouest.org>
+ * License: LGPL-2.1
+ *
+ * https://github.com/babelouest/orcania.git
+ */
+char *ogs_msprintf(const char *message, ...)
 {
-    if (s1 == NULL && s2 == NULL) {
-        return 0;
-    } else if (s1 != NULL && s2 == NULL) {
-        return -1;
-    } else if (s1 == NULL) {
-        return 1;
-    } else {
-        return strcmp(s1, s2);
+    va_list argp, argp_cpy;
+    size_t out_len = 0;
+    char *out = NULL;
+    if (message != NULL) {
+        va_start(argp, message);
+        va_copy(argp_cpy, argp);
+        out_len = vsnprintf(NULL, 0, message, argp);
+        out = ogs_malloc(out_len + sizeof(char));
+        if (out == NULL) {
+            va_end(argp);
+            va_end(argp_cpy);
+            return NULL;
+        }
+        vsnprintf(out, (out_len + sizeof(char)), message, argp_cpy);
+        va_end(argp);
+        va_end(argp_cpy);
     }
+    return out;
 }
-
-int ogs_strncmp(const char *s1, const char *s2, size_t n)
-{
-    if ((s1 == NULL && s2 == NULL) || n <= 0) {
-        return 0;
-    } else if (s1 != NULL && s2 == NULL) {
-        return -1;
-    } else if (s1 == NULL) {
-        return 1;
-    } else {
-        return strncmp(s1, s2, n);
-    }
-}
-
-char * ogs_strchr(const char *s, int c)
-{
-    if (s == NULL) {
-        return NULL;
-    } else {
-        return strchr(s, c);
-    }
-}
-
-size_t ogs_strlen(const char *s)
-{
-    if (s == NULL) {
-        return 0;
-    } else {
-        return strlen(s);
-    }
-}
-
