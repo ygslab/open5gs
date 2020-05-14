@@ -31,7 +31,7 @@ static void pfcp_node_fsm_init(ogs_pfcp_node_t *node, bool try_to_assoicate)
 
     if (try_to_assoicate == true) {
         node->t_association = ogs_timer_add(smf_self()->timer_mgr,
-                smf_timer_association, node);
+                smf_timer_pfcp_association, node);
         ogs_assert(node->t_association);
     }
 

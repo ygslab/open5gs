@@ -85,7 +85,7 @@ void smf_pfcp_state_will_associate(ogs_fsm_t *s, smf_event_t *e)
     case OGS_FSM_ENTRY_SIG:
         if (node->t_association) {
             ogs_timer_start(node->t_association,
-                    smf_timer_cfg(SMF_TIMER_ASSOCIATION)->duration);
+                    smf_timer_cfg(SMF_TIMER_PFCP_ASSOCIATION)->duration);
 
             smf_pfcp_send_association_setup_request(node);
         }
