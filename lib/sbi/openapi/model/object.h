@@ -11,17 +11,17 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_object_s {
+typedef struct OpenAPI_object_s {
     void *temporary;
-} ogs_sbi_object_t;
+} OpenAPI_object_t;
 
-ogs_sbi_object_t *ogs_sbi_object_create(void);
+OpenAPI_object_t *OpenAPI_object_create(void);
 
-void ogs_sbi_object_free(ogs_sbi_object_t *object);
+void OpenAPI_object_free(OpenAPI_object_t *object);
 
-ogs_sbi_object_t *ogs_sbi_object_parseFromJSON(cJSON *objectJSON);
+OpenAPI_object_t *OpenAPI_object_parseFromJSON(cJSON *objectJSON);
 
-cJSON *ogs_sbi_object_convertToJSON(ogs_sbi_object_t *object);
+cJSON *OpenAPI_object_convertToJSON(OpenAPI_object_t *object);
 
 #ifdef __cplusplus
 }

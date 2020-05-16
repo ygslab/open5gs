@@ -226,20 +226,6 @@ smf:
 #        - 127.0.0.1
 #        - fe80::1%@loopback_devname@
 #
-#  o Heartbeat timer(Default : 3 seconds)
-#    sbi:
-#      - addr: 127.0.0.1
-#
-#  o Heartbeat timer(5 seconds)
-#    sbi:
-#      - addr: 127.0.0.1
-#        heartbeat: 5
-#
-#  o Heartbeat timer(Disabled)
-#    sbi:
-#      - addr: 127.0.0.1
-#        heartbeat: 0
-#
 nrf:
     sbi:
       addr:
@@ -281,7 +267,6 @@ upf:
 #
 #  o Disable Stateless Address Autoconfiguration for IPv6
 #      no_slaac: true
-#
 #
 parameter:
 
@@ -327,4 +312,19 @@ max:
 #   - SGW Memory Usage : 65536 * 8Kbytes = 512Mbytes
 #
 #   packet: 65536
+#
 pool:
+
+#
+# time:
+#
+#  o SBI Heartbeat (Default : 3 seconds)
+#
+#  o SBI Heartbeat (Disabled)
+#    sbi:
+#      heartbeat: 0
+#
+#  o SBI Heartbeat (5 seconds)
+#    sbi:
+#      heartbeat: 5
+time:

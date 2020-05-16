@@ -4,13 +4,17 @@
 #include <stdio.h>
 #include "notification_event_type.h"
 
-char* ogs_sbi_notification_event_type_ToString(ogs_sbi_notification_event_type_e notification_event_type)
+char* OpenAPI_notification_event_type_ToString(OpenAPI_notification_event_type_e notification_event_type)
 {
     const char *notification_event_typeArray[] =  { "NULL", "NF_REGISTERED", "NF_DEREGISTERED", "NF_PROFILE_CHANGED" };
-    return (char *)notification_event_typeArray[notification_event_type];
+    size_t sizeofArray = sizeof(notification_event_typeArray) / sizeof(notification_event_typeArray[0]);
+    if (notification_event_type < sizeofArray)
+        return (char *)notification_event_typeArray[notification_event_type];
+    else
+        return (char *)"Unknown";
 }
 
-ogs_sbi_notification_event_type_e ogs_sbi_notification_event_type_FromString(char* notification_event_type)
+OpenAPI_notification_event_type_e OpenAPI_notification_event_type_FromString(char* notification_event_type)
 {
     int stringToReturn = 0;
     const char *notification_event_typeArray[] =  { "NULL", "NF_REGISTERED", "NF_DEREGISTERED", "NF_PROFILE_CHANGED" };

@@ -4,13 +4,17 @@
 #include <stdio.h>
 #include "patch_operation.h"
 
-char* ogs_sbi_patch_operation_ToString(ogs_sbi_patch_operation_e patch_operation)
+char* OpenAPI_patch_operation_ToString(OpenAPI_patch_operation_e patch_operation)
 {
     const char *patch_operationArray[] =  { "NULL", "add", "copy", "move", "_remove", "replace", "test" };
-    return (char *)patch_operationArray[patch_operation];
+    size_t sizeofArray = sizeof(patch_operationArray) / sizeof(patch_operationArray[0]);
+    if (patch_operation < sizeofArray)
+        return (char *)patch_operationArray[patch_operation];
+    else
+        return (char *)"Unknown";
 }
 
-ogs_sbi_patch_operation_e ogs_sbi_patch_operation_FromString(char* patch_operation)
+OpenAPI_patch_operation_e OpenAPI_patch_operation_FromString(char* patch_operation)
 {
     int stringToReturn = 0;
     const char *patch_operationArray[] =  { "NULL", "add", "copy", "move", "_remove", "replace", "test" };

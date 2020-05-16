@@ -28,12 +28,16 @@ extern "C" {
 #endif
 
 ogs_sbi_request_t *smf_nnrf_build_nf_register(
-        ogs_sbi_client_t *client,
-        ogs_sbi_nf_type_e nf_type, ogs_sbi_nf_status_e nf_status);
-ogs_sbi_request_t *smf_nnrf_build_nf_update(ogs_sbi_client_t *client);
-ogs_sbi_request_t *smf_nnrf_build_nf_de_register(ogs_sbi_client_t *client);
+        ogs_sbi_nf_instance_t *nf_instance);
+ogs_sbi_request_t *smf_nnrf_build_nf_update(
+        ogs_sbi_nf_instance_t *nf_instance);
+ogs_sbi_request_t *smf_nnrf_build_nf_de_register(
+        ogs_sbi_nf_instance_t *nf_instance);
 
-ogs_sbi_request_t *smf_nnrf_build_nf_status_subscribe(ogs_sbi_client_t *client);
+ogs_sbi_request_t *smf_nnrf_build_nf_status_subscribe(
+        OpenAPI_nf_type_e nf_type);
+ogs_sbi_request_t *smf_nnrf_build_nf_status_unsubscribe(
+        ogs_sbi_subscription_t *subscription);
 
 #ifdef __cplusplus
 }

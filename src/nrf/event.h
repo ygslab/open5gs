@@ -26,11 +26,13 @@
 extern "C" {
 #endif
 
+typedef struct ogs_sbi_server_s ogs_sbi_server_t;
 typedef struct ogs_sbi_session_s ogs_sbi_session_t;
 typedef struct ogs_sbi_request_s ogs_sbi_request_t;
 typedef struct ogs_sbi_response_s ogs_sbi_response_t;
 typedef struct ogs_sbi_message_s ogs_sbi_message_t;
-typedef struct nrf_nf_instance_s nrf_nf_instance_t;
+typedef struct ogs_sbi_nf_instance_s ogs_sbi_nf_instance_t;
+typedef struct ogs_sbi_subscription_s ogs_sbi_subscription_t;
 
 typedef enum {
     NRF_EVT_BASE = OGS_FSM_USER_SIG,
@@ -51,6 +53,7 @@ typedef struct nrf_event_s {
         /* OGS_EVT_SBI_SERVER */
         ogs_sbi_request_t *request;
         ogs_sbi_session_t *session;
+        ogs_sbi_server_t *server;
 
         /* OGS_EVT_SBI_CLIENT */
         ogs_sbi_response_t *response;
@@ -59,7 +62,8 @@ typedef struct nrf_event_s {
         ogs_sbi_message_t *message;
     } sbi;
 
-    nrf_nf_instance_t *nf_instance;
+    ogs_sbi_nf_instance_t *nf_instance;
+    ogs_sbi_subscription_t *subscription;
 } nrf_event_t;
 
 void nrf_event_init(void);

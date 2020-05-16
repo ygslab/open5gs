@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_chf_info_H_
-#define _ogs_sbi_chf_info_H_
+#ifndef _OpenAPI_chf_info_H_
+#define _OpenAPI_chf_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -20,25 +20,25 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_chf_info_s ogs_sbi_chf_info_t;
-typedef struct ogs_sbi_chf_info_s {
-    ogs_sbi_list_t *supi_range_list;
-    ogs_sbi_list_t *gpsi_range_list;
-    ogs_sbi_list_t *plmn_range_list;
-} ogs_sbi_chf_info_t;
+typedef struct OpenAPI_chf_info_s OpenAPI_chf_info_t;
+typedef struct OpenAPI_chf_info_s {
+    OpenAPI_list_t *supi_range_list;
+    OpenAPI_list_t *gpsi_range_list;
+    OpenAPI_list_t *plmn_range_list;
+} OpenAPI_chf_info_t;
 
-ogs_sbi_chf_info_t *ogs_sbi_chf_info_create(
-    ogs_sbi_list_t *supi_range_list,
-    ogs_sbi_list_t *gpsi_range_list,
-    ogs_sbi_list_t *plmn_range_list
+OpenAPI_chf_info_t *OpenAPI_chf_info_create(
+    OpenAPI_list_t *supi_range_list,
+    OpenAPI_list_t *gpsi_range_list,
+    OpenAPI_list_t *plmn_range_list
     );
-void ogs_sbi_chf_info_free(ogs_sbi_chf_info_t *chf_info);
-ogs_sbi_chf_info_t *ogs_sbi_chf_info_parseFromJSON(cJSON *chf_infoJSON);
-cJSON *ogs_sbi_chf_info_convertToJSON(ogs_sbi_chf_info_t *chf_info);
+void OpenAPI_chf_info_free(OpenAPI_chf_info_t *chf_info);
+OpenAPI_chf_info_t *OpenAPI_chf_info_parseFromJSON(cJSON *chf_infoJSON);
+cJSON *OpenAPI_chf_info_convertToJSON(OpenAPI_chf_info_t *chf_info);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_chf_info_H_ */
+#endif /* _OpenAPI_chf_info_H_ */
 

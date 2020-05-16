@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_nf_profile_H_
-#define _ogs_sbi_nf_profile_H_
+#ifndef _OpenAPI_nf_profile_H_
+#define _OpenAPI_nf_profile_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -36,115 +36,115 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_nf_profile_s ogs_sbi_nf_profile_t;
-typedef struct ogs_sbi_nf_profile_s {
+typedef struct OpenAPI_nf_profile_s OpenAPI_nf_profile_t;
+typedef struct OpenAPI_nf_profile_s {
     char *nf_instance_id;
     char *nf_instance_name;
-    ogs_sbi_nf_type_e nf_type;
-    ogs_sbi_nf_status_e nf_status;
+    OpenAPI_nf_type_e nf_type;
+    OpenAPI_nf_status_e nf_status;
     int heart_beat_timer;
-    ogs_sbi_list_t *plmn_list;
-    ogs_sbi_list_t *s_nssais;
-    ogs_sbi_list_t *per_plmn_snssai_list;
-    ogs_sbi_list_t *nsi_list;
+    OpenAPI_list_t *plmn_list;
+    OpenAPI_list_t *s_nssais;
+    OpenAPI_list_t *per_plmn_snssai_list;
+    OpenAPI_list_t *nsi_list;
     char *fqdn;
     char *inter_plmn_fqdn;
-    ogs_sbi_list_t *ipv4_addresses;
-    ogs_sbi_list_t *ipv6_addresses;
-    ogs_sbi_list_t *allowed_plmns;
-    ogs_sbi_list_t *allowed_nf_types;
-    ogs_sbi_list_t *allowed_nf_domains;
-    ogs_sbi_list_t *allowed_nssais;
+    OpenAPI_list_t *ipv4_addresses;
+    OpenAPI_list_t *ipv6_addresses;
+    OpenAPI_list_t *allowed_plmns;
+    OpenAPI_list_t *allowed_nf_types;
+    OpenAPI_list_t *allowed_nf_domains;
+    OpenAPI_list_t *allowed_nssais;
     int priority;
     int capacity;
     int load;
     char *locality;
-    struct ogs_sbi_udr_info_s *udr_info;
-    ogs_sbi_list_t *udr_info_ext;
-    struct ogs_sbi_udm_info_s *udm_info;
-    ogs_sbi_list_t *udm_info_ext;
-    struct ogs_sbi_ausf_info_s *ausf_info;
-    ogs_sbi_list_t *ausf_info_ext;
-    struct ogs_sbi_amf_info_s *amf_info;
-    ogs_sbi_list_t *amf_info_ext;
-    struct ogs_sbi_smf_info_s *smf_info;
-    ogs_sbi_list_t *smf_info_ext;
-    struct ogs_sbi_upf_info_s *upf_info;
-    ogs_sbi_list_t *upf_info_ext;
-    struct ogs_sbi_pcf_info_s *pcf_info;
-    ogs_sbi_list_t *pcf_info_ext;
-    struct ogs_sbi_bsf_info_s *bsf_info;
-    ogs_sbi_list_t *bsf_info_ext;
-    struct ogs_sbi_chf_info_s *chf_info;
-    ogs_sbi_list_t *chf_info_ext;
-    struct ogs_sbi_nrf_info_s *nrf_info;
-    struct ogs_sbi_nwdaf_info_s *nwdaf_info;
-    ogs_sbi_object_t *custom_info;
+    struct OpenAPI_udr_info_s *udr_info;
+    OpenAPI_list_t *udr_info_ext;
+    struct OpenAPI_udm_info_s *udm_info;
+    OpenAPI_list_t *udm_info_ext;
+    struct OpenAPI_ausf_info_s *ausf_info;
+    OpenAPI_list_t *ausf_info_ext;
+    struct OpenAPI_amf_info_s *amf_info;
+    OpenAPI_list_t *amf_info_ext;
+    struct OpenAPI_smf_info_s *smf_info;
+    OpenAPI_list_t *smf_info_ext;
+    struct OpenAPI_upf_info_s *upf_info;
+    OpenAPI_list_t *upf_info_ext;
+    struct OpenAPI_pcf_info_s *pcf_info;
+    OpenAPI_list_t *pcf_info_ext;
+    struct OpenAPI_bsf_info_s *bsf_info;
+    OpenAPI_list_t *bsf_info_ext;
+    struct OpenAPI_chf_info_s *chf_info;
+    OpenAPI_list_t *chf_info_ext;
+    struct OpenAPI_nrf_info_s *nrf_info;
+    struct OpenAPI_nwdaf_info_s *nwdaf_info;
+    OpenAPI_object_t *custom_info;
     char *recovery_time;
     int nf_service_persistence;
-    ogs_sbi_list_t *nf_services;
+    OpenAPI_list_t *nf_services;
     int nf_profile_changes_support_ind;
     int nf_profile_changes_ind;
-    ogs_sbi_list_t *default_notification_subscriptions;
-} ogs_sbi_nf_profile_t;
+    OpenAPI_list_t *default_notification_subscriptions;
+} OpenAPI_nf_profile_t;
 
-ogs_sbi_nf_profile_t *ogs_sbi_nf_profile_create(
+OpenAPI_nf_profile_t *OpenAPI_nf_profile_create(
     char *nf_instance_id,
     char *nf_instance_name,
-    ogs_sbi_nf_type_e nf_type,
-    ogs_sbi_nf_status_e nf_status,
+    OpenAPI_nf_type_e nf_type,
+    OpenAPI_nf_status_e nf_status,
     int heart_beat_timer,
-    ogs_sbi_list_t *plmn_list,
-    ogs_sbi_list_t *s_nssais,
-    ogs_sbi_list_t *per_plmn_snssai_list,
-    ogs_sbi_list_t *nsi_list,
+    OpenAPI_list_t *plmn_list,
+    OpenAPI_list_t *s_nssais,
+    OpenAPI_list_t *per_plmn_snssai_list,
+    OpenAPI_list_t *nsi_list,
     char *fqdn,
     char *inter_plmn_fqdn,
-    ogs_sbi_list_t *ipv4_addresses,
-    ogs_sbi_list_t *ipv6_addresses,
-    ogs_sbi_list_t *allowed_plmns,
-    ogs_sbi_list_t *allowed_nf_types,
-    ogs_sbi_list_t *allowed_nf_domains,
-    ogs_sbi_list_t *allowed_nssais,
+    OpenAPI_list_t *ipv4_addresses,
+    OpenAPI_list_t *ipv6_addresses,
+    OpenAPI_list_t *allowed_plmns,
+    OpenAPI_list_t *allowed_nf_types,
+    OpenAPI_list_t *allowed_nf_domains,
+    OpenAPI_list_t *allowed_nssais,
     int priority,
     int capacity,
     int load,
     char *locality,
-    ogs_sbi_udr_info_t *udr_info,
-    ogs_sbi_list_t *udr_info_ext,
-    ogs_sbi_udm_info_t *udm_info,
-    ogs_sbi_list_t *udm_info_ext,
-    ogs_sbi_ausf_info_t *ausf_info,
-    ogs_sbi_list_t *ausf_info_ext,
-    ogs_sbi_amf_info_t *amf_info,
-    ogs_sbi_list_t *amf_info_ext,
-    ogs_sbi_smf_info_t *smf_info,
-    ogs_sbi_list_t *smf_info_ext,
-    ogs_sbi_upf_info_t *upf_info,
-    ogs_sbi_list_t *upf_info_ext,
-    ogs_sbi_pcf_info_t *pcf_info,
-    ogs_sbi_list_t *pcf_info_ext,
-    ogs_sbi_bsf_info_t *bsf_info,
-    ogs_sbi_list_t *bsf_info_ext,
-    ogs_sbi_chf_info_t *chf_info,
-    ogs_sbi_list_t *chf_info_ext,
-    ogs_sbi_nrf_info_t *nrf_info,
-    ogs_sbi_nwdaf_info_t *nwdaf_info,
-    ogs_sbi_object_t *custom_info,
+    OpenAPI_udr_info_t *udr_info,
+    OpenAPI_list_t *udr_info_ext,
+    OpenAPI_udm_info_t *udm_info,
+    OpenAPI_list_t *udm_info_ext,
+    OpenAPI_ausf_info_t *ausf_info,
+    OpenAPI_list_t *ausf_info_ext,
+    OpenAPI_amf_info_t *amf_info,
+    OpenAPI_list_t *amf_info_ext,
+    OpenAPI_smf_info_t *smf_info,
+    OpenAPI_list_t *smf_info_ext,
+    OpenAPI_upf_info_t *upf_info,
+    OpenAPI_list_t *upf_info_ext,
+    OpenAPI_pcf_info_t *pcf_info,
+    OpenAPI_list_t *pcf_info_ext,
+    OpenAPI_bsf_info_t *bsf_info,
+    OpenAPI_list_t *bsf_info_ext,
+    OpenAPI_chf_info_t *chf_info,
+    OpenAPI_list_t *chf_info_ext,
+    OpenAPI_nrf_info_t *nrf_info,
+    OpenAPI_nwdaf_info_t *nwdaf_info,
+    OpenAPI_object_t *custom_info,
     char *recovery_time,
     int nf_service_persistence,
-    ogs_sbi_list_t *nf_services,
+    OpenAPI_list_t *nf_services,
     int nf_profile_changes_support_ind,
     int nf_profile_changes_ind,
-    ogs_sbi_list_t *default_notification_subscriptions
+    OpenAPI_list_t *default_notification_subscriptions
     );
-void ogs_sbi_nf_profile_free(ogs_sbi_nf_profile_t *nf_profile);
-ogs_sbi_nf_profile_t *ogs_sbi_nf_profile_parseFromJSON(cJSON *nf_profileJSON);
-cJSON *ogs_sbi_nf_profile_convertToJSON(ogs_sbi_nf_profile_t *nf_profile);
+void OpenAPI_nf_profile_free(OpenAPI_nf_profile_t *nf_profile);
+OpenAPI_nf_profile_t *OpenAPI_nf_profile_parseFromJSON(cJSON *nf_profileJSON);
+cJSON *OpenAPI_nf_profile_convertToJSON(OpenAPI_nf_profile_t *nf_profile);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_nf_profile_H_ */
+#endif /* _OpenAPI_nf_profile_H_ */
 

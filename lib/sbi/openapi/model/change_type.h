@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_change_type_H_
-#define _ogs_sbi_change_type_H_
+#ifndef _OpenAPI_change_type_H_
+#define _OpenAPI_change_type_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,15 +17,15 @@
 extern "C" {
 #endif
 
-typedef enum { ogs_sbi_change_type_NULL = 0, ogs_sbi_change_type_ADD, ogs_sbi_change_type_MOVE, ogs_sbi_change_type__REMOVE, ogs_sbi_change_type_REPLACE } ogs_sbi_change_type_e;
+typedef enum { OpenAPI_change_type_NULL = 0, OpenAPI_change_type_ADD, OpenAPI_change_type_MOVE, OpenAPI_change_type__REMOVE, OpenAPI_change_type_REPLACE } OpenAPI_change_type_e;
 
-char* ogs_sbi_change_type_ToString(ogs_sbi_change_type_e change_type);
+char* OpenAPI_change_type_ToString(OpenAPI_change_type_e change_type);
 
-ogs_sbi_change_type_e ogs_sbi_change_type_FromString(char* change_type);
+OpenAPI_change_type_e OpenAPI_change_type_FromString(char* change_type);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_change_type_H_ */
+#endif /* _OpenAPI_change_type_H_ */
 

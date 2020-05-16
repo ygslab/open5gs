@@ -30,6 +30,9 @@ void nrf_state_initial(ogs_fsm_t *s, nrf_event_t *e);
 void nrf_state_final(ogs_fsm_t *s, nrf_event_t *e);
 void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e);
 
+void nrf_nf_fsm_init(ogs_sbi_nf_instance_t *nf_instance);
+void nrf_nf_fsm_fini(ogs_sbi_nf_instance_t *nf_instance);
+
 void nrf_nf_state_initial(ogs_fsm_t *s, nrf_event_t *e);
 void nrf_nf_state_final(ogs_fsm_t *s, nrf_event_t *e);
 void nrf_nf_state_will_register(ogs_fsm_t *s, nrf_event_t *e);

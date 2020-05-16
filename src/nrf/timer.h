@@ -31,6 +31,7 @@ typedef enum {
     NRF_TIMER_BASE = 0,
 
     NRF_TIMER_SBI_NO_HEARTBEAT,
+    NRF_TIMER_SBI_NO_VALIDITY,
 
     MAX_NUM_OF_NRF_TIMER,
 
@@ -46,6 +47,7 @@ nrf_timer_cfg_t *nrf_timer_cfg(nrf_timer_e id);
 const char *nrf_timer_get_name(nrf_timer_e id);
 
 void nrf_timer_sbi_no_heartbeat(void *data);
+void nrf_timer_sbi_no_validity(void *data);
 
 #ifdef __cplusplus
 }

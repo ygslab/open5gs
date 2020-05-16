@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_tai_H_
-#define _ogs_sbi_tai_H_
+#ifndef _OpenAPI_tai_H_
+#define _OpenAPI_tai_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,23 +18,23 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_tai_s ogs_sbi_tai_t;
-typedef struct ogs_sbi_tai_s {
-    struct ogs_sbi_plmn_id_s *plmn_id;
+typedef struct OpenAPI_tai_s OpenAPI_tai_t;
+typedef struct OpenAPI_tai_s {
+    struct OpenAPI_plmn_id_s *plmn_id;
     char *tac;
-} ogs_sbi_tai_t;
+} OpenAPI_tai_t;
 
-ogs_sbi_tai_t *ogs_sbi_tai_create(
-    ogs_sbi_plmn_id_t *plmn_id,
+OpenAPI_tai_t *OpenAPI_tai_create(
+    OpenAPI_plmn_id_t *plmn_id,
     char *tac
     );
-void ogs_sbi_tai_free(ogs_sbi_tai_t *tai);
-ogs_sbi_tai_t *ogs_sbi_tai_parseFromJSON(cJSON *taiJSON);
-cJSON *ogs_sbi_tai_convertToJSON(ogs_sbi_tai_t *tai);
+void OpenAPI_tai_free(OpenAPI_tai_t *tai);
+OpenAPI_tai_t *OpenAPI_tai_parseFromJSON(cJSON *taiJSON);
+cJSON *OpenAPI_tai_convertToJSON(OpenAPI_tai_t *tai);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_tai_H_ */
+#endif /* _OpenAPI_tai_H_ */
 

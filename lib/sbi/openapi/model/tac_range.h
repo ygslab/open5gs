@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_tac_range_H_
-#define _ogs_sbi_tac_range_H_
+#ifndef _OpenAPI_tac_range_H_
+#define _OpenAPI_tac_range_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,25 +17,25 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_tac_range_s ogs_sbi_tac_range_t;
-typedef struct ogs_sbi_tac_range_s {
+typedef struct OpenAPI_tac_range_s OpenAPI_tac_range_t;
+typedef struct OpenAPI_tac_range_s {
     char *start;
     char *end;
     char *pattern;
-} ogs_sbi_tac_range_t;
+} OpenAPI_tac_range_t;
 
-ogs_sbi_tac_range_t *ogs_sbi_tac_range_create(
+OpenAPI_tac_range_t *OpenAPI_tac_range_create(
     char *start,
     char *end,
     char *pattern
     );
-void ogs_sbi_tac_range_free(ogs_sbi_tac_range_t *tac_range);
-ogs_sbi_tac_range_t *ogs_sbi_tac_range_parseFromJSON(cJSON *tac_rangeJSON);
-cJSON *ogs_sbi_tac_range_convertToJSON(ogs_sbi_tac_range_t *tac_range);
+void OpenAPI_tac_range_free(OpenAPI_tac_range_t *tac_range);
+OpenAPI_tac_range_t *OpenAPI_tac_range_parseFromJSON(cJSON *tac_rangeJSON);
+cJSON *OpenAPI_tac_range_convertToJSON(OpenAPI_tac_range_t *tac_range);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_tac_range_H_ */
+#endif /* _OpenAPI_tac_range_H_ */
 

@@ -4,8 +4,8 @@
  * {{description}}
  */
 
-#ifndef _ogs_sbi_{{classname}}_H_
-#define _ogs_sbi_{{classname}}_H_
+#ifndef _OpenAPI_{{classname}}_H_
+#define _OpenAPI_{{classname}}_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -22,40 +22,40 @@ extern "C" {
 
 {{#isEnum}}
     {{#allowableValues}}
-        typedef enum { ogs_sbi_{{classVarName}}_NULL = 0{{#enumVars}}, ogs_sbi_{{classVarName}}_{{{value}}}{{/enumVars}} } ogs_sbi_{{classVarName}}_e;
+        typedef enum { OpenAPI_{{classVarName}}_NULL = 0{{#enumVars}}, OpenAPI_{{classVarName}}_{{{value}}}{{/enumVars}} } OpenAPI_{{classVarName}}_e;
     {{/allowableValues}}
 
-    char* ogs_sbi_{{classname}}_ToString(ogs_sbi_{{classVarName}}_e {{classname}});
+    char* OpenAPI_{{classname}}_ToString(OpenAPI_{{classVarName}}_e {{classname}});
 
-    ogs_sbi_{{classVarName}}_e ogs_sbi_{{classname}}_FromString(char* {{classname}});
+    OpenAPI_{{classVarName}}_e OpenAPI_{{classname}}_FromString(char* {{classname}});
 {{/isEnum}}
 {{^isEnum}}
-    typedef struct ogs_sbi_{{classname}}_s ogs_sbi_{{classname}}_t;
+    typedef struct OpenAPI_{{classname}}_s OpenAPI_{{classname}}_t;
 {{#vars}}
     {{^isContainer}}
         {{#isPrimitiveType}}
             {{#isEnum}}
                 {{#allowableValues}}
-                typedef enum { ogs_sbi_{{classVarName}}_{{enumName}}_NULL = 0{{#enumVars}}, ogs_sbi_{{classVarName}}_{{enumName}}_{{{value}}}{{/enumVars}} } ogs_sbi_{{classVarName}}_{{name}}_e;
+                typedef enum { OpenAPI_{{classVarName}}_{{enumName}}_NULL = 0{{#enumVars}}, OpenAPI_{{classVarName}}_{{enumName}}_{{{value}}}{{/enumVars}} } OpenAPI_{{classVarName}}_{{name}}_e;
                 {{/allowableValues}}
 
-                char* ogs_sbi_{{classVarName}}_{{name}}_ToString(ogs_sbi_{{classVarName}}_{{name}}_e {{name}});
+                char* OpenAPI_{{classVarName}}_{{name}}_ToString(OpenAPI_{{classVarName}}_{{name}}_e {{name}});
 
-                ogs_sbi_{{classVarName}}_{{name}}_e ogs_sbi_{{classVarName}}_{{name}}_FromString(char* {{name}});
+                OpenAPI_{{classVarName}}_{{name}}_e OpenAPI_{{classVarName}}_{{name}}_FromString(char* {{name}});
             {{/isEnum}}
         {{/isPrimitiveType}}
     {{/isContainer}}
 {{/vars}}
-    typedef struct ogs_sbi_{{classname}}_s {
+    typedef struct OpenAPI_{{classname}}_s {
 {{#vars}}
     {{^isContainer}}
         {{^isPrimitiveType}}
             {{#isEnum}}
-                ogs_sbi_{{datatype}}_e {{name}};
+                OpenAPI_{{datatype}}_e {{name}};
             {{/isEnum}}
             {{^isEnum}}
                 {{#isModel}}
-                    struct ogs_sbi_{{datatype}}_s *{{name}};
+                    struct OpenAPI_{{datatype}}_s *{{name}};
                 {{/isModel}}
                 {{#isUuid}}
                     {{datatype}} *{{name}};
@@ -64,13 +64,13 @@ extern "C" {
                     {{datatype}} *{{name}};
                 {{/isEmail}}
                 {{#isFreeFormObject}}
-                    ogs_sbi_{{datatype}}_t *{{name}};
+                    OpenAPI_{{datatype}}_t *{{name}};
                 {{/isFreeFormObject}}
             {{/isEnum}}
         {{/isPrimitiveType}}
         {{#isPrimitiveType}}
             {{#isEnum}}
-                ogs_sbi_{{classVarName}}_{{name}}_e {{name}};
+                OpenAPI_{{classVarName}}_{{name}}_e {{name}};
             {{/isEnum}}
             {{^isEnum}}
                 {{#isNumeric}}
@@ -87,7 +87,7 @@ extern "C" {
                 {{datatype}} {{name}};
             {{/isByteArray}}
             {{#isBinary}}
-                ogs_sbi_{{datatype}} {{name}};
+                OpenAPI_{{datatype}} {{name}};
             {{/isBinary}}
             {{#isDate}}
                 {{datatype}} *{{name}};
@@ -99,25 +99,25 @@ extern "C" {
     {{/isContainer}}
     {{#isContainer}}
         {{#isListContainer}}
-            ogs_sbi_{{datatype}}_t *{{name}};
+            OpenAPI_{{datatype}}_t *{{name}};
         {{/isListContainer}}
         {{#isMapContainer}}
-            ogs_sbi_{{datatype}} {{name}};
+            OpenAPI_{{datatype}} {{name}};
         {{/isMapContainer}}
     {{/isContainer}}
 {{/vars}}
-} ogs_sbi_{{classname}}_t;
+} OpenAPI_{{classname}}_t;
 
-ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_create(
+OpenAPI_{{classname}}_t *OpenAPI_{{classname}}_create(
 {{#vars}}
     {{^isContainer}}
         {{^isPrimitiveType}}
             {{#isEnum}}
-                ogs_sbi_{{datatype}}_e {{name}}{{#hasMore}},{{/hasMore}}
+                OpenAPI_{{datatype}}_e {{name}}{{#hasMore}},{{/hasMore}}
             {{/isEnum}}
             {{^isEnum}}
                 {{#isModel}}
-                    ogs_sbi_{{datatype}}_t *{{name}}{{#hasMore}},{{/hasMore}}
+                    OpenAPI_{{datatype}}_t *{{name}}{{#hasMore}},{{/hasMore}}
                 {{/isModel}}
                 {{#isUuid}}
                     {{datatype}} *{{name}}{{#hasMore}},{{/hasMore}}
@@ -126,13 +126,13 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_create(
                     {{datatype}} *{{name}}{{#hasMore}},{{/hasMore}}
                 {{/isEmail}}
                 {{#isFreeFormObject}}
-                    ogs_sbi_{{datatype}}_t *{{name}}{{#hasMore}},{{/hasMore}}
+                    OpenAPI_{{datatype}}_t *{{name}}{{#hasMore}},{{/hasMore}}
                 {{/isFreeFormObject}}
             {{/isEnum}}
         {{/isPrimitiveType}}
         {{#isPrimitiveType}}
             {{#isEnum}}
-                ogs_sbi_{{classVarName}}_{{name}}_e {{name}}{{#hasMore}},{{/hasMore}}
+                OpenAPI_{{classVarName}}_{{name}}_e {{name}}{{#hasMore}},{{/hasMore}}
             {{/isEnum}}
             {{^isEnum}}
                 {{#isNumeric}}
@@ -149,7 +149,7 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_create(
                 {{datatype}} {{name}}{{#hasMore}},{{/hasMore}}
             {{/isByteArray}}
             {{#isBinary}}
-                ogs_sbi_{{datatype}} {{name}}{{#hasMore}},{{/hasMore}}
+                OpenAPI_{{datatype}} {{name}}{{#hasMore}},{{/hasMore}}
             {{/isBinary}}
             {{#isDate}}
                 {{datatype}} *{{name}}{{#hasMore}},{{/hasMore}}
@@ -161,21 +161,21 @@ ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_create(
     {{/isContainer}}
     {{#isContainer}}
         {{#isListContainer}}
-            ogs_sbi_{{datatype}}_t *{{name}}{{#hasMore}},{{/hasMore}}
+            OpenAPI_{{datatype}}_t *{{name}}{{#hasMore}},{{/hasMore}}
         {{/isListContainer}}
         {{#isMapContainer}}
-            ogs_sbi_{{datatype}} {{name}}{{#hasMore}},{{/hasMore}}
+            OpenAPI_{{datatype}} {{name}}{{#hasMore}},{{/hasMore}}
         {{/isMapContainer}}
     {{/isContainer}}
 {{/vars}});
-void ogs_sbi_{{classname}}_free(ogs_sbi_{{classname}}_t *{{classname}});
-ogs_sbi_{{classname}}_t *ogs_sbi_{{classname}}_parseFromJSON(cJSON *{{classname}}JSON);
-cJSON *ogs_sbi_{{classname}}_convertToJSON(ogs_sbi_{{classname}}_t *{{classname}});
+void OpenAPI_{{classname}}_free(OpenAPI_{{classname}}_t *{{classname}});
+OpenAPI_{{classname}}_t *OpenAPI_{{classname}}_parseFromJSON(cJSON *{{classname}}JSON);
+cJSON *OpenAPI_{{classname}}_convertToJSON(OpenAPI_{{classname}}_t *{{classname}});
 {{/isEnum}}
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_{{classname}}_H_ */
+#endif /* _OpenAPI_{{classname}}_H_ */
 {{/model}}{{/models}}

@@ -162,8 +162,9 @@ void ogs_sbi_server_remove_all(void)
         ogs_sbi_server_remove(server);
 }
 
-void ogs_sbi_server_start(ogs_sbi_server_t *server,
-        int (*cb)(ogs_sbi_session_t *session, ogs_sbi_request_t *request))
+void ogs_sbi_server_start(ogs_sbi_server_t *server, int (*cb)(
+            ogs_sbi_server_t *server, ogs_sbi_session_t *session,
+            ogs_sbi_request_t *request))
 {
     char buf[OGS_ADDRSTRLEN];
     ogs_sockaddr_t *addr = NULL;
@@ -245,8 +246,9 @@ void ogs_sbi_server_start(ogs_sbi_server_t *server,
         ogs_info("sbi_server() [any]:any");
 }
 
-void ogs_sbi_server_start_all(
-        int (*cb)(ogs_sbi_session_t *session, ogs_sbi_request_t *request))
+void ogs_sbi_server_start_all(int (*cb)(
+            ogs_sbi_server_t *server, ogs_sbi_session_t *session,
+            ogs_sbi_request_t *request))
 {
     ogs_sbi_server_t *server = NULL, *next_server = NULL;
 
@@ -345,7 +347,7 @@ void ogs_sbi_server_send_response(ogs_sbi_session_t *session,
 }
 
 void ogs_sbi_server_send_problem(
-        ogs_sbi_session_t *session, ogs_sbi_problem_details_t *problem)
+        ogs_sbi_session_t *session, OpenAPI_problem_details_t *problem)
 {
     ogs_sbi_message_t message;
     ogs_sbi_response_t *response = NULL;
@@ -356,7 +358,7 @@ void ogs_sbi_server_send_problem(
     memset(&message, 0, sizeof(message));
 
     message.http.content_type = (char*)"application/problem+json";
-    message.problem_details = problem;
+    message.ProblemDetails = problem;
 
     response = ogs_sbi_build_response(&message);
     ogs_assert(response);
@@ -368,7 +370,7 @@ void ogs_sbi_server_send_error(ogs_sbi_session_t *session,
         int status, ogs_sbi_message_t *message,
         const char *title, const char *detail)
 {
-    ogs_sbi_problem_details_t problem;
+    OpenAPI_problem_details_t problem;
 
     ogs_assert(session);
 
@@ -376,7 +378,7 @@ void ogs_sbi_server_send_error(ogs_sbi_session_t *session,
 
     if (message) {
         problem.type = ogs_msprintf("/%s/%s",
-                message->h.api.name, message->h.api.version);
+                message->h.service.name, message->h.api.version);
         if (message->h.resource.id)
             problem.instance = ogs_msprintf("/%s/%s",
                     message->h.resource.name, message->h.resource.id);
@@ -538,7 +540,7 @@ suspend:
     session = session_add(server, request, connection);
     ogs_assert(session);
 
-    if (server->cb(session, request) != OGS_OK) {
+    if (server->cb(server, session, request) != OGS_OK) {
         ogs_error("server callback error");
         return MHD_NO;
     }

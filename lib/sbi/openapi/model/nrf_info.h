@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_nrf_info_H_
-#define _ogs_sbi_nrf_info_H_
+#ifndef _OpenAPI_nrf_info_H_
+#define _OpenAPI_nrf_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -27,39 +27,39 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_nrf_info_s ogs_sbi_nrf_info_t;
-typedef struct ogs_sbi_nrf_info_s {
-    ogs_sbi_list_t* served_udr_info;
-    ogs_sbi_list_t* served_udm_info;
-    ogs_sbi_list_t* served_ausf_info;
-    ogs_sbi_list_t* served_amf_info;
-    ogs_sbi_list_t* served_smf_info;
-    ogs_sbi_list_t* served_upf_info;
-    ogs_sbi_list_t* served_pcf_info;
-    ogs_sbi_list_t* served_bsf_info;
-    ogs_sbi_list_t* served_chf_info;
-    ogs_sbi_list_t* served_nwdaf_info;
-} ogs_sbi_nrf_info_t;
+typedef struct OpenAPI_nrf_info_s OpenAPI_nrf_info_t;
+typedef struct OpenAPI_nrf_info_s {
+    OpenAPI_list_t* served_udr_info;
+    OpenAPI_list_t* served_udm_info;
+    OpenAPI_list_t* served_ausf_info;
+    OpenAPI_list_t* served_amf_info;
+    OpenAPI_list_t* served_smf_info;
+    OpenAPI_list_t* served_upf_info;
+    OpenAPI_list_t* served_pcf_info;
+    OpenAPI_list_t* served_bsf_info;
+    OpenAPI_list_t* served_chf_info;
+    OpenAPI_list_t* served_nwdaf_info;
+} OpenAPI_nrf_info_t;
 
-ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_create(
-    ogs_sbi_list_t* served_udr_info,
-    ogs_sbi_list_t* served_udm_info,
-    ogs_sbi_list_t* served_ausf_info,
-    ogs_sbi_list_t* served_amf_info,
-    ogs_sbi_list_t* served_smf_info,
-    ogs_sbi_list_t* served_upf_info,
-    ogs_sbi_list_t* served_pcf_info,
-    ogs_sbi_list_t* served_bsf_info,
-    ogs_sbi_list_t* served_chf_info,
-    ogs_sbi_list_t* served_nwdaf_info
+OpenAPI_nrf_info_t *OpenAPI_nrf_info_create(
+    OpenAPI_list_t* served_udr_info,
+    OpenAPI_list_t* served_udm_info,
+    OpenAPI_list_t* served_ausf_info,
+    OpenAPI_list_t* served_amf_info,
+    OpenAPI_list_t* served_smf_info,
+    OpenAPI_list_t* served_upf_info,
+    OpenAPI_list_t* served_pcf_info,
+    OpenAPI_list_t* served_bsf_info,
+    OpenAPI_list_t* served_chf_info,
+    OpenAPI_list_t* served_nwdaf_info
     );
-void ogs_sbi_nrf_info_free(ogs_sbi_nrf_info_t *nrf_info);
-ogs_sbi_nrf_info_t *ogs_sbi_nrf_info_parseFromJSON(cJSON *nrf_infoJSON);
-cJSON *ogs_sbi_nrf_info_convertToJSON(ogs_sbi_nrf_info_t *nrf_info);
+void OpenAPI_nrf_info_free(OpenAPI_nrf_info_t *nrf_info);
+OpenAPI_nrf_info_t *OpenAPI_nrf_info_parseFromJSON(cJSON *nrf_infoJSON);
+cJSON *OpenAPI_nrf_info_convertToJSON(OpenAPI_nrf_info_t *nrf_info);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_nrf_info_H_ */
+#endif /* _OpenAPI_nrf_info_H_ */
 

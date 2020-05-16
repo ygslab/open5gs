@@ -8,44 +8,44 @@
 extern "C" {
 #endif
 
-#define ogs_sbi_malloc(__sIZE) __sIZE == 0 ? NULL : ogs_malloc(__sIZE)
+#define OpenAPI_malloc(__sIZE) __sIZE == 0 ? NULL : ogs_malloc(__sIZE)
 
-typedef struct ogs_sbi_list_s ogs_sbi_list_t;
+typedef struct OpenAPI_list_s OpenAPI_list_t;
 
-typedef struct ogs_sbi_lnode_s ogs_sbi_lnode_t;
+typedef struct OpenAPI_lnode_s OpenAPI_lnode_t;
 
-struct ogs_sbi_lnode_s {
-    ogs_sbi_lnode_t *next;
-    ogs_sbi_lnode_t *prev;
+struct OpenAPI_lnode_s {
+    OpenAPI_lnode_t *next;
+    OpenAPI_lnode_t *prev;
     void *data;
 };
 
-typedef struct ogs_sbi_list_s {
-    ogs_sbi_lnode_t *first;
-    ogs_sbi_lnode_t *last;
+typedef struct OpenAPI_list_s {
+    OpenAPI_lnode_t *first;
+    OpenAPI_lnode_t *last;
 
     long count;
-} ogs_sbi_list_t;
+} OpenAPI_list_t;
 
-#define ogs_sbi_list_for_each(list, element) for(element = (list != NULL) ? (list)->first : NULL; element != NULL; element = element->next)
+#define OpenAPI_list_for_each(list, element) for(element = (list != NULL) ? (list)->first : NULL; element != NULL; element = element->next)
 
-ogs_sbi_list_t *ogs_sbi_list_create(void);
-void ogs_sbi_list_free(ogs_sbi_list_t *listToFree);
+OpenAPI_list_t *OpenAPI_list_create(void);
+void OpenAPI_list_free(OpenAPI_list_t *listToFree);
 
-void ogs_sbi_list_add(ogs_sbi_list_t *list, void *dataToAddInList);
-ogs_sbi_lnode_t *ogs_sbi_list_find(ogs_sbi_list_t *list, long indexOfElement);
-void ogs_sbi_list_remove(
-    ogs_sbi_list_t *list, ogs_sbi_lnode_t *elementToRemove);
+void OpenAPI_list_add(OpenAPI_list_t *list, void *dataToAddInList);
+OpenAPI_lnode_t *OpenAPI_list_find(OpenAPI_list_t *list, long indexOfElement);
+void OpenAPI_list_remove(
+    OpenAPI_list_t *list, OpenAPI_lnode_t *elementToRemove);
 
-void ogs_sbi_list_iterate_forward(ogs_sbi_list_t *list,
-                                  void (*operationToPerform)(ogs_sbi_lnode_t*, void*),
+void OpenAPI_list_iterate_forward(OpenAPI_list_t *list,
+                                  void (*operationToPerform)(OpenAPI_lnode_t*, void*),
                                   void *additionalDataNeededForCallbackFunction);
-void ogs_sbi_list_iterate_backward(ogs_sbi_list_t *list,
-                                   void (*operationToPerform)(ogs_sbi_lnode_t*, void*),
+void OpenAPI_list_iterate_backward(OpenAPI_list_t *list,
+                                   void (*operationToPerform)(OpenAPI_lnode_t*, void*),
                                    void *additionalDataNeededForCallbackFunction);
 
-void ogs_sbi_lnode_print(ogs_sbi_lnode_t *listEntry, void *additionalData);
-void ogs_sbi_lnode_free(ogs_sbi_lnode_t *listEntry, void *additionalData);
+void OpenAPI_lnode_print(OpenAPI_lnode_t *listEntry, void *additionalData);
+void OpenAPI_lnode_free(OpenAPI_lnode_t *listEntry, void *additionalData);
 
 #ifdef __cplusplus
 }

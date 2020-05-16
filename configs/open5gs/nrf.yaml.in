@@ -65,7 +65,6 @@ logger:
 #    sbi:
 #      dev: eth0
 #
-#
 nrf:
     sbi:
       addr:
@@ -93,7 +92,6 @@ nrf:
 #
 #  o Disable Stateless Address Autoconfiguration for IPv6
 #      no_slaac: true
-#
 #
 parameter:
 
@@ -139,4 +137,20 @@ max:
 #   - SGW Memory Usage : 65536 * 8Kbytes = 512Mbytes
 #
 #   packet: 65536
+#
 pool:
+
+#
+# time:
+#
+#  o SBI Validity (Default : 86400 seconds = 1 day)
+#
+#  o SBI Validity (Disabled)
+#    sbi:
+#      validity: 0
+#
+#  o SBI Validity (3600 seconds = 1 hour)
+#    sbi:
+#      validity: 3600
+#
+time:

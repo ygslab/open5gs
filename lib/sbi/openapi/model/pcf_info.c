@@ -4,16 +4,16 @@
 #include <stdio.h>
 #include "pcf_info.h"
 
-ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_create(
+OpenAPI_pcf_info_t *OpenAPI_pcf_info_create(
     char *group_id,
-    ogs_sbi_list_t *dnn_list,
-    ogs_sbi_list_t *supi_ranges,
-    ogs_sbi_list_t *gpsi_ranges,
+    OpenAPI_list_t *dnn_list,
+    OpenAPI_list_t *supi_ranges,
+    OpenAPI_list_t *gpsi_ranges,
     char *rx_diam_host,
     char *rx_diam_realm
     )
 {
-    ogs_sbi_pcf_info_t *pcf_info_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_pcf_info_t));
+    OpenAPI_pcf_info_t *pcf_info_local_var = OpenAPI_malloc(sizeof(OpenAPI_pcf_info_t));
     if (!pcf_info_local_var) {
         return NULL;
     }
@@ -27,36 +27,43 @@ ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_create(
     return pcf_info_local_var;
 }
 
-void ogs_sbi_pcf_info_free(ogs_sbi_pcf_info_t *pcf_info)
+void OpenAPI_pcf_info_free(OpenAPI_pcf_info_t *pcf_info)
 {
     if (NULL == pcf_info) {
         return;
     }
-    ogs_sbi_lnode_t *node;
+    OpenAPI_lnode_t *node;
     ogs_free(pcf_info->group_id);
-    ogs_sbi_list_for_each(pcf_info->dnn_list, node) {
+    OpenAPI_list_for_each(pcf_info->dnn_list, node) {
         ogs_free(node->data);
     }
-    ogs_sbi_list_free(pcf_info->dnn_list);
-    ogs_sbi_list_for_each(pcf_info->supi_ranges, node) {
-        ogs_sbi_supi_range_free(node->data);
+    OpenAPI_list_free(pcf_info->dnn_list);
+    OpenAPI_list_for_each(pcf_info->supi_ranges, node) {
+        OpenAPI_supi_range_free(node->data);
     }
-    ogs_sbi_list_free(pcf_info->supi_ranges);
-    ogs_sbi_list_for_each(pcf_info->gpsi_ranges, node) {
-        ogs_sbi_identity_range_free(node->data);
+    OpenAPI_list_free(pcf_info->supi_ranges);
+    OpenAPI_list_for_each(pcf_info->gpsi_ranges, node) {
+        OpenAPI_identity_range_free(node->data);
     }
-    ogs_sbi_list_free(pcf_info->gpsi_ranges);
+    OpenAPI_list_free(pcf_info->gpsi_ranges);
     ogs_free(pcf_info->rx_diam_host);
     ogs_free(pcf_info->rx_diam_realm);
     ogs_free(pcf_info);
 }
 
-cJSON *ogs_sbi_pcf_info_convertToJSON(ogs_sbi_pcf_info_t *pcf_info)
+cJSON *OpenAPI_pcf_info_convertToJSON(OpenAPI_pcf_info_t *pcf_info)
 {
-    cJSON *item = cJSON_CreateObject();
+    cJSON *item = NULL;
+
+    if (pcf_info == NULL) {
+        ogs_error("OpenAPI_pcf_info_convertToJSON() failed [PcfInfo]");
+        return NULL;
+    }
+
+    item = cJSON_CreateObject();
     if (pcf_info->group_id) {
         if (cJSON_AddStringToObject(item, "groupId", pcf_info->group_id) == NULL) {
-            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [group_id]");
+            ogs_error("OpenAPI_pcf_info_convertToJSON() failed [group_id]");
             goto end;
         }
     }
@@ -64,14 +71,14 @@ cJSON *ogs_sbi_pcf_info_convertToJSON(ogs_sbi_pcf_info_t *pcf_info)
     if (pcf_info->dnn_list) {
         cJSON *dnn_list = cJSON_AddArrayToObject(item, "dnnList");
         if (dnn_list == NULL) {
-            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [dnn_list]");
+            ogs_error("OpenAPI_pcf_info_convertToJSON() failed [dnn_list]");
             goto end;
         }
 
-        ogs_sbi_lnode_t *dnn_list_node;
-        ogs_sbi_list_for_each(pcf_info->dnn_list, dnn_list_node)  {
+        OpenAPI_lnode_t *dnn_list_node;
+        OpenAPI_list_for_each(pcf_info->dnn_list, dnn_list_node)  {
             if (cJSON_AddStringToObject(dnn_list, "", (char*)dnn_list_node->data) == NULL) {
-                ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [dnn_list]");
+                ogs_error("OpenAPI_pcf_info_convertToJSON() failed [dnn_list]");
                 goto end;
             }
         }
@@ -80,16 +87,16 @@ cJSON *ogs_sbi_pcf_info_convertToJSON(ogs_sbi_pcf_info_t *pcf_info)
     if (pcf_info->supi_ranges) {
         cJSON *supi_ranges = cJSON_AddArrayToObject(item, "supiRanges");
         if (supi_ranges == NULL) {
-            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [supi_ranges]");
+            ogs_error("OpenAPI_pcf_info_convertToJSON() failed [supi_ranges]");
             goto end;
         }
 
-        ogs_sbi_lnode_t *supi_ranges_node;
+        OpenAPI_lnode_t *supi_ranges_node;
         if (pcf_info->supi_ranges) {
-            ogs_sbi_list_for_each(pcf_info->supi_ranges, supi_ranges_node) {
-                cJSON *itemLocal = ogs_sbi_supi_range_convertToJSON(supi_ranges_node->data);
+            OpenAPI_list_for_each(pcf_info->supi_ranges, supi_ranges_node) {
+                cJSON *itemLocal = OpenAPI_supi_range_convertToJSON(supi_ranges_node->data);
                 if (itemLocal == NULL) {
-                    ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [supi_ranges]");
+                    ogs_error("OpenAPI_pcf_info_convertToJSON() failed [supi_ranges]");
                     goto end;
                 }
                 cJSON_AddItemToArray(supi_ranges, itemLocal);
@@ -100,16 +107,16 @@ cJSON *ogs_sbi_pcf_info_convertToJSON(ogs_sbi_pcf_info_t *pcf_info)
     if (pcf_info->gpsi_ranges) {
         cJSON *gpsi_ranges = cJSON_AddArrayToObject(item, "gpsiRanges");
         if (gpsi_ranges == NULL) {
-            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [gpsi_ranges]");
+            ogs_error("OpenAPI_pcf_info_convertToJSON() failed [gpsi_ranges]");
             goto end;
         }
 
-        ogs_sbi_lnode_t *gpsi_ranges_node;
+        OpenAPI_lnode_t *gpsi_ranges_node;
         if (pcf_info->gpsi_ranges) {
-            ogs_sbi_list_for_each(pcf_info->gpsi_ranges, gpsi_ranges_node) {
-                cJSON *itemLocal = ogs_sbi_identity_range_convertToJSON(gpsi_ranges_node->data);
+            OpenAPI_list_for_each(pcf_info->gpsi_ranges, gpsi_ranges_node) {
+                cJSON *itemLocal = OpenAPI_identity_range_convertToJSON(gpsi_ranges_node->data);
                 if (itemLocal == NULL) {
-                    ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [gpsi_ranges]");
+                    ogs_error("OpenAPI_pcf_info_convertToJSON() failed [gpsi_ranges]");
                     goto end;
                 }
                 cJSON_AddItemToArray(gpsi_ranges, itemLocal);
@@ -119,14 +126,14 @@ cJSON *ogs_sbi_pcf_info_convertToJSON(ogs_sbi_pcf_info_t *pcf_info)
 
     if (pcf_info->rx_diam_host) {
         if (cJSON_AddStringToObject(item, "rxDiamHost", pcf_info->rx_diam_host) == NULL) {
-            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [rx_diam_host]");
+            ogs_error("OpenAPI_pcf_info_convertToJSON() failed [rx_diam_host]");
             goto end;
         }
     }
 
     if (pcf_info->rx_diam_realm) {
         if (cJSON_AddStringToObject(item, "rxDiamRealm", pcf_info->rx_diam_realm) == NULL) {
-            ogs_error("ogs_sbi_pcf_info_convertToJSON() failed [rx_diam_realm]");
+            ogs_error("OpenAPI_pcf_info_convertToJSON() failed [rx_diam_realm]");
             goto end;
         }
     }
@@ -135,81 +142,81 @@ end:
     return item;
 }
 
-ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
+OpenAPI_pcf_info_t *OpenAPI_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
 {
-    ogs_sbi_pcf_info_t *pcf_info_local_var = NULL;
+    OpenAPI_pcf_info_t *pcf_info_local_var = NULL;
     cJSON *group_id = cJSON_GetObjectItemCaseSensitive(pcf_infoJSON, "groupId");
 
     if (group_id) {
         if (!cJSON_IsString(group_id)) {
-            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [group_id]");
+            ogs_error("OpenAPI_pcf_info_parseFromJSON() failed [group_id]");
             goto end;
         }
     }
 
     cJSON *dnn_list = cJSON_GetObjectItemCaseSensitive(pcf_infoJSON, "dnnList");
 
-    ogs_sbi_list_t *dnn_listList;
+    OpenAPI_list_t *dnn_listList;
     if (dnn_list) {
         cJSON *dnn_list_local;
         if (!cJSON_IsArray(dnn_list)) {
-            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [dnn_list]");
+            ogs_error("OpenAPI_pcf_info_parseFromJSON() failed [dnn_list]");
             goto end;
         }
-        dnn_listList = ogs_sbi_list_create();
+        dnn_listList = OpenAPI_list_create();
 
         cJSON_ArrayForEach(dnn_list_local, dnn_list) {
             if (!cJSON_IsString(dnn_list_local)) {
-                ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [dnn_list]");
+                ogs_error("OpenAPI_pcf_info_parseFromJSON() failed [dnn_list]");
                 goto end;
             }
-            ogs_sbi_list_add(dnn_listList, ogs_strdup(dnn_list_local->valuestring));
+            OpenAPI_list_add(dnn_listList, ogs_strdup(dnn_list_local->valuestring));
         }
     }
 
     cJSON *supi_ranges = cJSON_GetObjectItemCaseSensitive(pcf_infoJSON, "supiRanges");
 
-    ogs_sbi_list_t *supi_rangesList;
+    OpenAPI_list_t *supi_rangesList;
     if (supi_ranges) {
         cJSON *supi_ranges_local_nonprimitive;
         if (!cJSON_IsArray(supi_ranges)) {
-            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [supi_ranges]");
+            ogs_error("OpenAPI_pcf_info_parseFromJSON() failed [supi_ranges]");
             goto end;
         }
 
-        supi_rangesList = ogs_sbi_list_create();
+        supi_rangesList = OpenAPI_list_create();
 
         cJSON_ArrayForEach(supi_ranges_local_nonprimitive, supi_ranges ) {
             if (!cJSON_IsObject(supi_ranges_local_nonprimitive)) {
-                ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [supi_ranges]");
+                ogs_error("OpenAPI_pcf_info_parseFromJSON() failed [supi_ranges]");
                 goto end;
             }
-            ogs_sbi_supi_range_t *supi_rangesItem = ogs_sbi_supi_range_parseFromJSON(supi_ranges_local_nonprimitive);
+            OpenAPI_supi_range_t *supi_rangesItem = OpenAPI_supi_range_parseFromJSON(supi_ranges_local_nonprimitive);
 
-            ogs_sbi_list_add(supi_rangesList, supi_rangesItem);
+            OpenAPI_list_add(supi_rangesList, supi_rangesItem);
         }
     }
 
     cJSON *gpsi_ranges = cJSON_GetObjectItemCaseSensitive(pcf_infoJSON, "gpsiRanges");
 
-    ogs_sbi_list_t *gpsi_rangesList;
+    OpenAPI_list_t *gpsi_rangesList;
     if (gpsi_ranges) {
         cJSON *gpsi_ranges_local_nonprimitive;
         if (!cJSON_IsArray(gpsi_ranges)) {
-            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [gpsi_ranges]");
+            ogs_error("OpenAPI_pcf_info_parseFromJSON() failed [gpsi_ranges]");
             goto end;
         }
 
-        gpsi_rangesList = ogs_sbi_list_create();
+        gpsi_rangesList = OpenAPI_list_create();
 
         cJSON_ArrayForEach(gpsi_ranges_local_nonprimitive, gpsi_ranges ) {
             if (!cJSON_IsObject(gpsi_ranges_local_nonprimitive)) {
-                ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [gpsi_ranges]");
+                ogs_error("OpenAPI_pcf_info_parseFromJSON() failed [gpsi_ranges]");
                 goto end;
             }
-            ogs_sbi_identity_range_t *gpsi_rangesItem = ogs_sbi_identity_range_parseFromJSON(gpsi_ranges_local_nonprimitive);
+            OpenAPI_identity_range_t *gpsi_rangesItem = OpenAPI_identity_range_parseFromJSON(gpsi_ranges_local_nonprimitive);
 
-            ogs_sbi_list_add(gpsi_rangesList, gpsi_rangesItem);
+            OpenAPI_list_add(gpsi_rangesList, gpsi_rangesItem);
         }
     }
 
@@ -217,7 +224,7 @@ ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
 
     if (rx_diam_host) {
         if (!cJSON_IsString(rx_diam_host)) {
-            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [rx_diam_host]");
+            ogs_error("OpenAPI_pcf_info_parseFromJSON() failed [rx_diam_host]");
             goto end;
         }
     }
@@ -226,12 +233,12 @@ ogs_sbi_pcf_info_t *ogs_sbi_pcf_info_parseFromJSON(cJSON *pcf_infoJSON)
 
     if (rx_diam_realm) {
         if (!cJSON_IsString(rx_diam_realm)) {
-            ogs_error("ogs_sbi_pcf_info_parseFromJSON() failed [rx_diam_realm]");
+            ogs_error("OpenAPI_pcf_info_parseFromJSON() failed [rx_diam_realm]");
             goto end;
         }
     }
 
-    pcf_info_local_var = ogs_sbi_pcf_info_create (
+    pcf_info_local_var = OpenAPI_pcf_info_create (
         group_id ? ogs_strdup(group_id->valuestring) : NULL,
         dnn_list ? dnn_listList : NULL,
         supi_ranges ? supi_rangesList : NULL,

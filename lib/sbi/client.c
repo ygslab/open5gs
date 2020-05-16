@@ -34,7 +34,7 @@ typedef struct sockinfo_s {
 typedef struct connection_s {
     ogs_lnode_t lnode;
 
-    void *context;
+    void *data;
 
     char *method;
 
@@ -90,14 +90,15 @@ ogs_sbi_client_t *ogs_sbi_client_add(ogs_sockaddr_t *addr)
     ogs_sbi_client_t *client = NULL;
     CURLM *multi = NULL;
 
+    ogs_assert(addr);
+
     ogs_pool_alloc(&client_pool, &client);
     ogs_assert(client);
     memset(client, 0, sizeof(ogs_sbi_client_t));
 
-    ogs_list_init(&client->connection_list);
-
-    ogs_assert(addr);
     ogs_copyaddrinfo(&client->addr, addr);
+
+    ogs_list_init(&client->connection_list);
 
     client->t_curl = ogs_timer_add(
             ogs_sbi_self()->timer_mgr, multi_timer_expired, client);
@@ -110,6 +111,66 @@ ogs_sbi_client_t *ogs_sbi_client_add(ogs_sockaddr_t *addr)
     curl_multi_setopt(multi, CURLMOPT_TIMERDATA, client);
 
     ogs_list_add(&ogs_sbi_self()->client_list, client);
+
+    return client;
+}
+
+ogs_sbi_client_t *ogs_sbi_client_find_or_add(char *url)
+{
+    int rv;
+
+    ogs_sbi_client_t *client = NULL;
+    struct yuarel yuarel;
+    char *p = ogs_strdup(url);
+    int port;
+
+    ogs_sockaddr_t *addr = NULL;
+
+    rv = yuarel_parse(&yuarel, p);
+    if (rv != OGS_OK) {
+        ogs_free(p);
+        ogs_error("yuarel_parse() failed [%s]", url);
+        return NULL;
+    }
+
+    if (!yuarel.scheme) {
+        ogs_error("No http.scheme found [%s]", url);
+        ogs_free(p);
+        return NULL;
+    }
+
+    if (strcmp(yuarel.scheme, "https") == 0) {
+        port = OGS_SBI_HTTPS_PORT;
+    } else if (strcmp(yuarel.scheme, "http") == 0) {
+        port = OGS_SBI_HTTP_PORT;
+    } else {
+        ogs_error("Invalid http.scheme [%s:%s]", yuarel.scheme, url);
+        ogs_free(p);
+        return NULL;
+    }
+
+    if (!yuarel.host) {
+        ogs_error("No http.host found [%s]", url);
+        ogs_free(p);
+        return NULL;
+    }
+
+    if (yuarel.port) port = yuarel.port;
+
+    rv = ogs_getaddrinfo(&addr, AF_UNSPEC, yuarel.host, port, 0);
+    if (rv != OGS_OK) {
+        ogs_error("ogs_getaddrinfo() failed [%s]", url);
+        ogs_free(p);
+    }
+
+    client = ogs_sbi_client_find(addr);
+    if (!client) {
+        client = ogs_sbi_client_add(addr);
+        ogs_assert(client);
+    }
+
+    ogs_freeaddrinfo(addr);
+    ogs_free(p);
 
     return client;
 }
@@ -142,6 +203,20 @@ void ogs_sbi_client_remove_all(void)
         ogs_sbi_client_remove(client);
 }
 
+ogs_sbi_client_t *ogs_sbi_client_find(ogs_sockaddr_t *addr)
+{
+    ogs_sbi_client_t *client = NULL;
+
+    ogs_assert(addr);
+
+    ogs_list_for_each(&ogs_sbi_self()->client_list, client) {
+        if (ogs_sockaddr_is_equal(client->addr, addr) == true)
+            break;
+    }
+
+    return client;
+}
+
 #define mycase(code) \
   case code: s = __STRING(code)
 
@@ -168,7 +243,7 @@ static void mcode_or_die(const char *where, CURLMcode code)
 }
 
 static connection_t *connection_add(ogs_sbi_client_t *client,
-        ogs_sbi_request_t *request, void *context)
+        ogs_sbi_request_t *request, void *data)
 {
     ogs_hash_index_t *hi;
     int i;
@@ -211,7 +286,6 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
 
     conn->easy = curl_easy_init();
     ogs_assert(conn->easy);
-    ogs_assert(client->addr);
 
     /* HTTP Method */
     if (strcmp(request->h.method, OGS_SBI_HTTP_METHOD_PUT) == 0 ||
@@ -237,8 +311,8 @@ static connection_t *connection_add(ogs_sbi_client_t *client,
     rc = curl_multi_add_handle(client->multi, conn->easy);
     mcode_or_die("connection_add: curl_multi_add_handle", rc);
 
-    conn->context = context;
     conn->client = client;
+    conn->data = data;
 
     ogs_list_add(&client->connection_list, conn);
 
@@ -353,7 +427,7 @@ static void check_multi_info(ogs_sbi_client_t *client)
                             "Content-Type", content_type);
 
                 if (client->cb)
-                    client->cb(response, conn->context);
+                    client->cb(response, conn->data);
             } else
                 ogs_error("[%d] %s", res, conn->error);
 
@@ -367,18 +441,20 @@ static void check_multi_info(ogs_sbi_client_t *client)
 }
 
 void ogs_sbi_client_send_request(
-        ogs_sbi_client_t *client, ogs_sbi_request_t *request, void *context)
+        ogs_sbi_client_t *client, ogs_sbi_request_t *request, void *data)
 {
     connection_t *conn = NULL;
 
     ogs_assert(client);
     ogs_assert(request);
 
-    request->h.url = ogs_sbi_uridup(client,
-            request->h.api.name, request->h.api.version,
-            request->h.resource.name, request->h.resource.id);
+    if (request->h.url == NULL) {
+        request->h.url = ogs_sbi_client_uri(client,
+                request->h.service.name, request->h.api.version,
+                request->h.resource.name, request->h.resource.id);
+    }
 
-    conn = connection_add(client, request, context);
+    conn = connection_add(client, request, data);
     ogs_assert(conn);
     ogs_sbi_request_free(request);
 }

@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_links_value_schema_H_
-#define _ogs_sbi_links_value_schema_H_
+#ifndef _OpenAPI_links_value_schema_H_
+#define _OpenAPI_links_value_schema_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,21 +18,21 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_links_value_schema_s ogs_sbi_links_value_schema_t;
-typedef struct ogs_sbi_links_value_schema_s {
+typedef struct OpenAPI_links_value_schema_s OpenAPI_links_value_schema_t;
+typedef struct OpenAPI_links_value_schema_s {
     char *href;
-} ogs_sbi_links_value_schema_t;
+} OpenAPI_links_value_schema_t;
 
-ogs_sbi_links_value_schema_t *ogs_sbi_links_value_schema_create(
+OpenAPI_links_value_schema_t *OpenAPI_links_value_schema_create(
     char *href
     );
-void ogs_sbi_links_value_schema_free(ogs_sbi_links_value_schema_t *links_value_schema);
-ogs_sbi_links_value_schema_t *ogs_sbi_links_value_schema_parseFromJSON(cJSON *links_value_schemaJSON);
-cJSON *ogs_sbi_links_value_schema_convertToJSON(ogs_sbi_links_value_schema_t *links_value_schema);
+void OpenAPI_links_value_schema_free(OpenAPI_links_value_schema_t *links_value_schema);
+OpenAPI_links_value_schema_t *OpenAPI_links_value_schema_parseFromJSON(cJSON *links_value_schemaJSON);
+cJSON *OpenAPI_links_value_schema_convertToJSON(OpenAPI_links_value_schema_t *links_value_schema);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_links_value_schema_H_ */
+#endif /* _OpenAPI_links_value_schema_H_ */
 

@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "nwdaf_event.h"
 
-ogs_sbi_nwdaf_event_t *ogs_sbi_nwdaf_event_create(
+OpenAPI_nwdaf_event_t *OpenAPI_nwdaf_event_create(
     )
 {
-    ogs_sbi_nwdaf_event_t *nwdaf_event_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_nwdaf_event_t));
+    OpenAPI_nwdaf_event_t *nwdaf_event_local_var = OpenAPI_malloc(sizeof(OpenAPI_nwdaf_event_t));
     if (!nwdaf_event_local_var) {
         return NULL;
     }
@@ -15,26 +15,33 @@ ogs_sbi_nwdaf_event_t *ogs_sbi_nwdaf_event_create(
     return nwdaf_event_local_var;
 }
 
-void ogs_sbi_nwdaf_event_free(ogs_sbi_nwdaf_event_t *nwdaf_event)
+void OpenAPI_nwdaf_event_free(OpenAPI_nwdaf_event_t *nwdaf_event)
 {
     if (NULL == nwdaf_event) {
         return;
     }
-    ogs_sbi_lnode_t *node;
+    OpenAPI_lnode_t *node;
     ogs_free(nwdaf_event);
 }
 
-cJSON *ogs_sbi_nwdaf_event_convertToJSON(ogs_sbi_nwdaf_event_t *nwdaf_event)
+cJSON *OpenAPI_nwdaf_event_convertToJSON(OpenAPI_nwdaf_event_t *nwdaf_event)
 {
-    cJSON *item = cJSON_CreateObject();
+    cJSON *item = NULL;
+
+    if (nwdaf_event == NULL) {
+        ogs_error("OpenAPI_nwdaf_event_convertToJSON() failed [NwdafEvent]");
+        return NULL;
+    }
+
+    item = cJSON_CreateObject();
 end:
     return item;
 }
 
-ogs_sbi_nwdaf_event_t *ogs_sbi_nwdaf_event_parseFromJSON(cJSON *nwdaf_eventJSON)
+OpenAPI_nwdaf_event_t *OpenAPI_nwdaf_event_parseFromJSON(cJSON *nwdaf_eventJSON)
 {
-    ogs_sbi_nwdaf_event_t *nwdaf_event_local_var = NULL;
-    nwdaf_event_local_var = ogs_sbi_nwdaf_event_create (
+    OpenAPI_nwdaf_event_t *nwdaf_event_local_var = NULL;
+    nwdaf_event_local_var = OpenAPI_nwdaf_event_create (
         );
 
     return nwdaf_event_local_var;

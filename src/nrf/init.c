@@ -57,9 +57,8 @@ void nrf_terminate(void)
 
     ogs_thread_destroy(thread);
 
-    ogs_sbi_context_final();
-
     nrf_context_final();
+    ogs_sbi_context_final();
 
     nrf_event_final(); /* Destroy event */
 }

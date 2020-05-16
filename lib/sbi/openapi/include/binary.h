@@ -7,17 +7,17 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_binary_s {
+typedef struct OpenAPI_binary_s {
     uint8_t* data;
     unsigned int len;
-} ogs_sbi_binary_t;
+} OpenAPI_binary_t;
 
-ogs_sbi_binary_t *ogs_sbi_instantiate_binary_t(char *data, int len);
+OpenAPI_binary_t *OpenAPI_instantiate_binary_t(char *data, int len);
 
-char *ogs_sbi_base64encode(const void *b64_encode_this,
+char *OpenAPI_base64encode(const void *b64_encode_this,
                            int encode_this_many_bytes);
 
-char *ogs_sbi_base64decode(const void *b64_decode_this,
+char *OpenAPI_base64decode(const void *b64_decode_this,
                            int decode_this_many_bytes, int *decoded_bytes);
 
 #ifdef __cplusplus

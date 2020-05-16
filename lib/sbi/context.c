@@ -22,6 +22,10 @@
 
 int __ogs_sbi_domain;
 
+static OGS_POOL(nf_instance_pool, ogs_sbi_nf_instance_t);
+static OGS_POOL(nf_service_pool, ogs_sbi_nf_service_t);
+static OGS_POOL(subscription_pool, ogs_sbi_subscription_t);
+
 static ogs_sbi_context_t self;
 
 static int context_initialized = 0;
@@ -45,6 +49,13 @@ void ogs_sbi_context_init(ogs_pollset_t *pollset, ogs_timer_mgr_t *timer_mgr)
     ogs_sbi_server_init(32);
     ogs_sbi_client_init(32, 32);
 
+    ogs_list_init(&self.nf_instance_list);
+    ogs_pool_init(&nf_instance_pool, ogs_config()->pool.sbi);
+    ogs_pool_init(&nf_service_pool, ogs_config()->pool.sbi);
+
+    ogs_list_init(&self.subscription_list);
+    ogs_pool_init(&subscription_pool, ogs_config()->pool.sbi);
+
     ogs_uuid_get(&self.uuid);
     ogs_uuid_format(self.nf_instance_id, &self.uuid);
 
@@ -54,6 +65,13 @@ void ogs_sbi_context_init(ogs_pollset_t *pollset, ogs_timer_mgr_t *timer_mgr)
 void ogs_sbi_context_final(void)
 {
     ogs_assert(context_initialized == 1);
+
+    ogs_sbi_subscription_remove_all();
+    ogs_pool_final(&subscription_pool);
+
+    ogs_sbi_nf_instance_remove_all();
+    ogs_pool_final(&nf_instance_pool);
+    ogs_pool_final(&nf_service_pool);
 
     ogs_sbi_client_final();
     ogs_sbi_server_final();
@@ -72,8 +90,6 @@ static int ogs_sbi_context_prepare(void)
     self.http_port = OGS_SBI_HTTP_PORT;
     self.https_port = OGS_SBI_HTTPS_PORT;
 
-    self.heart_beat_timer = 3;
-
     self.content_encoding = "gzip";
 
     return OGS_OK;
@@ -84,12 +100,6 @@ static int ogs_sbi_context_validation(const char *local)
     if (ogs_list_first(&self.server_list) == NULL) {
         ogs_error("No %s.sbi: in '%s'", local, ogs_config()->file);
         return OGS_ERROR;
-    }
-    if (strcmp(local, "nrf") != 0) {
-        if (ogs_list_first(&self.client_list) == NULL) {
-            ogs_error("No nrf.sbi: in '%s'", ogs_config()->file);
-            return OGS_ERROR;
-        }
     }
 
     return OGS_OK;
@@ -274,11 +284,9 @@ int ogs_sbi_context_parse_config(const char *local, const char *remote)
                         ogs_assert(rv == OGS_OK);
 
                         node = ogs_list_first(&list);
-                        if (node)
-                            ogs_sbi_server_add(node->addr);
+                        if (node) ogs_sbi_server_add(node->addr);
                         node6 = ogs_list_first(&list6);
-                        if (node6)
-                            ogs_sbi_server_add(node6->addr);
+                        if (node6) ogs_sbi_server_add(node6->addr);
 
                         ogs_socknode_remove_all(&list);
                         ogs_socknode_remove_all(&list6);
@@ -303,7 +311,6 @@ int ogs_sbi_context_parse_config(const char *local, const char *remote)
                         uint16_t port = self.http_port;
                         const char *key = NULL;
                         const char *pem = NULL;
-                        int heart_beat_timer = self.heart_beat_timer;
 
                         if (ogs_yaml_iter_type(&sbi_array) ==
                                 YAML_MAPPING_NODE) {
@@ -375,9 +382,6 @@ int ogs_sbi_context_parse_config(const char *local, const char *remote)
                                     } else
                                         ogs_warn("unknown key `%s`", tls_key);
                                 }
-                            } else if (!strcmp(sbi_key, "heartbeat")) {
-                                const char *v = ogs_yaml_iter_value(&sbi_iter);
-                                if (v) heart_beat_timer = atoi(v);
                             } else
                                 ogs_warn("unknown key `%s`", sbi_key);
                         }
@@ -396,7 +400,6 @@ int ogs_sbi_context_parse_config(const char *local, const char *remote)
                         client = ogs_sbi_client_add(addr);
                         ogs_assert(client);
 
-                        client->heart_beat_timer = heart_beat_timer;
                         if (key) client->tls.key = key;
                         if (pem) client->tls.pem = pem;
 
@@ -413,4 +416,468 @@ int ogs_sbi_context_parse_config(const char *local, const char *remote)
     if (rv != OGS_OK) return rv;
 
     return OGS_OK;
+}
+
+ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_add(char *id)
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(id);
+
+    ogs_pool_alloc(&nf_instance_pool, &nf_instance);
+    ogs_assert(nf_instance);
+    memset(nf_instance, 0, sizeof(ogs_sbi_nf_instance_t));
+
+    nf_instance->id = ogs_strdup(id);
+    ogs_assert(nf_instance->id);
+
+    nf_instance->time.heartbeat = ogs_config()->time.sbi.heartbeat;
+
+    ogs_list_add(&ogs_sbi_self()->nf_instance_list, nf_instance);
+
+    return nf_instance;
+}
+
+void ogs_sbi_nf_instance_clear(ogs_sbi_nf_instance_t *nf_instance)
+{
+    int i;
+
+    ogs_assert(nf_instance);
+
+    for (i = 0; i < nf_instance->num_of_ipv4; i++) {
+        if (nf_instance->ipv4[i])
+            ogs_freeaddrinfo(nf_instance->ipv4[i]);
+    }
+    for (i = 0; i < nf_instance->num_of_ipv6; i++) {
+        if (nf_instance->ipv6[i])
+            ogs_freeaddrinfo(nf_instance->ipv6[i]);
+    }
+
+
+    ogs_sbi_nf_service_remove_all(nf_instance);
+}
+
+void ogs_sbi_nf_instance_remove(ogs_sbi_nf_instance_t *nf_instance)
+{
+    ogs_assert(nf_instance);
+
+    ogs_list_remove(&ogs_sbi_self()->nf_instance_list, nf_instance);
+
+    ogs_assert(nf_instance->id);
+    ogs_free(nf_instance->id);
+
+    ogs_sbi_nf_instance_clear(nf_instance);
+
+    ogs_pool_free(&nf_instance_pool, nf_instance);
+}
+
+void ogs_sbi_nf_instance_remove_all(void)
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL, *next_nf_instance = NULL;
+
+    ogs_list_for_each_safe(
+            &ogs_sbi_self()->nf_instance_list, next_nf_instance, nf_instance)
+        ogs_sbi_nf_instance_remove(nf_instance);
+}
+
+ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_find(char *id)
+{
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+
+    ogs_assert(id);
+
+    ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
+        ogs_assert(nf_instance->id);
+        if (strcmp(nf_instance->id, id) == 0)
+            break;
+    }
+
+    return nf_instance;
+}
+
+ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_build_default(
+        OpenAPI_nf_type_e nf_type, ogs_sbi_client_t *client)
+{
+    ogs_sbi_server_t *server = NULL;
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+    char *hostname = NULL;
+
+    nf_instance = ogs_sbi_nf_instance_add(ogs_sbi_self()->nf_instance_id);
+    ogs_assert(nf_instance);
+
+    nf_instance->nf_type = nf_type;
+    nf_instance->nf_status = OpenAPI_nf_status_REGISTERED;
+    OGS_SETUP_SBI_CLIENT(nf_instance, client);
+
+    hostname = NULL;
+    ogs_list_for_each(&ogs_sbi_self()->server_list, server) {
+        ogs_assert(server->addr);
+
+        /* First FQDN is selected */
+        if (!hostname) {
+            hostname = ogs_gethostname(server->addr);
+            if (hostname)
+                continue;
+        }
+
+        if (nf_instance->num_of_ipv4 < OGS_SBI_MAX_NUM_OF_IP_ADDRESS) {
+            ogs_sockaddr_t *addr = NULL;
+            ogs_copyaddrinfo(&addr, server->addr);
+            ogs_assert(addr);
+
+            if (addr->ogs_sa_family == AF_INET) {
+                nf_instance->ipv4[nf_instance->num_of_ipv4] = addr;
+                nf_instance->num_of_ipv4++;
+            } else if (addr->ogs_sa_family == AF_INET6) {
+                nf_instance->ipv6[nf_instance->num_of_ipv6] = addr;
+                nf_instance->num_of_ipv6++;
+            } else
+                ogs_assert_if_reached();
+        }
+    }
+
+    if (hostname)
+        strcpy(nf_instance->fqdn, hostname);
+
+    return nf_instance;
+}
+
+ogs_sbi_nf_service_t *ogs_sbi_nf_service_add(ogs_sbi_nf_instance_t *nf_instance,
+        char *id, char *name, OpenAPI_uri_scheme_e scheme)
+{
+    ogs_sbi_nf_service_t *nf_service = NULL;
+
+    ogs_assert(nf_instance);
+    ogs_assert(id);
+    ogs_assert(name);
+
+    ogs_pool_alloc(&nf_service_pool, &nf_service);
+    ogs_assert(nf_service);
+    memset(nf_service, 0, sizeof(ogs_sbi_nf_service_t));
+
+    nf_service->id = ogs_strdup(id);
+    ogs_assert(nf_service->id);
+    nf_service->name = ogs_strdup(name);
+    ogs_assert(nf_service->name);
+    nf_service->scheme = scheme;
+
+    nf_service->status = OpenAPI_nf_service_status_REGISTERED;
+
+    nf_service->nf_instance = nf_instance;
+
+    ogs_list_add(&nf_instance->nf_service_list, nf_service);
+
+    return nf_service;
+}
+
+void ogs_sbi_nf_service_add_version(ogs_sbi_nf_service_t *nf_service,
+        char *in_uri, char *full, char *expiry)
+{
+    ogs_assert(nf_service);
+
+    ogs_assert(in_uri);
+    ogs_assert(full);
+
+    if (nf_service->num_of_version < OGS_SBI_MAX_NUM_OF_SERVICE_VERSION) {
+        nf_service->versions[nf_service->num_of_version].in_uri =
+            ogs_strdup(in_uri);
+        nf_service->versions[nf_service->num_of_version].full =
+            ogs_strdup(full);
+        if (expiry)
+            nf_service->versions[nf_service->num_of_version].expiry =
+                ogs_strdup(expiry);
+        nf_service->num_of_version++;
+    }
+}
+
+void ogs_sbi_nf_service_remove(ogs_sbi_nf_instance_t *nf_instance,
+        ogs_sbi_nf_service_t *nf_service)
+{
+    int i;
+
+    ogs_assert(nf_instance);
+    ogs_assert(nf_service);
+
+    ogs_list_remove(&nf_instance->nf_service_list, nf_service);
+
+    ogs_assert(nf_service->id);
+    ogs_free(nf_service->id);
+
+    ogs_assert(nf_service->name);
+    ogs_free(nf_service->name);
+
+    for (i = 0; i < nf_service->num_of_version; i++) {
+        if (nf_service->versions[i].in_uri)
+            ogs_free(nf_service->versions[i].in_uri);
+        if (nf_service->versions[i].full)
+            ogs_free(nf_service->versions[i].full);
+        if (nf_service->versions[i].expiry)
+            ogs_free(nf_service->versions[i].expiry);
+    }
+
+    for (i = 0; i < nf_service->num_of_addr; i++) {
+        if (nf_service->addr[i].ipv4)
+            ogs_freeaddrinfo(nf_service->addr[i].ipv4);
+        if (nf_service->addr[i].ipv6)
+            ogs_freeaddrinfo(nf_service->addr[i].ipv6);
+    }
+
+    ogs_pool_free(&nf_service_pool, nf_service);
+}
+
+void ogs_sbi_nf_service_remove_all(ogs_sbi_nf_instance_t *nf_instance)
+{
+    ogs_sbi_nf_service_t *nf_service = NULL, *next_nf_service = NULL;
+
+    ogs_assert(nf_instance);
+
+    ogs_list_for_each_safe(&nf_instance->nf_service_list,
+            next_nf_service, nf_service)
+        ogs_sbi_nf_service_remove(nf_instance, nf_service);
+}
+
+ogs_sbi_nf_service_t *ogs_sbi_nf_service_find(
+        ogs_sbi_nf_instance_t *nf_instance, char *name)
+{
+    ogs_sbi_nf_service_t *nf_service = NULL;
+
+    ogs_assert(nf_instance);
+    ogs_assert(name);
+
+    ogs_list_for_each(&nf_instance->nf_service_list, nf_service) {
+        ogs_assert(nf_service->name);
+        if (strcmp(nf_service->name, name) == 0)
+            break;
+    }
+
+    return nf_service;
+}
+
+ogs_sbi_nf_service_t *ogs_sbi_nf_service_build_default(
+        ogs_sbi_nf_instance_t *nf_instance,
+        char *name, ogs_sbi_client_t *client)
+{
+    ogs_sbi_server_t *server = NULL;
+    ogs_sbi_nf_service_t *nf_service = NULL;
+    ogs_uuid_t uuid;
+    char id[OGS_UUID_FORMATTED_LENGTH + 1];
+    char *hostname = NULL;
+
+    ogs_assert(nf_instance);
+    ogs_assert(name);
+    ogs_assert(client);
+
+    ogs_uuid_get(&uuid);
+    ogs_uuid_format(id, &uuid);
+
+    nf_service = ogs_sbi_nf_service_add(nf_instance, id, name,
+        (client->tls.key && client->tls.pem) ?
+            OpenAPI_uri_scheme_https : OpenAPI_uri_scheme_http);
+    ogs_assert(nf_service);
+    OGS_SETUP_SBI_CLIENT(nf_service, client);
+
+    hostname = NULL;
+    ogs_list_for_each(&ogs_sbi_self()->server_list, server) {
+        ogs_assert(server->addr);
+
+        /* First FQDN is selected */
+        if (!hostname) {
+            hostname = ogs_gethostname(server->addr);
+            if (hostname)
+                continue;
+        }
+
+        if (nf_service->num_of_addr < OGS_SBI_MAX_NUM_OF_IP_ADDRESS) {
+            int port = 0;
+            ogs_sockaddr_t *addr = NULL;
+            ogs_copyaddrinfo(&addr, server->addr);
+            ogs_assert(addr);
+
+            port = OGS_PORT(addr);
+            if (nf_service->scheme == OpenAPI_uri_scheme_https) {
+                if (port == OGS_SBI_HTTPS_PORT) port = 0;
+            } else if (nf_service->scheme == OpenAPI_uri_scheme_http) {
+                if (port == OGS_SBI_HTTP_PORT) port = 0;
+            }
+
+            nf_service->addr[nf_service->num_of_addr].port = port;
+            if (addr->ogs_sa_family == AF_INET) {
+                nf_service->addr[nf_service->num_of_addr].ipv4 = addr;
+            } else if (addr->ogs_sa_family == AF_INET6) {
+                nf_service->addr[nf_service->num_of_addr].ipv6 = addr;
+            } else
+                ogs_assert_if_reached();
+
+            nf_service->num_of_addr++;
+        }
+    }
+
+    if (hostname)
+        strcpy(nf_service->fqdn, hostname);
+
+    return nf_service;
+}
+
+static ogs_sbi_client_t *find_client_by_fqdn(char *fqdn, int port)
+{
+    int rv;
+    ogs_sockaddr_t *addr = NULL;
+    ogs_sbi_client_t *client = NULL;
+
+    rv = ogs_getaddrinfo(&addr, AF_UNSPEC, fqdn,
+            port ? port : OGS_SBI_HTTPS_PORT, 0);
+    if (rv != OGS_OK) {
+        ogs_error("Invalid NFProfile.fqdn");
+        return NULL;
+    }
+
+    client = ogs_sbi_client_find(addr);
+    if (!client) {
+        client = ogs_sbi_client_add(addr);
+        ogs_assert(client);
+    }
+
+    ogs_freeaddrinfo(addr);
+
+    return client;
+}
+
+ogs_sbi_client_t *ogs_sbi_nf_instance_find_client(
+        ogs_sbi_nf_instance_t *nf_instance)
+{
+    ogs_sbi_client_t *client = NULL;
+    ogs_sockaddr_t *addr = NULL;
+
+    if (strlen(nf_instance->fqdn))
+        client = find_client_by_fqdn(nf_instance->fqdn, 0);
+
+    if (!client) {
+        /* At this point, CLIENT selection method is very simple. */
+        if (nf_instance->num_of_ipv4) addr = nf_instance->ipv4[0];
+        if (nf_instance->num_of_ipv6) addr = nf_instance->ipv6[0];
+
+        if (addr) {
+            client = ogs_sbi_client_find(addr);
+            if (!client) {
+                client = ogs_sbi_client_add(addr);
+                ogs_assert(client);
+            }
+        }
+    }
+
+    ogs_sbi_nf_service_find_client_all(nf_instance);
+
+    return client;
+}
+
+ogs_sbi_client_t *ogs_sbi_nf_service_find_client(
+        ogs_sbi_nf_service_t *nf_service)
+{
+    ogs_sbi_client_t *client = NULL;
+    ogs_sockaddr_t *addr = NULL;
+
+    if (strlen(nf_service->fqdn))
+        client = find_client_by_fqdn(nf_service->fqdn, 0);
+
+    if (!client) {
+        /* At this point, CLIENT selection method is very simple. */
+        if (nf_service->num_of_addr) {
+            addr = nf_service->addr[0].ipv6;
+            if (!addr)
+                addr = nf_service->addr[0].ipv4;
+        }
+
+        if (addr) {
+            client = ogs_sbi_client_find(addr);
+            if (!client) {
+                client = ogs_sbi_client_add(addr);
+                ogs_assert(client);
+            }
+        }
+    }
+
+    if (!client) {
+        ogs_sbi_nf_instance_t *nf_instance = NULL;
+        nf_instance = nf_service->nf_instance;
+        ogs_assert(nf_instance);
+        client = nf_instance->client;
+    }
+
+    return client;
+}
+
+void ogs_sbi_nf_service_find_client_all(ogs_sbi_nf_instance_t *nf_instance)
+{
+    ogs_sbi_nf_service_t *nf_service = NULL;
+
+    ogs_assert(nf_instance);
+
+    ogs_list_for_each(&nf_instance->nf_service_list, nf_service)
+        ogs_sbi_nf_service_find_client(nf_service);
+}
+
+ogs_sbi_subscription_t *ogs_sbi_subscription_add(void)
+{
+    ogs_sbi_subscription_t *subscription = NULL;
+
+    ogs_pool_alloc(&subscription_pool, &subscription);
+    ogs_assert(subscription);
+    memset(subscription, 0, sizeof(ogs_sbi_subscription_t));
+
+    subscription->time.validity = ogs_config()->time.sbi.validity;
+
+    ogs_list_add(&ogs_sbi_self()->subscription_list, subscription);
+
+    return subscription;
+}
+
+void ogs_sbi_subscription_set_id(ogs_sbi_subscription_t *subscription, char *id)
+{
+    ogs_assert(subscription);
+    ogs_assert(id);
+
+    subscription->id = ogs_strdup(id);
+    ogs_assert(subscription->id);
+}
+
+void ogs_sbi_subscription_remove(ogs_sbi_subscription_t *subscription)
+{
+    ogs_assert(subscription);
+
+    ogs_list_remove(&ogs_sbi_self()->subscription_list, subscription);
+
+    if (subscription->id)
+        ogs_free(subscription->id);
+
+    if (subscription->notification_uri)
+        ogs_free(subscription->notification_uri);
+
+    if (subscription->t_validity)
+        ogs_timer_delete(subscription->t_validity);
+
+    ogs_pool_free(&subscription_pool, subscription);
+}
+
+void ogs_sbi_subscription_remove_all(void)
+{
+    ogs_sbi_subscription_t *subscription = NULL, *next_subscription = NULL;
+
+    ogs_list_for_each_safe(&ogs_sbi_self()->subscription_list,
+            next_subscription, subscription)
+        ogs_sbi_subscription_remove(subscription);
+}
+
+ogs_sbi_subscription_t *ogs_sbi_subscription_find(char *id)
+{
+    ogs_sbi_subscription_t *subscription = NULL;
+
+    ogs_assert(id);
+
+    ogs_list_for_each(&ogs_sbi_self()->subscription_list, subscription) {
+        ogs_assert(subscription->id);
+        if (strcmp(subscription->id, id) == 0)
+            break;
+    }
+
+    return subscription;
 }

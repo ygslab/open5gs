@@ -4,12 +4,12 @@
 #include <stdio.h>
 #include "amf_cond.h"
 
-ogs_sbi_amf_cond_t *ogs_sbi_amf_cond_create(
+OpenAPI_amf_cond_t *OpenAPI_amf_cond_create(
     char *amf_set_id,
     char *amf_region_id
     )
 {
-    ogs_sbi_amf_cond_t *amf_cond_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_amf_cond_t));
+    OpenAPI_amf_cond_t *amf_cond_local_var = OpenAPI_malloc(sizeof(OpenAPI_amf_cond_t));
     if (!amf_cond_local_var) {
         return NULL;
     }
@@ -19,30 +19,37 @@ ogs_sbi_amf_cond_t *ogs_sbi_amf_cond_create(
     return amf_cond_local_var;
 }
 
-void ogs_sbi_amf_cond_free(ogs_sbi_amf_cond_t *amf_cond)
+void OpenAPI_amf_cond_free(OpenAPI_amf_cond_t *amf_cond)
 {
     if (NULL == amf_cond) {
         return;
     }
-    ogs_sbi_lnode_t *node;
+    OpenAPI_lnode_t *node;
     ogs_free(amf_cond->amf_set_id);
     ogs_free(amf_cond->amf_region_id);
     ogs_free(amf_cond);
 }
 
-cJSON *ogs_sbi_amf_cond_convertToJSON(ogs_sbi_amf_cond_t *amf_cond)
+cJSON *OpenAPI_amf_cond_convertToJSON(OpenAPI_amf_cond_t *amf_cond)
 {
-    cJSON *item = cJSON_CreateObject();
+    cJSON *item = NULL;
+
+    if (amf_cond == NULL) {
+        ogs_error("OpenAPI_amf_cond_convertToJSON() failed [AmfCond]");
+        return NULL;
+    }
+
+    item = cJSON_CreateObject();
     if (amf_cond->amf_set_id) {
         if (cJSON_AddStringToObject(item, "amfSetId", amf_cond->amf_set_id) == NULL) {
-            ogs_error("ogs_sbi_amf_cond_convertToJSON() failed [amf_set_id]");
+            ogs_error("OpenAPI_amf_cond_convertToJSON() failed [amf_set_id]");
             goto end;
         }
     }
 
     if (amf_cond->amf_region_id) {
         if (cJSON_AddStringToObject(item, "amfRegionId", amf_cond->amf_region_id) == NULL) {
-            ogs_error("ogs_sbi_amf_cond_convertToJSON() failed [amf_region_id]");
+            ogs_error("OpenAPI_amf_cond_convertToJSON() failed [amf_region_id]");
             goto end;
         }
     }
@@ -51,14 +58,14 @@ end:
     return item;
 }
 
-ogs_sbi_amf_cond_t *ogs_sbi_amf_cond_parseFromJSON(cJSON *amf_condJSON)
+OpenAPI_amf_cond_t *OpenAPI_amf_cond_parseFromJSON(cJSON *amf_condJSON)
 {
-    ogs_sbi_amf_cond_t *amf_cond_local_var = NULL;
+    OpenAPI_amf_cond_t *amf_cond_local_var = NULL;
     cJSON *amf_set_id = cJSON_GetObjectItemCaseSensitive(amf_condJSON, "amfSetId");
 
     if (amf_set_id) {
         if (!cJSON_IsString(amf_set_id)) {
-            ogs_error("ogs_sbi_amf_cond_parseFromJSON() failed [amf_set_id]");
+            ogs_error("OpenAPI_amf_cond_parseFromJSON() failed [amf_set_id]");
             goto end;
         }
     }
@@ -67,12 +74,12 @@ ogs_sbi_amf_cond_t *ogs_sbi_amf_cond_parseFromJSON(cJSON *amf_condJSON)
 
     if (amf_region_id) {
         if (!cJSON_IsString(amf_region_id)) {
-            ogs_error("ogs_sbi_amf_cond_parseFromJSON() failed [amf_region_id]");
+            ogs_error("OpenAPI_amf_cond_parseFromJSON() failed [amf_region_id]");
             goto end;
         }
     }
 
-    amf_cond_local_var = ogs_sbi_amf_cond_create (
+    amf_cond_local_var = OpenAPI_amf_cond_create (
         amf_set_id ? ogs_strdup(amf_set_id->valuestring) : NULL,
         amf_region_id ? ogs_strdup(amf_region_id->valuestring) : NULL
         );

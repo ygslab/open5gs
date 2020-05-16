@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_nf_type_cond_H_
-#define _ogs_sbi_nf_type_cond_H_
+#ifndef _OpenAPI_nf_type_cond_H_
+#define _OpenAPI_nf_type_cond_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,21 +18,21 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_nf_type_cond_s ogs_sbi_nf_type_cond_t;
-typedef struct ogs_sbi_nf_type_cond_s {
-    ogs_sbi_nf_type_e nf_type;
-} ogs_sbi_nf_type_cond_t;
+typedef struct OpenAPI_nf_type_cond_s OpenAPI_nf_type_cond_t;
+typedef struct OpenAPI_nf_type_cond_s {
+    OpenAPI_nf_type_e nf_type;
+} OpenAPI_nf_type_cond_t;
 
-ogs_sbi_nf_type_cond_t *ogs_sbi_nf_type_cond_create(
-    ogs_sbi_nf_type_e nf_type
+OpenAPI_nf_type_cond_t *OpenAPI_nf_type_cond_create(
+    OpenAPI_nf_type_e nf_type
     );
-void ogs_sbi_nf_type_cond_free(ogs_sbi_nf_type_cond_t *nf_type_cond);
-ogs_sbi_nf_type_cond_t *ogs_sbi_nf_type_cond_parseFromJSON(cJSON *nf_type_condJSON);
-cJSON *ogs_sbi_nf_type_cond_convertToJSON(ogs_sbi_nf_type_cond_t *nf_type_cond);
+void OpenAPI_nf_type_cond_free(OpenAPI_nf_type_cond_t *nf_type_cond);
+OpenAPI_nf_type_cond_t *OpenAPI_nf_type_cond_parseFromJSON(cJSON *nf_type_condJSON);
+cJSON *OpenAPI_nf_type_cond_convertToJSON(OpenAPI_nf_type_cond_t *nf_type_cond);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_nf_type_cond_H_ */
+#endif /* _OpenAPI_nf_type_cond_H_ */
 

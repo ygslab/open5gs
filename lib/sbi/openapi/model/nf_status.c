@@ -4,13 +4,17 @@
 #include <stdio.h>
 #include "nf_status.h"
 
-char* ogs_sbi_nf_status_ToString(ogs_sbi_nf_status_e nf_status)
+char* OpenAPI_nf_status_ToString(OpenAPI_nf_status_e nf_status)
 {
     const char *nf_statusArray[] =  { "NULL", "REGISTERED", "SUSPENDED", "UNDISCOVERABLE" };
-    return (char *)nf_statusArray[nf_status];
+    size_t sizeofArray = sizeof(nf_statusArray) / sizeof(nf_statusArray[0]);
+    if (nf_status < sizeofArray)
+        return (char *)nf_statusArray[nf_status];
+    else
+        return (char *)"Unknown";
 }
 
-ogs_sbi_nf_status_e ogs_sbi_nf_status_FromString(char* nf_status)
+OpenAPI_nf_status_e OpenAPI_nf_status_FromString(char* nf_status)
 {
     int stringToReturn = 0;
     const char *nf_statusArray[] =  { "NULL", "REGISTERED", "SUSPENDED", "UNDISCOVERABLE" };

@@ -27,12 +27,16 @@
 extern "C" {
 #endif
 
-bool nrf_nnrf_handle_nf_register(nrf_nf_instance_t *nf_instance,
+bool nrf_nnrf_handle_nf_register(
+        ogs_sbi_nf_instance_t *nf_instance, ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *message);
-bool nrf_nnrf_handle_nf_update(nrf_nf_instance_t *nf_instance,
+bool nrf_nnrf_handle_nf_update(
+        ogs_sbi_nf_instance_t *nf_instance, ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *message);
 
-bool nrf_nnrf_handle_nf_status_subscribe(nrf_nf_instance_t *nf_instance,
+bool nrf_nnrf_handle_nf_status_subscribe(ogs_sbi_server_t *server,
+        ogs_sbi_session_t *session, ogs_sbi_message_t *message);
+bool nrf_nnrf_handle_nf_status_unsubscribe(ogs_sbi_server_t *server,
         ogs_sbi_session_t *session, ogs_sbi_message_t *message);
 
 #ifdef __cplusplus

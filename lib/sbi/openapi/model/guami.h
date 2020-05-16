@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_guami_H_
-#define _ogs_sbi_guami_H_
+#ifndef _OpenAPI_guami_H_
+#define _OpenAPI_guami_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,23 +18,23 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_guami_s ogs_sbi_guami_t;
-typedef struct ogs_sbi_guami_s {
-    struct ogs_sbi_plmn_id_s *plmn_id;
+typedef struct OpenAPI_guami_s OpenAPI_guami_t;
+typedef struct OpenAPI_guami_s {
+    struct OpenAPI_plmn_id_s *plmn_id;
     char *amf_id;
-} ogs_sbi_guami_t;
+} OpenAPI_guami_t;
 
-ogs_sbi_guami_t *ogs_sbi_guami_create(
-    ogs_sbi_plmn_id_t *plmn_id,
+OpenAPI_guami_t *OpenAPI_guami_create(
+    OpenAPI_plmn_id_t *plmn_id,
     char *amf_id
     );
-void ogs_sbi_guami_free(ogs_sbi_guami_t *guami);
-ogs_sbi_guami_t *ogs_sbi_guami_parseFromJSON(cJSON *guamiJSON);
-cJSON *ogs_sbi_guami_convertToJSON(ogs_sbi_guami_t *guami);
+void OpenAPI_guami_free(OpenAPI_guami_t *guami);
+OpenAPI_guami_t *OpenAPI_guami_parseFromJSON(cJSON *guamiJSON);
+cJSON *OpenAPI_guami_convertToJSON(OpenAPI_guami_t *guami);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_guami_H_ */
+#endif /* _OpenAPI_guami_H_ */
 

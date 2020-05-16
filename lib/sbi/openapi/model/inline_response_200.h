@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_inline_response_200_H_
-#define _ogs_sbi_inline_response_200_H_
+#ifndef _OpenAPI_inline_response_200_H_
+#define _OpenAPI_inline_response_200_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,21 +18,21 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_inline_response_200_s ogs_sbi_inline_response_200_t;
-typedef struct ogs_sbi_inline_response_200_s {
-    ogs_sbi_list_t* _links;
-} ogs_sbi_inline_response_200_t;
+typedef struct OpenAPI_inline_response_200_s OpenAPI_inline_response_200_t;
+typedef struct OpenAPI_inline_response_200_s {
+    OpenAPI_list_t* _links;
+} OpenAPI_inline_response_200_t;
 
-ogs_sbi_inline_response_200_t *ogs_sbi_inline_response_200_create(
-    ogs_sbi_list_t* _links
+OpenAPI_inline_response_200_t *OpenAPI_inline_response_200_create(
+    OpenAPI_list_t* _links
     );
-void ogs_sbi_inline_response_200_free(ogs_sbi_inline_response_200_t *inline_response_200);
-ogs_sbi_inline_response_200_t *ogs_sbi_inline_response_200_parseFromJSON(cJSON *inline_response_200JSON);
-cJSON *ogs_sbi_inline_response_200_convertToJSON(ogs_sbi_inline_response_200_t *inline_response_200);
+void OpenAPI_inline_response_200_free(OpenAPI_inline_response_200_t *inline_response_200);
+OpenAPI_inline_response_200_t *OpenAPI_inline_response_200_parseFromJSON(cJSON *inline_response_200JSON);
+cJSON *OpenAPI_inline_response_200_convertToJSON(OpenAPI_inline_response_200_t *inline_response_200);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_inline_response_200_H_ */
+#endif /* _OpenAPI_inline_response_200_H_ */
 

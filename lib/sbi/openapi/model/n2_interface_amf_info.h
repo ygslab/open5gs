@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_n2_interface_amf_info_H_
-#define _ogs_sbi_n2_interface_amf_info_H_
+#ifndef _OpenAPI_n2_interface_amf_info_H_
+#define _OpenAPI_n2_interface_amf_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,25 +17,25 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_n2_interface_amf_info_s ogs_sbi_n2_interface_amf_info_t;
-typedef struct ogs_sbi_n2_interface_amf_info_s {
-    ogs_sbi_list_t *ipv4_endpoint_address;
-    ogs_sbi_list_t *ipv6_endpoint_address;
+typedef struct OpenAPI_n2_interface_amf_info_s OpenAPI_n2_interface_amf_info_t;
+typedef struct OpenAPI_n2_interface_amf_info_s {
+    OpenAPI_list_t *ipv4_endpoint_address;
+    OpenAPI_list_t *ipv6_endpoint_address;
     char *amf_name;
-} ogs_sbi_n2_interface_amf_info_t;
+} OpenAPI_n2_interface_amf_info_t;
 
-ogs_sbi_n2_interface_amf_info_t *ogs_sbi_n2_interface_amf_info_create(
-    ogs_sbi_list_t *ipv4_endpoint_address,
-    ogs_sbi_list_t *ipv6_endpoint_address,
+OpenAPI_n2_interface_amf_info_t *OpenAPI_n2_interface_amf_info_create(
+    OpenAPI_list_t *ipv4_endpoint_address,
+    OpenAPI_list_t *ipv6_endpoint_address,
     char *amf_name
     );
-void ogs_sbi_n2_interface_amf_info_free(ogs_sbi_n2_interface_amf_info_t *n2_interface_amf_info);
-ogs_sbi_n2_interface_amf_info_t *ogs_sbi_n2_interface_amf_info_parseFromJSON(cJSON *n2_interface_amf_infoJSON);
-cJSON *ogs_sbi_n2_interface_amf_info_convertToJSON(ogs_sbi_n2_interface_amf_info_t *n2_interface_amf_info);
+void OpenAPI_n2_interface_amf_info_free(OpenAPI_n2_interface_amf_info_t *n2_interface_amf_info);
+OpenAPI_n2_interface_amf_info_t *OpenAPI_n2_interface_amf_info_parseFromJSON(cJSON *n2_interface_amf_infoJSON);
+cJSON *OpenAPI_n2_interface_amf_info_convertToJSON(OpenAPI_n2_interface_amf_info_t *n2_interface_amf_info);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_n2_interface_amf_info_H_ */
+#endif /* _OpenAPI_n2_interface_amf_info_H_ */
 

@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_plmn_range_H_
-#define _ogs_sbi_plmn_range_H_
+#ifndef _OpenAPI_plmn_range_H_
+#define _OpenAPI_plmn_range_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,25 +17,25 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_plmn_range_s ogs_sbi_plmn_range_t;
-typedef struct ogs_sbi_plmn_range_s {
+typedef struct OpenAPI_plmn_range_s OpenAPI_plmn_range_t;
+typedef struct OpenAPI_plmn_range_s {
     char *start;
     char *end;
     char *pattern;
-} ogs_sbi_plmn_range_t;
+} OpenAPI_plmn_range_t;
 
-ogs_sbi_plmn_range_t *ogs_sbi_plmn_range_create(
+OpenAPI_plmn_range_t *OpenAPI_plmn_range_create(
     char *start,
     char *end,
     char *pattern
     );
-void ogs_sbi_plmn_range_free(ogs_sbi_plmn_range_t *plmn_range);
-ogs_sbi_plmn_range_t *ogs_sbi_plmn_range_parseFromJSON(cJSON *plmn_rangeJSON);
-cJSON *ogs_sbi_plmn_range_convertToJSON(ogs_sbi_plmn_range_t *plmn_range);
+void OpenAPI_plmn_range_free(OpenAPI_plmn_range_t *plmn_range);
+OpenAPI_plmn_range_t *OpenAPI_plmn_range_parseFromJSON(cJSON *plmn_rangeJSON);
+cJSON *OpenAPI_plmn_range_convertToJSON(OpenAPI_plmn_range_t *plmn_range);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_plmn_range_H_ */
+#endif /* _OpenAPI_plmn_range_H_ */
 

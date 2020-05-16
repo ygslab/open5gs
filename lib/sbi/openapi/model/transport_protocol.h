@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_transport_protocol_H_
-#define _ogs_sbi_transport_protocol_H_
+#ifndef _OpenAPI_transport_protocol_H_
+#define _OpenAPI_transport_protocol_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,15 +17,15 @@
 extern "C" {
 #endif
 
-typedef enum { ogs_sbi_transport_protocol_NULL = 0, ogs_sbi_transport_protocol_TCP } ogs_sbi_transport_protocol_e;
+typedef enum { OpenAPI_transport_protocol_NULL = 0, OpenAPI_transport_protocol_TCP } OpenAPI_transport_protocol_e;
 
-char* ogs_sbi_transport_protocol_ToString(ogs_sbi_transport_protocol_e transport_protocol);
+char* OpenAPI_transport_protocol_ToString(OpenAPI_transport_protocol_e transport_protocol);
 
-ogs_sbi_transport_protocol_e ogs_sbi_transport_protocol_FromString(char* transport_protocol);
+OpenAPI_transport_protocol_e OpenAPI_transport_protocol_FromString(char* transport_protocol);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_transport_protocol_H_ */
+#endif /* _OpenAPI_transport_protocol_H_ */
 

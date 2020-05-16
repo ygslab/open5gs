@@ -22,6 +22,8 @@
 static nrf_timer_cfg_t g_nrf_timer_cfg[MAX_NUM_OF_NRF_TIMER] = {
     [NRF_TIMER_SBI_NO_HEARTBEAT] =
         { .duration = ogs_time_from_sec(12) },
+    [NRF_TIMER_SBI_NO_VALIDITY] =
+        { .duration = ogs_time_from_sec(86400) },
 };
 
 nrf_timer_cfg_t *nrf_timer_cfg(nrf_timer_e id)
@@ -35,6 +37,8 @@ const char *nrf_timer_get_name(nrf_timer_e id)
     switch (id) {
     case NRF_TIMER_SBI_NO_HEARTBEAT:
         return "NRF_TIMER_SBI_NO_HEARTBEAT";
+    case NRF_TIMER_SBI_NO_VALIDITY:
+        return "NRF_TIMER_SBI_NO_VALIDITY";
     default: 
        break;
     }
@@ -54,6 +58,11 @@ static void timer_send_event(int timer_id, void *data)
         e->timer_id = timer_id;
         e->nf_instance = data;
         break;
+    case NRF_TIMER_SBI_NO_VALIDITY:
+        e = nrf_event_new(NRF_EVT_SBI_TIMER);
+        e->timer_id = timer_id;
+        e->subscription = data;
+        break;
     default:
         ogs_fatal("Unknown timer id[%d]", timer_id);
         ogs_assert_if_reached();
@@ -70,4 +79,9 @@ static void timer_send_event(int timer_id, void *data)
 void nrf_timer_sbi_no_heartbeat(void *data)
 {
     timer_send_event(NRF_TIMER_SBI_NO_HEARTBEAT, data);
+}
+
+void nrf_timer_sbi_no_validity(void *data)
+{
+    timer_send_event(NRF_TIMER_SBI_NO_VALIDITY, data);
 }

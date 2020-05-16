@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_nf_service_H_
-#define _ogs_sbi_nf_service_H_
+#ifndef _OpenAPI_nf_service_H_
+#define _OpenAPI_nf_service_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -26,59 +26,59 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_nf_service_s ogs_sbi_nf_service_t;
-typedef struct ogs_sbi_nf_service_s {
+typedef struct OpenAPI_nf_service_s OpenAPI_nf_service_t;
+typedef struct OpenAPI_nf_service_s {
     char *service_instance_id;
     char *service_name;
-    ogs_sbi_list_t *versions;
-    ogs_sbi_uri_scheme_e scheme;
-    ogs_sbi_nf_service_status_e nf_service_status;
+    OpenAPI_list_t *versions;
+    OpenAPI_uri_scheme_e scheme;
+    OpenAPI_nf_service_status_e nf_service_status;
     char *fqdn;
     char *inter_plmn_fqdn;
-    ogs_sbi_list_t *ip_end_points;
+    OpenAPI_list_t *ip_end_points;
     char *api_prefix;
-    ogs_sbi_list_t *default_notification_subscriptions;
-    ogs_sbi_list_t *allowed_plmns;
-    ogs_sbi_list_t *allowed_nf_types;
-    ogs_sbi_list_t *allowed_nf_domains;
-    ogs_sbi_list_t *allowed_nssais;
+    OpenAPI_list_t *default_notification_subscriptions;
+    OpenAPI_list_t *allowed_plmns;
+    OpenAPI_list_t *allowed_nf_types;
+    OpenAPI_list_t *allowed_nf_domains;
+    OpenAPI_list_t *allowed_nssais;
     int priority;
     int capacity;
     int load;
     char *recovery_time;
-    struct ogs_sbi_chf_service_info_s *chf_service_info;
+    struct OpenAPI_chf_service_info_s *chf_service_info;
     char *supported_features;
-} ogs_sbi_nf_service_t;
+} OpenAPI_nf_service_t;
 
-ogs_sbi_nf_service_t *ogs_sbi_nf_service_create(
+OpenAPI_nf_service_t *OpenAPI_nf_service_create(
     char *service_instance_id,
     char *service_name,
-    ogs_sbi_list_t *versions,
-    ogs_sbi_uri_scheme_e scheme,
-    ogs_sbi_nf_service_status_e nf_service_status,
+    OpenAPI_list_t *versions,
+    OpenAPI_uri_scheme_e scheme,
+    OpenAPI_nf_service_status_e nf_service_status,
     char *fqdn,
     char *inter_plmn_fqdn,
-    ogs_sbi_list_t *ip_end_points,
+    OpenAPI_list_t *ip_end_points,
     char *api_prefix,
-    ogs_sbi_list_t *default_notification_subscriptions,
-    ogs_sbi_list_t *allowed_plmns,
-    ogs_sbi_list_t *allowed_nf_types,
-    ogs_sbi_list_t *allowed_nf_domains,
-    ogs_sbi_list_t *allowed_nssais,
+    OpenAPI_list_t *default_notification_subscriptions,
+    OpenAPI_list_t *allowed_plmns,
+    OpenAPI_list_t *allowed_nf_types,
+    OpenAPI_list_t *allowed_nf_domains,
+    OpenAPI_list_t *allowed_nssais,
     int priority,
     int capacity,
     int load,
     char *recovery_time,
-    ogs_sbi_chf_service_info_t *chf_service_info,
+    OpenAPI_chf_service_info_t *chf_service_info,
     char *supported_features
     );
-void ogs_sbi_nf_service_free(ogs_sbi_nf_service_t *nf_service);
-ogs_sbi_nf_service_t *ogs_sbi_nf_service_parseFromJSON(cJSON *nf_serviceJSON);
-cJSON *ogs_sbi_nf_service_convertToJSON(ogs_sbi_nf_service_t *nf_service);
+void OpenAPI_nf_service_free(OpenAPI_nf_service_t *nf_service);
+OpenAPI_nf_service_t *OpenAPI_nf_service_parseFromJSON(cJSON *nf_serviceJSON);
+cJSON *OpenAPI_nf_service_convertToJSON(OpenAPI_nf_service_t *nf_service);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_nf_service_H_ */
+#endif /* _OpenAPI_nf_service_H_ */
 

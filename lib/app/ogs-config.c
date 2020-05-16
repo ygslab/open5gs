@@ -176,6 +176,9 @@ static int config_prepare(void)
 
     recalculate_pool_size();
 
+    self.time.sbi.heartbeat = 3;    /* 3 seconds */
+    self.time.sbi.validity = 86400; /* 1 days */
+
     return OGS_OK;
 }
 
@@ -359,8 +362,34 @@ int ogs_config_parse()
                 } else
                     ogs_warn("unknown key `%s`", pool_key);
             }
+        } else if (!strcmp(root_key, "time")) {
+            ogs_yaml_iter_t time_iter;
+            ogs_yaml_iter_recurse(&root_iter, &time_iter);
+            while (ogs_yaml_iter_next(&time_iter)) {
+                const char *time_key = ogs_yaml_iter_key(&time_iter);
+                ogs_assert(time_key);
+                if (!strcmp(time_key, "sbi")) {
+                    ogs_yaml_iter_t sbi_iter;
+                    ogs_yaml_iter_recurse(&time_iter, &sbi_iter);
+
+                    while (ogs_yaml_iter_next(&sbi_iter)) {
+                        const char *sbi_key =
+                            ogs_yaml_iter_key(&sbi_iter);
+                        ogs_assert(sbi_key);
+
+                        if (!strcmp(sbi_key, "heartbeat")) {
+                            const char *v = ogs_yaml_iter_value(&sbi_iter);
+                            if (v) self.time.sbi.heartbeat = atoi(v);
+                        } else if (!strcmp(sbi_key, "validity")) {
+                            const char *v = ogs_yaml_iter_value(&sbi_iter);
+                            if (v) self.time.sbi.validity = atoi(v);
+                        } else
+                            ogs_warn("unknown key `%s`", sbi_key);
+                    }
+                } else
+                    ogs_warn("unknown key `%s`", time_key);
+            }
         }
-            
     }
 
     rv = ogs_app_ctx_validation();

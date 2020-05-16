@@ -28,6 +28,7 @@
 extern "C" {
 #endif
 
+typedef struct ogs_sbi_server_s ogs_sbi_server_t;
 typedef struct ogs_sbi_session_s ogs_sbi_session_t;
 
 typedef struct ogs_sbi_server_s {
@@ -40,7 +41,9 @@ typedef struct ogs_sbi_server_s {
         const char  *pem;
     } tls;
 
-    int (*cb)(ogs_sbi_session_t *session, ogs_sbi_request_t *request);
+    int (*cb)(ogs_sbi_server_t *server, ogs_sbi_session_t *session,
+            ogs_sbi_request_t *request);
+    void *data;
 
     ogs_list_t      suspended_session_list; /* MHD suspended list */
 
@@ -56,10 +59,12 @@ ogs_sbi_server_t *ogs_sbi_server_add(ogs_sockaddr_t *addr);
 void ogs_sbi_server_remove(ogs_sbi_server_t *server);
 void ogs_sbi_server_remove_all(void);
 
-void ogs_sbi_server_start(ogs_sbi_server_t *server,
-        int (*cb)(ogs_sbi_session_t *session, ogs_sbi_request_t *request));
-void ogs_sbi_server_start_all(
-        int (*cb)(ogs_sbi_session_t *session, ogs_sbi_request_t *request));
+void ogs_sbi_server_start(ogs_sbi_server_t *server, int (*cb)(
+            ogs_sbi_server_t *server, ogs_sbi_session_t *session,
+            ogs_sbi_request_t *request));
+void ogs_sbi_server_start_all(int (*cb)(
+            ogs_sbi_server_t *server, ogs_sbi_session_t *session,
+            ogs_sbi_request_t *request));
 void ogs_sbi_server_stop(ogs_sbi_server_t *server);
 void ogs_sbi_server_stop_all(void);
 
@@ -69,7 +74,7 @@ void ogs_sbi_server_send_error(ogs_sbi_session_t *session,
         int status, ogs_sbi_message_t *message,
         const char *title, const char *detail);
 void ogs_sbi_server_send_problem(
-        ogs_sbi_session_t *session, ogs_sbi_problem_details_t *problem);
+        ogs_sbi_session_t *session, OpenAPI_problem_details_t *problem);
 
 #ifdef __cplusplus
 }

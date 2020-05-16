@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_notification_data_H_
-#define _ogs_sbi_notification_data_H_
+#ifndef _OpenAPI_notification_data_H_
+#define _OpenAPI_notification_data_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -20,27 +20,27 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_notification_data_s ogs_sbi_notification_data_t;
-typedef struct ogs_sbi_notification_data_s {
-    ogs_sbi_notification_event_type_e event;
+typedef struct OpenAPI_notification_data_s OpenAPI_notification_data_t;
+typedef struct OpenAPI_notification_data_s {
+    OpenAPI_notification_event_type_e event;
     char *nf_instance_uri;
-    struct ogs_sbi_nf_profile_s *nf_profile;
-    ogs_sbi_list_t *profile_changes;
-} ogs_sbi_notification_data_t;
+    struct OpenAPI_nf_profile_s *nf_profile;
+    OpenAPI_list_t *profile_changes;
+} OpenAPI_notification_data_t;
 
-ogs_sbi_notification_data_t *ogs_sbi_notification_data_create(
-    ogs_sbi_notification_event_type_e event,
+OpenAPI_notification_data_t *OpenAPI_notification_data_create(
+    OpenAPI_notification_event_type_e event,
     char *nf_instance_uri,
-    ogs_sbi_nf_profile_t *nf_profile,
-    ogs_sbi_list_t *profile_changes
+    OpenAPI_nf_profile_t *nf_profile,
+    OpenAPI_list_t *profile_changes
     );
-void ogs_sbi_notification_data_free(ogs_sbi_notification_data_t *notification_data);
-ogs_sbi_notification_data_t *ogs_sbi_notification_data_parseFromJSON(cJSON *notification_dataJSON);
-cJSON *ogs_sbi_notification_data_convertToJSON(ogs_sbi_notification_data_t *notification_data);
+void OpenAPI_notification_data_free(OpenAPI_notification_data_t *notification_data);
+OpenAPI_notification_data_t *OpenAPI_notification_data_parseFromJSON(cJSON *notification_dataJSON);
+cJSON *OpenAPI_notification_data_convertToJSON(OpenAPI_notification_data_t *notification_data);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_notification_data_H_ */
+#endif /* _OpenAPI_notification_data_H_ */
 

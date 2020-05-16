@@ -40,19 +40,21 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
 {
     ogs_assert(message);
 
-    if (message->nf_profile)
-        ogs_sbi_nf_profile_free(message->nf_profile);
-    if (message->problem_details)
-        ogs_sbi_problem_details_free(message->problem_details);
-    if (message->patch_list) {
-        ogs_sbi_lnode_t *node = NULL;
-        ogs_sbi_list_for_each(message->patch_list, node)
-            ogs_sbi_patch_item_free(node->data);
-        ogs_sbi_list_free(message->patch_list);
+    if (message->NFProfile)
+        OpenAPI_nf_profile_free(message->NFProfile);
+    if (message->ProblemDetails)
+        OpenAPI_problem_details_free(message->ProblemDetails);
+    if (message->PatchItemList) {
+        OpenAPI_lnode_t *node = NULL;
+        OpenAPI_list_for_each(message->PatchItemList, node)
+            OpenAPI_patch_item_free(node->data);
+        OpenAPI_list_free(message->PatchItemList);
     }
 
-    if (message->subscription_data)
-        ogs_sbi_subscription_data_free(message->subscription_data);
+    if (message->SubscriptionData)
+        OpenAPI_subscription_data_free(message->SubscriptionData);
+    if (message->NotificationData)
+        OpenAPI_notification_data_free(message->NotificationData);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -116,7 +118,7 @@ static void sbi_header_free(ogs_sbi_header_t *h)
     ogs_assert(h);
 
     if (h->method) ogs_free(h->method);
-    if (h->api.name) ogs_free(h->api.name);
+    if (h->service.name) ogs_free(h->service.name);
     if (h->api.version) ogs_free(h->api.version);
     if (h->resource.name) ogs_free(h->resource.name);
     if (h->resource.id) ogs_free(h->resource.id);
@@ -148,12 +150,20 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     request = ogs_sbi_request_new();
     ogs_assert(request);
 
+    ogs_assert(message->h.method);
     request->h.method = ogs_strdup(message->h.method);
-    request->h.api.name = ogs_strdup(message->h.api.name);
-    request->h.api.version = ogs_strdup(message->h.api.version);
-    request->h.resource.name = ogs_strdup(message->h.resource.name);
-    if (message->h.resource.id)
-        request->h.resource.id = ogs_strdup(message->h.resource.id);
+    if (message->h.url) {
+        request->h.url = ogs_strdup(message->h.url);
+    } else {
+        ogs_assert(message->h.service.name);
+        request->h.service.name = ogs_strdup(message->h.service.name);
+        ogs_assert(message->h.api.version);
+        request->h.api.version = ogs_strdup(message->h.api.version);
+        ogs_assert(message->h.resource.name);
+        request->h.resource.name = ogs_strdup(message->h.resource.name);
+        if (message->h.resource.id)
+            request->h.resource.id = ogs_strdup(message->h.resource.id);
+    }
 
     /* HTTP Message */
     request->http.content = build_content(message);
@@ -206,26 +216,30 @@ static char *build_content(ogs_sbi_message_t *message)
     cJSON *item = NULL;
     ogs_assert(message);
 
-    if (message->problem_details) {
-        item = ogs_sbi_problem_details_convertToJSON(message->problem_details);
+    if (message->ProblemDetails) {
+        item = OpenAPI_problem_details_convertToJSON(message->ProblemDetails);
         ogs_assert(item);
-    } else if (message->nf_profile) {
-        item = ogs_sbi_nf_profile_convertToJSON(message->nf_profile);
+    } else if (message->NFProfile) {
+        item = OpenAPI_nf_profile_convertToJSON(message->NFProfile);
         ogs_assert(item);
-    } else if (message->patch_list) {
-        ogs_sbi_lnode_t *node = NULL;
+    } else if (message->PatchItemList) {
+        OpenAPI_lnode_t *node = NULL;
 
         item = cJSON_CreateArray();
         ogs_assert(item);
 
-        ogs_sbi_list_for_each(message->patch_list, node) {
-            cJSON *patchItem = ogs_sbi_patch_item_convertToJSON(node->data);
+        OpenAPI_list_for_each(message->PatchItemList, node) {
+            cJSON *patchItem = OpenAPI_patch_item_convertToJSON(node->data);
             ogs_assert(patchItem);
             cJSON_AddItemToArray(item, patchItem);
         }
-    } else if (message->subscription_data) {
-        item = ogs_sbi_subscription_data_convertToJSON(
-                message->subscription_data);
+    } else if (message->SubscriptionData) {
+        item = OpenAPI_subscription_data_convertToJSON(
+                message->SubscriptionData);
+        ogs_assert(item);
+    } else if (message->NotificationData) {
+        item = OpenAPI_notification_data_convertToJSON(
+                message->NotificationData);
         ogs_assert(item);
     }
 
@@ -238,7 +252,6 @@ static char *build_content(ogs_sbi_message_t *message)
     return content;
 }
 
-static char *parse_url(char *url, char **saveptr);
 static int parse_sbi_header(
         ogs_sbi_message_t *message, ogs_sbi_header_t *header);
 static int parse_content(ogs_sbi_message_t *message, char *content);
@@ -310,6 +323,7 @@ int ogs_sbi_parse_response(
 static int parse_sbi_header(
         ogs_sbi_message_t *message, ogs_sbi_header_t *header)
 {
+    struct yuarel yuarel;
     char *saveptr = NULL;
     char *url = NULL, *p = NULL;;
 
@@ -328,33 +342,41 @@ static int parse_sbi_header(
     p = url;
 
     if (p[0] != '/') {
-        /* Remove Absolute URL - http://[::1]:7777 */
-        p = strchr(p, '/');
-        p = strchr(p+2, '/');
+        int rv = yuarel_parse(&yuarel, p);
+        if (rv != OGS_OK) {
+            ogs_error("yuarel_parse() failed");
+            ogs_free(url);
+            return OGS_ERROR;
+        }
+
+        p = yuarel.path;
     }
 
-    header->api.name = parse_url(p, &saveptr);
-    if (!header->api.name) {
-        ogs_error("parse_url() failed");
+    header->service.name = ogs_sbi_parse_url(p, "/", &saveptr);
+    if (!header->service.name) {
+        ogs_error("ogs_sbi_parse_url() failed");
+        ogs_free(url);
         return OGS_ERROR;
     }
-    message->h.api.name = header->api.name;
+    message->h.service.name = header->service.name;
 
-    header->api.version = parse_url(NULL, &saveptr);
+    header->api.version = ogs_sbi_parse_url(NULL, "/", &saveptr);
     if (!header->api.version) {
-        ogs_error("parse_url() failed");
+        ogs_error("ogs_sbi_parse_url() failed");
+        ogs_free(url);
         return OGS_ERROR;
     }
     message->h.api.version = header->api.version;
 
-    header->resource.name = parse_url(NULL, &saveptr);
+    header->resource.name = ogs_sbi_parse_url(NULL, "/", &saveptr);
     if (!header->resource.name) {
-        ogs_error("parse_url() failed");
+        ogs_error("ogs_sbi_parse_url() failed");
+        ogs_free(url);
         return OGS_ERROR;
     }
     message->h.resource.name = header->resource.name;
 
-    header->resource.id = parse_url(NULL, &saveptr);
+    header->resource.id = ogs_sbi_parse_url(NULL, "/", &saveptr);
     message->h.resource.id = header->resource.id;
 
     ogs_free(url);
@@ -387,15 +409,15 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
         if (!strncmp(message->http.content_type,
                 OGS_SBI_CONTENT_PROBLEM_TYPE,
                 strlen(OGS_SBI_CONTENT_PROBLEM_TYPE))) {
-            message->problem_details =
-                ogs_sbi_problem_details_parseFromJSON(item);
+            message->ProblemDetails =
+                OpenAPI_problem_details_parseFromJSON(item);
         } else if (!strncmp(message->http.content_type,
                 OGS_SBI_CONTENT_PATCH_TYPE,
                 strlen(OGS_SBI_CONTENT_PATCH_TYPE))) {
             if (item) {
-                ogs_sbi_patch_item_t *patch_item = NULL;
+                OpenAPI_patch_item_t *patch_item = NULL;
                 cJSON *patchJSON = NULL;
-                message->patch_list = ogs_sbi_list_create();
+                message->PatchItemList = OpenAPI_list_create();
                 cJSON_ArrayForEach(patchJSON, item) {
                     if (!cJSON_IsObject(patchJSON)) {
                         rv = OGS_ERROR;
@@ -403,28 +425,37 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
                         goto cleanup;
                     }
 
-                    patch_item = ogs_sbi_patch_item_parseFromJSON(patchJSON);
-                    ogs_sbi_list_add(message->patch_list, patch_item);
+                    patch_item = OpenAPI_patch_item_parseFromJSON(patchJSON);
+                    OpenAPI_list_add(message->PatchItemList, patch_item);
                 }
             }
         } else {
-            SWITCH(message->h.api.name)
-            CASE(OGS_SBI_API_NAME_NRF_NFM)
+            SWITCH(message->h.service.name)
+            CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
 
                 SWITCH(message->h.resource.name)
                 CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
-                    message->nf_profile =
-                        ogs_sbi_nf_profile_parseFromJSON(item);
-                    if (!message->nf_profile) {
+                    message->NFProfile =
+                        OpenAPI_nf_profile_parseFromJSON(item);
+                    if (!message->NFProfile) {
                         rv = OGS_ERROR;
                         ogs_error("JSON parse error");
                     }
                     break;
 
                 CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS)
-                    message->subscription_data =
-                        ogs_sbi_subscription_data_parseFromJSON(item);
-                    if (!message->subscription_data) {
+                    message->SubscriptionData =
+                        OpenAPI_subscription_data_parseFromJSON(item);
+                    if (!message->SubscriptionData) {
+                        rv = OGS_ERROR;
+                        ogs_error("JSON parse error");
+                    }
+                    break;
+
+                CASE(OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY)
+                    message->NotificationData =
+                        OpenAPI_notification_data_parseFromJSON(item);
+                    if (!message->NotificationData) {
                         rv = OGS_ERROR;
                         ogs_error("JSON parse error");
                     }
@@ -439,7 +470,7 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
 
             DEFAULT
                 rv = OGS_ERROR;
-                ogs_error("Not implemented API name - %s", message->h.api.name);
+                ogs_error("Not implemented API name - %s", message->h.service.name);
             END
         }
     }
@@ -460,47 +491,3 @@ void *ogs_sbi_header_get(ogs_hash_t *ht, const void *key)
     return ogs_hash_get(ht, key, strlen(key));
 }
 
-/**
- * Returns a url-decoded version of str
- * IMPORTANT: be sure to free() the returned string after use
- * Thanks Geek Hideout!
- * http://www.geekhideout.com/urlcode.shtml
- */
-static char *url_decode(const char *str)
-{
-    if (str != NULL) {
-        char *pstr = (char*)str;
-        char *buf = ogs_malloc(strlen(str) + 1);
-        char *pbuf = buf;
-        while (*pstr) {
-            if (*pstr == '%') {
-                if (pstr[1] && pstr[2]) {
-                    *pbuf++ = ogs_from_hex(pstr[1]) << 4 |
-                                ogs_from_hex(pstr[2]);
-                    pstr += 2;
-                }
-            } else if (*pstr == '+') {
-                *pbuf++ = ' ';
-            } else {
-                *pbuf++ = * pstr;
-            }
-            pstr++;
-        }
-        *pbuf = '\0';
-        return buf;
-    } else {
-        return NULL;
-    }
-}
-
-static char *parse_url(char *url, char **saveptr)
-{
-    char *item = NULL;
-
-    item = url_decode(strtok_r(url, "/", saveptr));
-    if (!item) {
-        return NULL;
-    }
-
-    return item;
-}

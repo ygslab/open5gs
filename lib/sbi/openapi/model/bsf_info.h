@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_bsf_info_H_
-#define _ogs_sbi_bsf_info_H_
+#ifndef _OpenAPI_bsf_info_H_
+#define _OpenAPI_bsf_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -19,27 +19,27 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_bsf_info_s ogs_sbi_bsf_info_t;
-typedef struct ogs_sbi_bsf_info_s {
-    ogs_sbi_list_t *dnn_list;
-    ogs_sbi_list_t *ip_domain_list;
-    ogs_sbi_list_t *ipv4_address_ranges;
-    ogs_sbi_list_t *ipv6_prefix_ranges;
-} ogs_sbi_bsf_info_t;
+typedef struct OpenAPI_bsf_info_s OpenAPI_bsf_info_t;
+typedef struct OpenAPI_bsf_info_s {
+    OpenAPI_list_t *dnn_list;
+    OpenAPI_list_t *ip_domain_list;
+    OpenAPI_list_t *ipv4_address_ranges;
+    OpenAPI_list_t *ipv6_prefix_ranges;
+} OpenAPI_bsf_info_t;
 
-ogs_sbi_bsf_info_t *ogs_sbi_bsf_info_create(
-    ogs_sbi_list_t *dnn_list,
-    ogs_sbi_list_t *ip_domain_list,
-    ogs_sbi_list_t *ipv4_address_ranges,
-    ogs_sbi_list_t *ipv6_prefix_ranges
+OpenAPI_bsf_info_t *OpenAPI_bsf_info_create(
+    OpenAPI_list_t *dnn_list,
+    OpenAPI_list_t *ip_domain_list,
+    OpenAPI_list_t *ipv4_address_ranges,
+    OpenAPI_list_t *ipv6_prefix_ranges
     );
-void ogs_sbi_bsf_info_free(ogs_sbi_bsf_info_t *bsf_info);
-ogs_sbi_bsf_info_t *ogs_sbi_bsf_info_parseFromJSON(cJSON *bsf_infoJSON);
-cJSON *ogs_sbi_bsf_info_convertToJSON(ogs_sbi_bsf_info_t *bsf_info);
+void OpenAPI_bsf_info_free(OpenAPI_bsf_info_t *bsf_info);
+OpenAPI_bsf_info_t *OpenAPI_bsf_info_parseFromJSON(cJSON *bsf_infoJSON);
+cJSON *OpenAPI_bsf_info_convertToJSON(OpenAPI_bsf_info_t *bsf_info);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_bsf_info_H_ */
+#endif /* _OpenAPI_bsf_info_H_ */
 

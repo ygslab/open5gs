@@ -4,13 +4,17 @@
 #include <stdio.h>
 #include "uri_scheme.h"
 
-char* ogs_sbi_uri_scheme_ToString(ogs_sbi_uri_scheme_e uri_scheme)
+char* OpenAPI_uri_scheme_ToString(OpenAPI_uri_scheme_e uri_scheme)
 {
     const char *uri_schemeArray[] =  { "NULL", "http", "https" };
-    return (char *)uri_schemeArray[uri_scheme];
+    size_t sizeofArray = sizeof(uri_schemeArray) / sizeof(uri_schemeArray[0]);
+    if (uri_scheme < sizeofArray)
+        return (char *)uri_schemeArray[uri_scheme];
+    else
+        return (char *)"Unknown";
 }
 
-ogs_sbi_uri_scheme_e ogs_sbi_uri_scheme_FromString(char* uri_scheme)
+OpenAPI_uri_scheme_e OpenAPI_uri_scheme_FromString(char* uri_scheme)
 {
     int stringToReturn = 0;
     const char *uri_schemeArray[] =  { "NULL", "http", "https" };

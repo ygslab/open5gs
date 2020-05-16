@@ -115,7 +115,7 @@ static int smf_context_prepare(void)
     self.gtpc_port = OGS_GTPV2_C_UDP_PORT;
     self.diam_config->cnf_port = DIAMETER_PORT;
     self.diam_config->cnf_port_tls = DIAMETER_SECURE_PORT;
-    self.nf_type = ogs_sbi_nf_type_SMF;
+    self.nf_type = OpenAPI_nf_type_SMF;
 
     return OGS_OK;
 }

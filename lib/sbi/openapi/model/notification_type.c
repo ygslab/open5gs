@@ -4,13 +4,17 @@
 #include <stdio.h>
 #include "notification_type.h"
 
-char* ogs_sbi_notification_type_ToString(ogs_sbi_notification_type_e notification_type)
+char* OpenAPI_notification_type_ToString(OpenAPI_notification_type_e notification_type)
 {
     const char *notification_typeArray[] =  { "NULL", "N1_MESSAGES", "N2_INFORMATION", "LOCATION_NOTIFICATION", "DATA_REMOVAL_NOTIFICATION", "DATA_CHANGE_NOTIFICATION" };
-    return (char *)notification_typeArray[notification_type];
+    size_t sizeofArray = sizeof(notification_typeArray) / sizeof(notification_typeArray[0]);
+    if (notification_type < sizeofArray)
+        return (char *)notification_typeArray[notification_type];
+    else
+        return (char *)"Unknown";
 }
 
-ogs_sbi_notification_type_e ogs_sbi_notification_type_FromString(char* notification_type)
+OpenAPI_notification_type_e OpenAPI_notification_type_FromString(char* notification_type)
 {
     int stringToReturn = 0;
     const char *notification_typeArray[] =  { "NULL", "N1_MESSAGES", "N2_INFORMATION", "LOCATION_NOTIFICATION", "DATA_REMOVAL_NOTIFICATION", "DATA_CHANGE_NOTIFICATION" };

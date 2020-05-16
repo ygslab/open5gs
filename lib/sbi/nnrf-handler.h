@@ -17,22 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined(OGS_SBI_INSIDE) && !defined(OGS_SBI_COMPILATION)
-#error "This header cannot be included directly."
-#endif
+#ifndef OGS_NNRF_HANDLER_H
+#define OGS_NNRF_HANDLER_H
 
-#ifndef OGS_SBI_BASE_H
-#define OGS_SBI_BASE_H
+#include "ogs-sbi.h"
+#include "context.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int ogs_sbi_init(uint16_t port);
-void ogs_sbi_final(void);
+bool ogs_sbi_nnrf_handle_nf_profile(ogs_sbi_nf_instance_t *nf_instance,
+        OpenAPI_nf_profile_t *NFProfile,
+        ogs_sbi_session_t *session, ogs_sbi_message_t *message);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_SBI_BASE_H */
+#endif /* OGS_NNRF_HANDLER_H */

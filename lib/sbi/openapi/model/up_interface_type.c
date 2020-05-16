@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "up_interface_type.h"
 
-ogs_sbi_up_interface_type_t *ogs_sbi_up_interface_type_create(
+OpenAPI_up_interface_type_t *OpenAPI_up_interface_type_create(
     )
 {
-    ogs_sbi_up_interface_type_t *up_interface_type_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_up_interface_type_t));
+    OpenAPI_up_interface_type_t *up_interface_type_local_var = OpenAPI_malloc(sizeof(OpenAPI_up_interface_type_t));
     if (!up_interface_type_local_var) {
         return NULL;
     }
@@ -15,26 +15,33 @@ ogs_sbi_up_interface_type_t *ogs_sbi_up_interface_type_create(
     return up_interface_type_local_var;
 }
 
-void ogs_sbi_up_interface_type_free(ogs_sbi_up_interface_type_t *up_interface_type)
+void OpenAPI_up_interface_type_free(OpenAPI_up_interface_type_t *up_interface_type)
 {
     if (NULL == up_interface_type) {
         return;
     }
-    ogs_sbi_lnode_t *node;
+    OpenAPI_lnode_t *node;
     ogs_free(up_interface_type);
 }
 
-cJSON *ogs_sbi_up_interface_type_convertToJSON(ogs_sbi_up_interface_type_t *up_interface_type)
+cJSON *OpenAPI_up_interface_type_convertToJSON(OpenAPI_up_interface_type_t *up_interface_type)
 {
-    cJSON *item = cJSON_CreateObject();
+    cJSON *item = NULL;
+
+    if (up_interface_type == NULL) {
+        ogs_error("OpenAPI_up_interface_type_convertToJSON() failed [UPInterfaceType]");
+        return NULL;
+    }
+
+    item = cJSON_CreateObject();
 end:
     return item;
 }
 
-ogs_sbi_up_interface_type_t *ogs_sbi_up_interface_type_parseFromJSON(cJSON *up_interface_typeJSON)
+OpenAPI_up_interface_type_t *OpenAPI_up_interface_type_parseFromJSON(cJSON *up_interface_typeJSON)
 {
-    ogs_sbi_up_interface_type_t *up_interface_type_local_var = NULL;
-    up_interface_type_local_var = ogs_sbi_up_interface_type_create (
+    OpenAPI_up_interface_type_t *up_interface_type_local_var = NULL;
+    up_interface_type_local_var = OpenAPI_up_interface_type_create (
         );
 
     return up_interface_type_local_var;

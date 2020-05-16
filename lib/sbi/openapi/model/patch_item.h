@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_patch_item_H_
-#define _ogs_sbi_patch_item_H_
+#ifndef _OpenAPI_patch_item_H_
+#define _OpenAPI_patch_item_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,27 +18,27 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_patch_item_s ogs_sbi_patch_item_t;
-typedef struct ogs_sbi_patch_item_s {
-    ogs_sbi_patch_operation_e op;
+typedef struct OpenAPI_patch_item_s OpenAPI_patch_item_t;
+typedef struct OpenAPI_patch_item_s {
+    OpenAPI_patch_operation_e op;
     char *path;
     char *from;
     char *value;
-} ogs_sbi_patch_item_t;
+} OpenAPI_patch_item_t;
 
-ogs_sbi_patch_item_t *ogs_sbi_patch_item_create(
-    ogs_sbi_patch_operation_e op,
+OpenAPI_patch_item_t *OpenAPI_patch_item_create(
+    OpenAPI_patch_operation_e op,
     char *path,
     char *from,
     char *value
     );
-void ogs_sbi_patch_item_free(ogs_sbi_patch_item_t *patch_item);
-ogs_sbi_patch_item_t *ogs_sbi_patch_item_parseFromJSON(cJSON *patch_itemJSON);
-cJSON *ogs_sbi_patch_item_convertToJSON(ogs_sbi_patch_item_t *patch_item);
+void OpenAPI_patch_item_free(OpenAPI_patch_item_t *patch_item);
+OpenAPI_patch_item_t *OpenAPI_patch_item_parseFromJSON(cJSON *patch_itemJSON);
+cJSON *OpenAPI_patch_item_convertToJSON(OpenAPI_patch_item_t *patch_item);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_patch_item_H_ */
+#endif /* _OpenAPI_patch_item_H_ */
 

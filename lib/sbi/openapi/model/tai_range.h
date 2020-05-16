@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_tai_range_H_
-#define _ogs_sbi_tai_range_H_
+#ifndef _OpenAPI_tai_range_H_
+#define _OpenAPI_tai_range_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -19,23 +19,23 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_tai_range_s ogs_sbi_tai_range_t;
-typedef struct ogs_sbi_tai_range_s {
-    struct ogs_sbi_plmn_id_s *plmn_id;
-    ogs_sbi_list_t *tac_range_list;
-} ogs_sbi_tai_range_t;
+typedef struct OpenAPI_tai_range_s OpenAPI_tai_range_t;
+typedef struct OpenAPI_tai_range_s {
+    struct OpenAPI_plmn_id_s *plmn_id;
+    OpenAPI_list_t *tac_range_list;
+} OpenAPI_tai_range_t;
 
-ogs_sbi_tai_range_t *ogs_sbi_tai_range_create(
-    ogs_sbi_plmn_id_t *plmn_id,
-    ogs_sbi_list_t *tac_range_list
+OpenAPI_tai_range_t *OpenAPI_tai_range_create(
+    OpenAPI_plmn_id_t *plmn_id,
+    OpenAPI_list_t *tac_range_list
     );
-void ogs_sbi_tai_range_free(ogs_sbi_tai_range_t *tai_range);
-ogs_sbi_tai_range_t *ogs_sbi_tai_range_parseFromJSON(cJSON *tai_rangeJSON);
-cJSON *ogs_sbi_tai_range_convertToJSON(ogs_sbi_tai_range_t *tai_range);
+void OpenAPI_tai_range_free(OpenAPI_tai_range_t *tai_range);
+OpenAPI_tai_range_t *OpenAPI_tai_range_parseFromJSON(cJSON *tai_rangeJSON);
+cJSON *OpenAPI_tai_range_convertToJSON(OpenAPI_tai_range_t *tai_range);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_tai_range_H_ */
+#endif /* _OpenAPI_tai_range_H_ */
 

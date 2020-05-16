@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_ipv4_address_range_H_
-#define _ogs_sbi_ipv4_address_range_H_
+#ifndef _OpenAPI_ipv4_address_range_H_
+#define _OpenAPI_ipv4_address_range_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,23 +17,23 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_ipv4_address_range_s ogs_sbi_ipv4_address_range_t;
-typedef struct ogs_sbi_ipv4_address_range_s {
+typedef struct OpenAPI_ipv4_address_range_s OpenAPI_ipv4_address_range_t;
+typedef struct OpenAPI_ipv4_address_range_s {
     char *start;
     char *end;
-} ogs_sbi_ipv4_address_range_t;
+} OpenAPI_ipv4_address_range_t;
 
-ogs_sbi_ipv4_address_range_t *ogs_sbi_ipv4_address_range_create(
+OpenAPI_ipv4_address_range_t *OpenAPI_ipv4_address_range_create(
     char *start,
     char *end
     );
-void ogs_sbi_ipv4_address_range_free(ogs_sbi_ipv4_address_range_t *ipv4_address_range);
-ogs_sbi_ipv4_address_range_t *ogs_sbi_ipv4_address_range_parseFromJSON(cJSON *ipv4_address_rangeJSON);
-cJSON *ogs_sbi_ipv4_address_range_convertToJSON(ogs_sbi_ipv4_address_range_t *ipv4_address_range);
+void OpenAPI_ipv4_address_range_free(OpenAPI_ipv4_address_range_t *ipv4_address_range);
+OpenAPI_ipv4_address_range_t *OpenAPI_ipv4_address_range_parseFromJSON(cJSON *ipv4_address_rangeJSON);
+cJSON *OpenAPI_ipv4_address_range_convertToJSON(OpenAPI_ipv4_address_range_t *ipv4_address_range);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_ipv4_address_range_H_ */
+#endif /* _OpenAPI_ipv4_address_range_H_ */
 

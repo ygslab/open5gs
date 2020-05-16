@@ -4,13 +4,13 @@
 #include <stdio.h>
 #include "supi_range.h"
 
-ogs_sbi_supi_range_t *ogs_sbi_supi_range_create(
+OpenAPI_supi_range_t *OpenAPI_supi_range_create(
     char *start,
     char *end,
     char *pattern
     )
 {
-    ogs_sbi_supi_range_t *supi_range_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_supi_range_t));
+    OpenAPI_supi_range_t *supi_range_local_var = OpenAPI_malloc(sizeof(OpenAPI_supi_range_t));
     if (!supi_range_local_var) {
         return NULL;
     }
@@ -21,38 +21,45 @@ ogs_sbi_supi_range_t *ogs_sbi_supi_range_create(
     return supi_range_local_var;
 }
 
-void ogs_sbi_supi_range_free(ogs_sbi_supi_range_t *supi_range)
+void OpenAPI_supi_range_free(OpenAPI_supi_range_t *supi_range)
 {
     if (NULL == supi_range) {
         return;
     }
-    ogs_sbi_lnode_t *node;
+    OpenAPI_lnode_t *node;
     ogs_free(supi_range->start);
     ogs_free(supi_range->end);
     ogs_free(supi_range->pattern);
     ogs_free(supi_range);
 }
 
-cJSON *ogs_sbi_supi_range_convertToJSON(ogs_sbi_supi_range_t *supi_range)
+cJSON *OpenAPI_supi_range_convertToJSON(OpenAPI_supi_range_t *supi_range)
 {
-    cJSON *item = cJSON_CreateObject();
+    cJSON *item = NULL;
+
+    if (supi_range == NULL) {
+        ogs_error("OpenAPI_supi_range_convertToJSON() failed [SupiRange]");
+        return NULL;
+    }
+
+    item = cJSON_CreateObject();
     if (supi_range->start) {
         if (cJSON_AddStringToObject(item, "start", supi_range->start) == NULL) {
-            ogs_error("ogs_sbi_supi_range_convertToJSON() failed [start]");
+            ogs_error("OpenAPI_supi_range_convertToJSON() failed [start]");
             goto end;
         }
     }
 
     if (supi_range->end) {
         if (cJSON_AddStringToObject(item, "end", supi_range->end) == NULL) {
-            ogs_error("ogs_sbi_supi_range_convertToJSON() failed [end]");
+            ogs_error("OpenAPI_supi_range_convertToJSON() failed [end]");
             goto end;
         }
     }
 
     if (supi_range->pattern) {
         if (cJSON_AddStringToObject(item, "pattern", supi_range->pattern) == NULL) {
-            ogs_error("ogs_sbi_supi_range_convertToJSON() failed [pattern]");
+            ogs_error("OpenAPI_supi_range_convertToJSON() failed [pattern]");
             goto end;
         }
     }
@@ -61,14 +68,14 @@ end:
     return item;
 }
 
-ogs_sbi_supi_range_t *ogs_sbi_supi_range_parseFromJSON(cJSON *supi_rangeJSON)
+OpenAPI_supi_range_t *OpenAPI_supi_range_parseFromJSON(cJSON *supi_rangeJSON)
 {
-    ogs_sbi_supi_range_t *supi_range_local_var = NULL;
+    OpenAPI_supi_range_t *supi_range_local_var = NULL;
     cJSON *start = cJSON_GetObjectItemCaseSensitive(supi_rangeJSON, "start");
 
     if (start) {
         if (!cJSON_IsString(start)) {
-            ogs_error("ogs_sbi_supi_range_parseFromJSON() failed [start]");
+            ogs_error("OpenAPI_supi_range_parseFromJSON() failed [start]");
             goto end;
         }
     }
@@ -77,7 +84,7 @@ ogs_sbi_supi_range_t *ogs_sbi_supi_range_parseFromJSON(cJSON *supi_rangeJSON)
 
     if (end) {
         if (!cJSON_IsString(end)) {
-            ogs_error("ogs_sbi_supi_range_parseFromJSON() failed [end]");
+            ogs_error("OpenAPI_supi_range_parseFromJSON() failed [end]");
             goto end;
         }
     }
@@ -86,12 +93,12 @@ ogs_sbi_supi_range_t *ogs_sbi_supi_range_parseFromJSON(cJSON *supi_rangeJSON)
 
     if (pattern) {
         if (!cJSON_IsString(pattern)) {
-            ogs_error("ogs_sbi_supi_range_parseFromJSON() failed [pattern]");
+            ogs_error("OpenAPI_supi_range_parseFromJSON() failed [pattern]");
             goto end;
         }
     }
 
-    supi_range_local_var = ogs_sbi_supi_range_create (
+    supi_range_local_var = OpenAPI_supi_range_create (
         start ? ogs_strdup(start->valuestring) : NULL,
         end ? ogs_strdup(end->valuestring) : NULL,
         pattern ? ogs_strdup(pattern->valuestring) : NULL

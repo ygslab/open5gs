@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "n2_information_class.h"
 
-ogs_sbi_n2_information_class_t *ogs_sbi_n2_information_class_create(
+OpenAPI_n2_information_class_t *OpenAPI_n2_information_class_create(
     )
 {
-    ogs_sbi_n2_information_class_t *n2_information_class_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_n2_information_class_t));
+    OpenAPI_n2_information_class_t *n2_information_class_local_var = OpenAPI_malloc(sizeof(OpenAPI_n2_information_class_t));
     if (!n2_information_class_local_var) {
         return NULL;
     }
@@ -15,26 +15,33 @@ ogs_sbi_n2_information_class_t *ogs_sbi_n2_information_class_create(
     return n2_information_class_local_var;
 }
 
-void ogs_sbi_n2_information_class_free(ogs_sbi_n2_information_class_t *n2_information_class)
+void OpenAPI_n2_information_class_free(OpenAPI_n2_information_class_t *n2_information_class)
 {
     if (NULL == n2_information_class) {
         return;
     }
-    ogs_sbi_lnode_t *node;
+    OpenAPI_lnode_t *node;
     ogs_free(n2_information_class);
 }
 
-cJSON *ogs_sbi_n2_information_class_convertToJSON(ogs_sbi_n2_information_class_t *n2_information_class)
+cJSON *OpenAPI_n2_information_class_convertToJSON(OpenAPI_n2_information_class_t *n2_information_class)
 {
-    cJSON *item = cJSON_CreateObject();
+    cJSON *item = NULL;
+
+    if (n2_information_class == NULL) {
+        ogs_error("OpenAPI_n2_information_class_convertToJSON() failed [N2InformationClass]");
+        return NULL;
+    }
+
+    item = cJSON_CreateObject();
 end:
     return item;
 }
 
-ogs_sbi_n2_information_class_t *ogs_sbi_n2_information_class_parseFromJSON(cJSON *n2_information_classJSON)
+OpenAPI_n2_information_class_t *OpenAPI_n2_information_class_parseFromJSON(cJSON *n2_information_classJSON)
 {
-    ogs_sbi_n2_information_class_t *n2_information_class_local_var = NULL;
-    n2_information_class_local_var = ogs_sbi_n2_information_class_create (
+    OpenAPI_n2_information_class_t *n2_information_class_local_var = NULL;
+    n2_information_class_local_var = OpenAPI_n2_information_class_create (
         );
 
     return n2_information_class_local_var;

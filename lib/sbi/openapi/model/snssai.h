@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_snssai_H_
-#define _ogs_sbi_snssai_H_
+#ifndef _OpenAPI_snssai_H_
+#define _OpenAPI_snssai_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,23 +17,23 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_snssai_s ogs_sbi_snssai_t;
-typedef struct ogs_sbi_snssai_s {
+typedef struct OpenAPI_snssai_s OpenAPI_snssai_t;
+typedef struct OpenAPI_snssai_s {
     int sst;
     char *sd;
-} ogs_sbi_snssai_t;
+} OpenAPI_snssai_t;
 
-ogs_sbi_snssai_t *ogs_sbi_snssai_create(
+OpenAPI_snssai_t *OpenAPI_snssai_create(
     int sst,
     char *sd
     );
-void ogs_sbi_snssai_free(ogs_sbi_snssai_t *snssai);
-ogs_sbi_snssai_t *ogs_sbi_snssai_parseFromJSON(cJSON *snssaiJSON);
-cJSON *ogs_sbi_snssai_convertToJSON(ogs_sbi_snssai_t *snssai);
+void OpenAPI_snssai_free(OpenAPI_snssai_t *snssai);
+OpenAPI_snssai_t *OpenAPI_snssai_parseFromJSON(cJSON *snssaiJSON);
+cJSON *OpenAPI_snssai_convertToJSON(OpenAPI_snssai_t *snssai);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_snssai_H_ */
+#endif /* _OpenAPI_snssai_H_ */
 

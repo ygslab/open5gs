@@ -21,6 +21,7 @@
 #define NRF_SBI_PATH_H
 
 #include "ogs-sbi.h"
+#include "nnrf-build.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,6 +29,12 @@ extern "C" {
 
 int nrf_sbi_open(void);
 void nrf_sbi_close(void);
+
+void nrf_sbi_send_nf_status_notify(ogs_sbi_subscription_t *subscription,
+        OpenAPI_notification_event_type_e event,
+        ogs_sbi_nf_instance_t *nf_instance);
+void nrf_sbi_send_nf_status_notify_all(OpenAPI_notification_event_type_e event,
+        ogs_sbi_nf_instance_t *nf_instance);
 
 #ifdef __cplusplus
 }

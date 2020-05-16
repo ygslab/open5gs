@@ -39,10 +39,12 @@ void nrf_state_final(ogs_fsm_t *s, nrf_event_t *e)
 void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
 {
     int rv;
+    ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
     ogs_sbi_request_t *request = NULL;
     ogs_sbi_message_t message;
-    nrf_nf_instance_t *nf_instance = NULL;
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
+    ogs_sbi_subscription_t *subscription = NULL;
 
     ogs_assert(e);
 
@@ -67,6 +69,8 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
         ogs_assert(request);
         session = e->sbi.session;
         ogs_assert(session);
+        server = e->sbi.server;
+        ogs_assert(server);
 
         rv = ogs_sbi_parse_request(&message, request);
         if (rv != OGS_OK) {
@@ -85,19 +89,20 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
             break;
         }
 
-        SWITCH(message.h.api.name)
-        CASE(OGS_SBI_API_NAME_NRF_NFM)
+        SWITCH(message.h.service.name)
+        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
 
             SWITCH(message.h.resource.name)
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
 
-                nf_instance = nrf_nf_instance_find(message.h.resource.id);
+                nf_instance = ogs_sbi_nf_instance_find(message.h.resource.id);
                 if (!nf_instance) {
                     SWITCH(message.h.method)
                     CASE(OGS_SBI_HTTP_METHOD_PUT)
-                        nf_instance = 
-                            nrf_nf_instance_add(message.h.resource.id);
+                        nf_instance = ogs_sbi_nf_instance_add(
+                                message.h.resource.id);
                         ogs_assert(nf_instance);
+                        nrf_nf_fsm_init(nf_instance);
                         break;
                     DEFAULT
                         ogs_error("Not found [%s]", message.h.resource.id);
@@ -112,43 +117,43 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
                     e->sbi.message = &message;
                     ogs_fsm_dispatch(&nf_instance->sm, e);
                     if (OGS_FSM_CHECK(&nf_instance->sm,
+                                nrf_nf_state_de_registered)) {
+                        nrf_nf_fsm_fini(nf_instance);
+                        ogs_sbi_nf_instance_remove(nf_instance);
+
+                        /* FIXME : Remove unnecessary Client */
+                    } else if (OGS_FSM_CHECK(&nf_instance->sm,
                                 nrf_nf_state_exception)) {
                         ogs_error("State machine exception");
                         ogs_sbi_message_free(&message);
-                        nrf_nf_instance_remove(nf_instance);
+
+                        nrf_nf_fsm_fini(nf_instance);
+                        ogs_sbi_nf_instance_remove(nf_instance);
+
+                        /* FIXME : Remove unnecessary Client */
                     }
                 }
                 break;
 
             CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS)
-                ogs_sbi_subscription_data_t *subscription_data =
-                    message.subscription_data;
-                char *req_nf_instance_id = NULL;
-                if (subscription_data) {
-                    req_nf_instance_id = subscription_data->req_nf_instance_id;
-                    if (req_nf_instance_id) 
-                        nf_instance = nrf_nf_instance_find(req_nf_instance_id);
-                }
+                SWITCH(message.h.method)
+                CASE(OGS_SBI_HTTP_METHOD_POST)
+                    nrf_nnrf_handle_nf_status_subscribe(
+                            server, session, &message);
+                    break;
 
-                if (nf_instance) {
-                    e->nf_instance = nf_instance;
-                    e->sbi.message = &message;
-                    ogs_fsm_dispatch(&nf_instance->sm, e);
-                    if (OGS_FSM_CHECK(&nf_instance->sm,
-                                nrf_nf_state_exception)) {
-                        ogs_error("State machine exception");
-                        ogs_sbi_message_free(&message);
-                        nrf_nf_instance_remove(nf_instance);
-                    }
-                } else {
-                    const char *detail = req_nf_instance_id ?
-                        req_nf_instance_id : "Unknown";
-                    ogs_error("Not found [%s]", detail);
+                CASE(OGS_SBI_HTTP_METHOD_DELETE)
+                    nrf_nnrf_handle_nf_status_unsubscribe(
+                            server, session, &message);
+                    break;
+
+                DEFAULT
+                    ogs_error("Invalid HTTP method [%s]",
+                            message.h.method);
                     ogs_sbi_server_send_error(session,
-                            OGS_SBI_HTTP_STATUS_NOT_FOUND,
-                            &message, "Not found", detail);
-                }
-
+                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
+                            "Invalid HTTP method", message.h.method);
+                END
                 break;
 
             DEFAULT
@@ -161,7 +166,7 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
             break;
 
         DEFAULT
-            ogs_error("Invalid API name [%s]", message.h.api.name);
+            ogs_error("Invalid API name [%s]", message.h.service.name);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
                     "Invalid API name", message.h.resource.name);
@@ -170,19 +175,36 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
         /* In lib/sbi/server.c, notify_completed() releases 'request' buffer. */
         ogs_sbi_message_free(&message);
         break;
-    case NRF_EVT_SBI_TIMER:
-        nf_instance = e->nf_instance;
-        ogs_assert(nf_instance);
 
-        ogs_assert(OGS_FSM_STATE(&nf_instance->sm));
-        ogs_fsm_dispatch(&nf_instance->sm, e);
-        if (OGS_FSM_CHECK(&nf_instance->sm, nrf_nf_state_de_registered)) {
-            nrf_nf_instance_remove(nf_instance);
-        } else if (OGS_FSM_CHECK(&nf_instance->sm, nrf_nf_state_exception)) {
-            ogs_error("State machine exception");
-            nrf_nf_instance_remove(nf_instance);
+    case NRF_EVT_SBI_TIMER:
+        switch(e->timer_id) {
+        case NRF_TIMER_SBI_NO_HEARTBEAT:
+            nf_instance = e->nf_instance;
+            ogs_assert(nf_instance);
+
+            ogs_warn("No heartbeat [%s]", nf_instance->id);
+            nf_instance->nf_type = OpenAPI_nf_status_SUSPENDED;
+
+            nrf_nf_fsm_fini(nf_instance);
+            ogs_sbi_nf_instance_remove(nf_instance);
+
+            /* FIXME : Remove unnecessary Client */
+            break;
+
+        case NRF_TIMER_SBI_NO_VALIDITY:
+            subscription = e->subscription;
+            ogs_assert(subscription);
+
+            ogs_info("Subscription validity expired [%s]", subscription->id);
+            ogs_sbi_subscription_remove(subscription);
+            break;
+
+        default:
+            ogs_error("Unknown timer[%s:%d]",
+                    nrf_timer_get_name(e->timer_id), e->timer_id);
         }
         break;
+
     default:
         ogs_error("No handler for event %s", nrf_event_get_name(e));
         break;

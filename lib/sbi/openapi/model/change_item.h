@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_change_item_H_
-#define _ogs_sbi_change_item_H_
+#ifndef _OpenAPI_change_item_H_
+#define _OpenAPI_change_item_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,29 +18,29 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_change_item_s ogs_sbi_change_item_t;
-typedef struct ogs_sbi_change_item_s {
-    ogs_sbi_change_type_e op;
+typedef struct OpenAPI_change_item_s OpenAPI_change_item_t;
+typedef struct OpenAPI_change_item_s {
+    OpenAPI_change_type_e op;
     char *path;
     char *from;
     char *orig_value;
     char *new_value;
-} ogs_sbi_change_item_t;
+} OpenAPI_change_item_t;
 
-ogs_sbi_change_item_t *ogs_sbi_change_item_create(
-    ogs_sbi_change_type_e op,
+OpenAPI_change_item_t *OpenAPI_change_item_create(
+    OpenAPI_change_type_e op,
     char *path,
     char *from,
     char *orig_value,
     char *new_value
     );
-void ogs_sbi_change_item_free(ogs_sbi_change_item_t *change_item);
-ogs_sbi_change_item_t *ogs_sbi_change_item_parseFromJSON(cJSON *change_itemJSON);
-cJSON *ogs_sbi_change_item_convertToJSON(ogs_sbi_change_item_t *change_item);
+void OpenAPI_change_item_free(OpenAPI_change_item_t *change_item);
+OpenAPI_change_item_t *OpenAPI_change_item_parseFromJSON(cJSON *change_itemJSON);
+cJSON *OpenAPI_change_item_convertToJSON(OpenAPI_change_item_t *change_item);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_change_item_H_ */
+#endif /* _OpenAPI_change_item_H_ */
 

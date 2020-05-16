@@ -18,12 +18,16 @@
 subdir('openapi')
 
 libsbi_sources = files('''
+    yuarel.c
     conv.c
     message.c
 
     server.c
     client.c
     context.c
+
+    nnrf-build.c
+    nnrf-handler.c
 '''.split())
 
 libsbi_inc = include_directories('.')

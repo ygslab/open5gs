@@ -21,6 +21,7 @@
 #define OGS_SBI_PRIVATE_H
 
 #include "ogs-core.h"
+#include "yuarel.h"
 
 #ifdef __cplusplus
 extern "C" {

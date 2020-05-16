@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "data_set_id.h"
 
-ogs_sbi_data_set_id_t *ogs_sbi_data_set_id_create(
+OpenAPI_data_set_id_t *OpenAPI_data_set_id_create(
     )
 {
-    ogs_sbi_data_set_id_t *data_set_id_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_data_set_id_t));
+    OpenAPI_data_set_id_t *data_set_id_local_var = OpenAPI_malloc(sizeof(OpenAPI_data_set_id_t));
     if (!data_set_id_local_var) {
         return NULL;
     }
@@ -15,26 +15,33 @@ ogs_sbi_data_set_id_t *ogs_sbi_data_set_id_create(
     return data_set_id_local_var;
 }
 
-void ogs_sbi_data_set_id_free(ogs_sbi_data_set_id_t *data_set_id)
+void OpenAPI_data_set_id_free(OpenAPI_data_set_id_t *data_set_id)
 {
     if (NULL == data_set_id) {
         return;
     }
-    ogs_sbi_lnode_t *node;
+    OpenAPI_lnode_t *node;
     ogs_free(data_set_id);
 }
 
-cJSON *ogs_sbi_data_set_id_convertToJSON(ogs_sbi_data_set_id_t *data_set_id)
+cJSON *OpenAPI_data_set_id_convertToJSON(OpenAPI_data_set_id_t *data_set_id)
 {
-    cJSON *item = cJSON_CreateObject();
+    cJSON *item = NULL;
+
+    if (data_set_id == NULL) {
+        ogs_error("OpenAPI_data_set_id_convertToJSON() failed [DataSetId]");
+        return NULL;
+    }
+
+    item = cJSON_CreateObject();
 end:
     return item;
 }
 
-ogs_sbi_data_set_id_t *ogs_sbi_data_set_id_parseFromJSON(cJSON *data_set_idJSON)
+OpenAPI_data_set_id_t *OpenAPI_data_set_id_parseFromJSON(cJSON *data_set_idJSON)
 {
-    ogs_sbi_data_set_id_t *data_set_id_local_var = NULL;
-    data_set_id_local_var = ogs_sbi_data_set_id_create (
+    OpenAPI_data_set_id_t *data_set_id_local_var = NULL;
+    data_set_id_local_var = OpenAPI_data_set_id_create (
         );
 
     return data_set_id_local_var;

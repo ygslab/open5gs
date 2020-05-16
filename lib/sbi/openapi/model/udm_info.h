@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_udm_info_H_
-#define _ogs_sbi_udm_info_H_
+#ifndef _OpenAPI_udm_info_H_
+#define _OpenAPI_udm_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -19,29 +19,29 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_udm_info_s ogs_sbi_udm_info_t;
-typedef struct ogs_sbi_udm_info_s {
+typedef struct OpenAPI_udm_info_s OpenAPI_udm_info_t;
+typedef struct OpenAPI_udm_info_s {
     char *group_id;
-    ogs_sbi_list_t *supi_ranges;
-    ogs_sbi_list_t *gpsi_ranges;
-    ogs_sbi_list_t *external_group_identifiers_ranges;
-    ogs_sbi_list_t *routing_indicators;
-} ogs_sbi_udm_info_t;
+    OpenAPI_list_t *supi_ranges;
+    OpenAPI_list_t *gpsi_ranges;
+    OpenAPI_list_t *external_group_identifiers_ranges;
+    OpenAPI_list_t *routing_indicators;
+} OpenAPI_udm_info_t;
 
-ogs_sbi_udm_info_t *ogs_sbi_udm_info_create(
+OpenAPI_udm_info_t *OpenAPI_udm_info_create(
     char *group_id,
-    ogs_sbi_list_t *supi_ranges,
-    ogs_sbi_list_t *gpsi_ranges,
-    ogs_sbi_list_t *external_group_identifiers_ranges,
-    ogs_sbi_list_t *routing_indicators
+    OpenAPI_list_t *supi_ranges,
+    OpenAPI_list_t *gpsi_ranges,
+    OpenAPI_list_t *external_group_identifiers_ranges,
+    OpenAPI_list_t *routing_indicators
     );
-void ogs_sbi_udm_info_free(ogs_sbi_udm_info_t *udm_info);
-ogs_sbi_udm_info_t *ogs_sbi_udm_info_parseFromJSON(cJSON *udm_infoJSON);
-cJSON *ogs_sbi_udm_info_convertToJSON(ogs_sbi_udm_info_t *udm_info);
+void OpenAPI_udm_info_free(OpenAPI_udm_info_t *udm_info);
+OpenAPI_udm_info_t *OpenAPI_udm_info_parseFromJSON(cJSON *udm_infoJSON);
+cJSON *OpenAPI_udm_info_convertToJSON(OpenAPI_udm_info_t *udm_info);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_udm_info_H_ */
+#endif /* _OpenAPI_udm_info_H_ */
 

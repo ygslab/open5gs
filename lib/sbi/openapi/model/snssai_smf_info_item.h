@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_snssai_smf_info_item_H_
-#define _ogs_sbi_snssai_smf_info_item_H_
+#ifndef _OpenAPI_snssai_smf_info_item_H_
+#define _OpenAPI_snssai_smf_info_item_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -19,23 +19,23 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_snssai_smf_info_item_s ogs_sbi_snssai_smf_info_item_t;
-typedef struct ogs_sbi_snssai_smf_info_item_s {
-    struct ogs_sbi_snssai_s *s_nssai;
-    ogs_sbi_list_t *dnn_smf_info_list;
-} ogs_sbi_snssai_smf_info_item_t;
+typedef struct OpenAPI_snssai_smf_info_item_s OpenAPI_snssai_smf_info_item_t;
+typedef struct OpenAPI_snssai_smf_info_item_s {
+    struct OpenAPI_snssai_s *s_nssai;
+    OpenAPI_list_t *dnn_smf_info_list;
+} OpenAPI_snssai_smf_info_item_t;
 
-ogs_sbi_snssai_smf_info_item_t *ogs_sbi_snssai_smf_info_item_create(
-    ogs_sbi_snssai_t *s_nssai,
-    ogs_sbi_list_t *dnn_smf_info_list
+OpenAPI_snssai_smf_info_item_t *OpenAPI_snssai_smf_info_item_create(
+    OpenAPI_snssai_t *s_nssai,
+    OpenAPI_list_t *dnn_smf_info_list
     );
-void ogs_sbi_snssai_smf_info_item_free(ogs_sbi_snssai_smf_info_item_t *snssai_smf_info_item);
-ogs_sbi_snssai_smf_info_item_t *ogs_sbi_snssai_smf_info_item_parseFromJSON(cJSON *snssai_smf_info_itemJSON);
-cJSON *ogs_sbi_snssai_smf_info_item_convertToJSON(ogs_sbi_snssai_smf_info_item_t *snssai_smf_info_item);
+void OpenAPI_snssai_smf_info_item_free(OpenAPI_snssai_smf_info_item_t *snssai_smf_info_item);
+OpenAPI_snssai_smf_info_item_t *OpenAPI_snssai_smf_info_item_parseFromJSON(cJSON *snssai_smf_info_itemJSON);
+cJSON *OpenAPI_snssai_smf_info_item_convertToJSON(OpenAPI_snssai_smf_info_item_t *snssai_smf_info_item);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_snssai_smf_info_item_H_ */
+#endif /* _OpenAPI_snssai_smf_info_item_H_ */
 

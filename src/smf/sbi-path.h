@@ -29,12 +29,13 @@ extern "C" {
 int smf_sbi_open(void);
 void smf_sbi_close(void);
 
-void smf_sbi_send_nf_register(ogs_sbi_client_t *client,
-        ogs_sbi_nf_type_e nf_type, ogs_sbi_nf_status_e nf_status);
-void smf_sbi_send_nf_update(ogs_sbi_client_t *client);
-void smf_sbi_send_nf_de_register(ogs_sbi_client_t *client);
+void smf_sbi_send_nf_register(ogs_sbi_nf_instance_t *nf_instance);
+void smf_sbi_send_nf_update(ogs_sbi_nf_instance_t *nf_instance);
+void smf_sbi_send_nf_de_register(ogs_sbi_nf_instance_t *nf_instance);
 
-void smf_sbi_send_nf_status_subscribe(ogs_sbi_client_t *client);
+void smf_sbi_send_nf_status_subscribe(
+        ogs_sbi_client_t *client, OpenAPI_nf_type_e nf_type);
+void smf_sbi_send_nf_status_unsubscribe(ogs_sbi_subscription_t *subscription);
 
 #ifdef __cplusplus
 }

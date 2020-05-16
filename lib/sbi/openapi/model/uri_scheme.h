@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_uri_scheme_H_
-#define _ogs_sbi_uri_scheme_H_
+#ifndef _OpenAPI_uri_scheme_H_
+#define _OpenAPI_uri_scheme_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,15 +17,15 @@
 extern "C" {
 #endif
 
-typedef enum { ogs_sbi_uri_scheme_NULL = 0, ogs_sbi_uri_scheme_http, ogs_sbi_uri_scheme_https } ogs_sbi_uri_scheme_e;
+typedef enum { OpenAPI_uri_scheme_NULL = 0, OpenAPI_uri_scheme_http, OpenAPI_uri_scheme_https } OpenAPI_uri_scheme_e;
 
-char* ogs_sbi_uri_scheme_ToString(ogs_sbi_uri_scheme_e uri_scheme);
+char* OpenAPI_uri_scheme_ToString(OpenAPI_uri_scheme_e uri_scheme);
 
-ogs_sbi_uri_scheme_e ogs_sbi_uri_scheme_FromString(char* uri_scheme);
+OpenAPI_uri_scheme_e OpenAPI_uri_scheme_FromString(char* uri_scheme);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_uri_scheme_H_ */
+#endif /* _OpenAPI_uri_scheme_H_ */
 

@@ -7,16 +7,16 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_map_s {
+typedef struct OpenAPI_map_s {
     char *key;
     void *value;
-} ogs_sbi_map_t;
+} OpenAPI_map_t;
 
-ogs_sbi_map_t *ogs_sbi_map_create(char *key, void *value);
+OpenAPI_map_t *OpenAPI_map_create(char *key, void *value);
 
-ogs_sbi_map_t *ogs_sbi_map_create_allocate(char *key, double value);
+OpenAPI_map_t *OpenAPI_map_create_allocate(char *key, double value);
 
-void ogs_sbi_map_free(ogs_sbi_map_t *ogs_sbi_map);
+void OpenAPI_map_free(OpenAPI_map_t *OpenAPI_map);
 
 #ifdef __cplusplus
 }

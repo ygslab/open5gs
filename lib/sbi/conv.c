@@ -21,7 +21,7 @@
 
 #include "sbi-private.h"
 
-char *ogs_sbi_uridup(ogs_sbi_client_t *client,
+static char *ogs_uridup(bool https, ogs_sockaddr_t *addr,
     const char *api_name, const char *api_version,
     const char *resource_name, const char *resource_id)
 {
@@ -29,7 +29,7 @@ char *ogs_sbi_uridup(ogs_sbi_client_t *client,
     char url[OGS_HUGE_LEN];
     char *p, *last;
 
-    ogs_assert(client);
+    ogs_assert(addr);
     ogs_assert(api_name);
     ogs_assert(api_version);
     ogs_assert(resource_name);
@@ -38,20 +38,20 @@ char *ogs_sbi_uridup(ogs_sbi_client_t *client,
     last = url + OGS_HUGE_LEN;
 
     /* HTTP scheme is selected based on TLS information */
-    if (client->tls.key && client->tls.pem)
+    if (https == true)
         p = ogs_slprintf(p, last, "https://");
     else
         p = ogs_slprintf(p, last, "http://");
 
     /* IP address */
-    if (client->addr->ogs_sa_family == AF_INET6)
-        p = ogs_slprintf(p, last, "[%s]", OGS_ADDR(client->addr, buf));
+    if (addr->ogs_sa_family == AF_INET6)
+        p = ogs_slprintf(p, last, "[%s]", OGS_ADDR(addr, buf));
     else
-        p = ogs_slprintf(p, last, "%s", OGS_ADDR(client->addr, buf));
+        p = ogs_slprintf(p, last, "%s", OGS_ADDR(addr, buf));
 
     /* Port number */
-    if (OGS_PORT(client->addr) != OGS_SBI_HTTP_PORT) {
-        p = ogs_slprintf(p, last, ":%d", OGS_PORT(client->addr));
+    if (OGS_PORT(addr) != OGS_SBI_HTTP_PORT) {
+        p = ogs_slprintf(p, last, ":%d", OGS_PORT(addr));
     }
 
     /* API */
@@ -67,4 +67,126 @@ char *ogs_sbi_uridup(ogs_sbi_client_t *client,
         p = ogs_slprintf(p, last, "/%s", resource_id);
 
     return ogs_strdup(url);
+}
+
+char *ogs_sbi_server_uri(ogs_sbi_server_t *server,
+    const char *api_name, const char *api_version,
+    const char *resource_name, const char *resource_id)
+{
+    bool https = false;
+    if (server->tls.key && server->tls.pem)
+        https = true;
+
+    return ogs_uridup(https, server->addr, api_name, api_version,
+            resource_name, resource_id);
+}
+
+char *ogs_sbi_client_uri(ogs_sbi_client_t *client,
+    const char *api_name, const char *api_version,
+    const char *resource_name, const char *resource_id)
+{
+    bool https = false;
+    if (client->tls.key && client->tls.pem)
+        https = true;
+
+    return ogs_uridup(https, client->addr, api_name, api_version,
+            resource_name, resource_id);
+}
+
+/**
+ * Returns a url-decoded version of str
+ * IMPORTANT: be sure to free() the returned string after use
+ * Thanks Geek Hideout!
+ * http://www.geekhideout.com/urlcode.shtml
+ */
+static char *url_decode(const char *str)
+{
+    if (str != NULL) {
+        char *pstr = (char*)str;
+        char *buf = ogs_malloc(strlen(str) + 1);
+        char *pbuf = buf;
+        while (*pstr) {
+            if (*pstr == '%') {
+                if (pstr[1] && pstr[2]) {
+                    *pbuf++ = ogs_from_hex(pstr[1]) << 4 |
+                                ogs_from_hex(pstr[2]);
+                    pstr += 2;
+                }
+            } else if (*pstr == '+') {
+                *pbuf++ = ' ';
+            } else {
+                *pbuf++ = * pstr;
+            }
+            pstr++;
+        }
+        *pbuf = '\0';
+        return buf;
+    } else {
+        return NULL;
+    }
+}
+
+char *ogs_sbi_parse_url(char *url, const char *delim, char **saveptr)
+{
+    char *item = NULL;
+
+    item = url_decode(strtok_r(url, delim, saveptr));
+    if (!item) {
+        return NULL;
+    }
+
+    return item;
+}
+
+ogs_sockaddr_t *ogs_sbi_getaddr_from_uri(char *uri)
+{
+    int rv;
+    struct yuarel yuarel;
+    char *p = NULL;
+    int port;
+
+    ogs_sockaddr_t *addr = NULL;
+
+    p = ogs_strdup(uri);
+
+    rv = yuarel_parse(&yuarel, p);
+    if (rv != OGS_OK) {
+        ogs_free(p);
+        ogs_error("yuarel_parse() failed [%s]", uri);
+        return NULL;
+    }
+
+    if (!yuarel.scheme) {
+        ogs_error("No http.scheme found [%s]", uri);
+        ogs_free(p);
+        return NULL;
+    }
+
+    if (strcmp(yuarel.scheme, "https") == 0) {
+        port = OGS_SBI_HTTPS_PORT;
+    } else if (strcmp(yuarel.scheme, "http") == 0) {
+        port = OGS_SBI_HTTP_PORT;
+    } else {
+        ogs_error("Invalid http.scheme [%s:%s]", yuarel.scheme, uri);
+        ogs_free(p);
+        return NULL;
+    }
+
+    if (!yuarel.host) {
+        ogs_error("No http.host found [%s]", uri);
+        ogs_free(p);
+        return NULL;
+    }
+
+    if (yuarel.port) port = yuarel.port;
+
+    rv = ogs_getaddrinfo(&addr, AF_UNSPEC, yuarel.host, port, 0);
+    if (rv != OGS_OK) {
+        ogs_error("ogs_getaddrinfo() failed [%s]", uri);
+        ogs_free(p);
+        return NULL;
+    }
+
+    ogs_free(p);
+    return addr;
 }

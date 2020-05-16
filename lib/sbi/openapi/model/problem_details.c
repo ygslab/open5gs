@@ -4,18 +4,18 @@
 #include <stdio.h>
 #include "problem_details.h"
 
-ogs_sbi_problem_details_t *ogs_sbi_problem_details_create(
+OpenAPI_problem_details_t *OpenAPI_problem_details_create(
     char *type,
     char *title,
     int status,
     char *detail,
     char *instance,
     char *cause,
-    ogs_sbi_list_t *invalid_params,
+    OpenAPI_list_t *invalid_params,
     char *supported_features
     )
 {
-    ogs_sbi_problem_details_t *problem_details_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_problem_details_t));
+    OpenAPI_problem_details_t *problem_details_local_var = OpenAPI_malloc(sizeof(OpenAPI_problem_details_t));
     if (!problem_details_local_var) {
         return NULL;
     }
@@ -31,66 +31,73 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_create(
     return problem_details_local_var;
 }
 
-void ogs_sbi_problem_details_free(ogs_sbi_problem_details_t *problem_details)
+void OpenAPI_problem_details_free(OpenAPI_problem_details_t *problem_details)
 {
     if (NULL == problem_details) {
         return;
     }
-    ogs_sbi_lnode_t *node;
+    OpenAPI_lnode_t *node;
     ogs_free(problem_details->type);
     ogs_free(problem_details->title);
     ogs_free(problem_details->detail);
     ogs_free(problem_details->instance);
     ogs_free(problem_details->cause);
-    ogs_sbi_list_for_each(problem_details->invalid_params, node) {
-        ogs_sbi_invalid_param_free(node->data);
+    OpenAPI_list_for_each(problem_details->invalid_params, node) {
+        OpenAPI_invalid_param_free(node->data);
     }
-    ogs_sbi_list_free(problem_details->invalid_params);
+    OpenAPI_list_free(problem_details->invalid_params);
     ogs_free(problem_details->supported_features);
     ogs_free(problem_details);
 }
 
-cJSON *ogs_sbi_problem_details_convertToJSON(ogs_sbi_problem_details_t *problem_details)
+cJSON *OpenAPI_problem_details_convertToJSON(OpenAPI_problem_details_t *problem_details)
 {
-    cJSON *item = cJSON_CreateObject();
+    cJSON *item = NULL;
+
+    if (problem_details == NULL) {
+        ogs_error("OpenAPI_problem_details_convertToJSON() failed [ProblemDetails]");
+        return NULL;
+    }
+
+    item = cJSON_CreateObject();
     if (problem_details->type) {
         if (cJSON_AddStringToObject(item, "type", problem_details->type) == NULL) {
-            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [type]");
+            ogs_error("OpenAPI_problem_details_convertToJSON() failed [type]");
             goto end;
         }
     }
 
     if (problem_details->title) {
         if (cJSON_AddStringToObject(item, "title", problem_details->title) == NULL) {
-            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [title]");
+            ogs_error("OpenAPI_problem_details_convertToJSON() failed [title]");
             goto end;
         }
     }
 
     if (problem_details->status) {
         if (cJSON_AddNumberToObject(item, "status", problem_details->status) == NULL) {
-            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [status]");
+            ogs_error("OpenAPI_problem_details_convertToJSON() failed [status]");
             goto end;
         }
     }
 
     if (problem_details->detail) {
         if (cJSON_AddStringToObject(item, "detail", problem_details->detail) == NULL) {
-            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [detail]");
+            ogs_error("OpenAPI_problem_details_convertToJSON() failed [detail]");
             goto end;
         }
     }
 
     if (problem_details->instance) {
         if (cJSON_AddStringToObject(item, "instance", problem_details->instance) == NULL) {
-            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [instance]");
+            ogs_error("OpenAPI_problem_details_convertToJSON() failed [instance]");
             goto end;
         }
     }
 
     if (problem_details->cause) {
         if (cJSON_AddStringToObject(item, "cause", problem_details->cause) == NULL) {
-            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [cause]");
+            ogs_error("OpenAPI_problem_details_convertToJSON() failed [cause]");
             goto end;
         }
     }
@@ -98,16 +105,16 @@ cJSON *ogs_sbi_problem_details_convertToJSON(ogs_sbi_problem_details_t *problem_
     if (problem_details->invalid_params) {
         cJSON *invalid_params = cJSON_AddArrayToObject(item, "invalidParams");
         if (invalid_params == NULL) {
-            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [invalid_params]");
+            ogs_error("OpenAPI_problem_details_convertToJSON() failed [invalid_params]");
             goto end;
         }
 
-        ogs_sbi_lnode_t *invalid_params_node;
+        OpenAPI_lnode_t *invalid_params_node;
         if (problem_details->invalid_params) {
-            ogs_sbi_list_for_each(problem_details->invalid_params, invalid_params_node) {
-                cJSON *itemLocal = ogs_sbi_invalid_param_convertToJSON(invalid_params_node->data);
+            OpenAPI_list_for_each(problem_details->invalid_params, invalid_params_node) {
+                cJSON *itemLocal = OpenAPI_invalid_param_convertToJSON(invalid_params_node->data);
                 if (itemLocal == NULL) {
-                    ogs_error("ogs_sbi_problem_details_convertToJSON() failed [invalid_params]");
+                    ogs_error("OpenAPI_problem_details_convertToJSON() failed [invalid_params]");
                     goto end;
                 }
                 cJSON_AddItemToArray(invalid_params, itemLocal);
@@ -117,7 +124,7 @@ cJSON *ogs_sbi_problem_details_convertToJSON(ogs_sbi_problem_details_t *problem_
 
     if (problem_details->supported_features) {
         if (cJSON_AddStringToObject(item, "supportedFeatures", problem_details->supported_features) == NULL) {
-            ogs_error("ogs_sbi_problem_details_convertToJSON() failed [supported_features]");
+            ogs_error("OpenAPI_problem_details_convertToJSON() failed [supported_features]");
             goto end;
         }
     }
@@ -126,14 +133,14 @@ end:
     return item;
 }
 
-ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_detailsJSON)
+OpenAPI_problem_details_t *OpenAPI_problem_details_parseFromJSON(cJSON *problem_detailsJSON)
 {
-    ogs_sbi_problem_details_t *problem_details_local_var = NULL;
+    OpenAPI_problem_details_t *problem_details_local_var = NULL;
     cJSON *type = cJSON_GetObjectItemCaseSensitive(problem_detailsJSON, "type");
 
     if (type) {
         if (!cJSON_IsString(type)) {
-            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [type]");
+            ogs_error("OpenAPI_problem_details_parseFromJSON() failed [type]");
             goto end;
         }
     }
@@ -142,7 +149,7 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
 
     if (title) {
         if (!cJSON_IsString(title)) {
-            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [title]");
+            ogs_error("OpenAPI_problem_details_parseFromJSON() failed [title]");
             goto end;
         }
     }
@@ -151,7 +158,7 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
 
     if (status) {
         if (!cJSON_IsNumber(status)) {
-            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [status]");
+            ogs_error("OpenAPI_problem_details_parseFromJSON() failed [status]");
             goto end;
         }
     }
@@ -160,7 +167,7 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
 
     if (detail) {
         if (!cJSON_IsString(detail)) {
-            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [detail]");
+            ogs_error("OpenAPI_problem_details_parseFromJSON() failed [detail]");
             goto end;
         }
     }
@@ -169,7 +176,7 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
 
     if (instance) {
         if (!cJSON_IsString(instance)) {
-            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [instance]");
+            ogs_error("OpenAPI_problem_details_parseFromJSON() failed [instance]");
             goto end;
         }
     }
@@ -178,31 +185,31 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
 
     if (cause) {
         if (!cJSON_IsString(cause)) {
-            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [cause]");
+            ogs_error("OpenAPI_problem_details_parseFromJSON() failed [cause]");
             goto end;
         }
     }
 
     cJSON *invalid_params = cJSON_GetObjectItemCaseSensitive(problem_detailsJSON, "invalidParams");
 
-    ogs_sbi_list_t *invalid_paramsList;
+    OpenAPI_list_t *invalid_paramsList;
     if (invalid_params) {
         cJSON *invalid_params_local_nonprimitive;
         if (!cJSON_IsArray(invalid_params)) {
-            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [invalid_params]");
+            ogs_error("OpenAPI_problem_details_parseFromJSON() failed [invalid_params]");
             goto end;
         }
 
-        invalid_paramsList = ogs_sbi_list_create();
+        invalid_paramsList = OpenAPI_list_create();
 
         cJSON_ArrayForEach(invalid_params_local_nonprimitive, invalid_params ) {
             if (!cJSON_IsObject(invalid_params_local_nonprimitive)) {
-                ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [invalid_params]");
+                ogs_error("OpenAPI_problem_details_parseFromJSON() failed [invalid_params]");
                 goto end;
             }
-            ogs_sbi_invalid_param_t *invalid_paramsItem = ogs_sbi_invalid_param_parseFromJSON(invalid_params_local_nonprimitive);
+            OpenAPI_invalid_param_t *invalid_paramsItem = OpenAPI_invalid_param_parseFromJSON(invalid_params_local_nonprimitive);
 
-            ogs_sbi_list_add(invalid_paramsList, invalid_paramsItem);
+            OpenAPI_list_add(invalid_paramsList, invalid_paramsItem);
         }
     }
 
@@ -210,12 +217,12 @@ ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_
 
     if (supported_features) {
         if (!cJSON_IsString(supported_features)) {
-            ogs_error("ogs_sbi_problem_details_parseFromJSON() failed [supported_features]");
+            ogs_error("OpenAPI_problem_details_parseFromJSON() failed [supported_features]");
             goto end;
         }
     }
 
-    problem_details_local_var = ogs_sbi_problem_details_create (
+    problem_details_local_var = OpenAPI_problem_details_create (
         type ? ogs_strdup(type->valuestring) : NULL,
         title ? ogs_strdup(title->valuestring) : NULL,
         status ? status->valuedouble : 0,

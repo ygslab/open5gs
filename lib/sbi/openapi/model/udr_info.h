@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_udr_info_H_
-#define _ogs_sbi_udr_info_H_
+#ifndef _OpenAPI_udr_info_H_
+#define _OpenAPI_udr_info_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -20,29 +20,29 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_udr_info_s ogs_sbi_udr_info_t;
-typedef struct ogs_sbi_udr_info_s {
+typedef struct OpenAPI_udr_info_s OpenAPI_udr_info_t;
+typedef struct OpenAPI_udr_info_s {
     char *group_id;
-    ogs_sbi_list_t *supi_ranges;
-    ogs_sbi_list_t *gpsi_ranges;
-    ogs_sbi_list_t *external_group_identifiers_ranges;
-    ogs_sbi_list_t *supported_data_sets;
-} ogs_sbi_udr_info_t;
+    OpenAPI_list_t *supi_ranges;
+    OpenAPI_list_t *gpsi_ranges;
+    OpenAPI_list_t *external_group_identifiers_ranges;
+    OpenAPI_list_t *supported_data_sets;
+} OpenAPI_udr_info_t;
 
-ogs_sbi_udr_info_t *ogs_sbi_udr_info_create(
+OpenAPI_udr_info_t *OpenAPI_udr_info_create(
     char *group_id,
-    ogs_sbi_list_t *supi_ranges,
-    ogs_sbi_list_t *gpsi_ranges,
-    ogs_sbi_list_t *external_group_identifiers_ranges,
-    ogs_sbi_list_t *supported_data_sets
+    OpenAPI_list_t *supi_ranges,
+    OpenAPI_list_t *gpsi_ranges,
+    OpenAPI_list_t *external_group_identifiers_ranges,
+    OpenAPI_list_t *supported_data_sets
     );
-void ogs_sbi_udr_info_free(ogs_sbi_udr_info_t *udr_info);
-ogs_sbi_udr_info_t *ogs_sbi_udr_info_parseFromJSON(cJSON *udr_infoJSON);
-cJSON *ogs_sbi_udr_info_convertToJSON(ogs_sbi_udr_info_t *udr_info);
+void OpenAPI_udr_info_free(OpenAPI_udr_info_t *udr_info);
+OpenAPI_udr_info_t *OpenAPI_udr_info_parseFromJSON(cJSON *udr_infoJSON);
+cJSON *OpenAPI_udr_info_convertToJSON(OpenAPI_udr_info_t *udr_info);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_udr_info_H_ */
+#endif /* _OpenAPI_udr_info_H_ */
 

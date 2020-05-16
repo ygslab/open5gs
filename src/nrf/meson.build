@@ -21,6 +21,7 @@ libnrf_sources = files('''
     timer.c
 
     nnrf-handler.c
+    nnrf-build.c
     sbi-path.c
 
     nf-sm.c

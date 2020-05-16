@@ -31,6 +31,9 @@ extern "C" {
 #define OGS_SBI_HTTP_PORT                           80
 #define OGS_SBI_HTTPS_PORT                          443
 
+#define OGS_SBI_HTTP_SCHEME                         "http"
+#define OGS_SBI_HTTPS_SCHEME                        "https"
+
 #define OGS_SBI_HTTP_STATUS_OK                      200
 #define OGS_SBI_HTTP_STATUS_CREATED                 201 /* POST PUT */
 #define OGS_SBI_HTTP_STATUS_ACCEPTED                202 /* DELETE PATCH
@@ -73,7 +76,10 @@ extern "C" {
 #define OGS_SBI_HTTP_METHOD_OPTIONS                 "OPTIONS"
 
 #define OGS_SBI_API_VERSION                         "v1"
-#define OGS_SBI_API_NAME_NRF_NFM                    "nnrf-nfm"
+#define OGS_SBI_API_FULL_VERSION                    "1.0.0"
+#define OGS_SBI_SERVICE_NAME_NRF_NFM                "nnrf-nfm"
+#define OGS_SBI_SERVICE_NAME_SMF_PDUSESSION         "nsmf-pdusession"
+#define OGS_SBI_SERVICE_NAME_SMF_EVENT_EXPOSURE     "nsmf-event-exposure"
 
 #define OGS_SBI_RESOURCE_NAME_NF_INSTANCES          "nf-instances"
 #define OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS         "subscriptions"
@@ -95,6 +101,9 @@ typedef struct ogs_sbi_header_s {
 
     struct {
         char *name;
+    } service;
+
+    struct {
         char *version;
     } api;
 
@@ -115,11 +124,12 @@ typedef struct ogs_sbi_message_s {
 
     int res_status;
 
-    ogs_sbi_nf_profile_t *nf_profile;
-    ogs_sbi_problem_details_t *problem_details;
-    ogs_sbi_list_t *patch_list;
+    OpenAPI_nf_profile_t *NFProfile;
+    OpenAPI_problem_details_t *ProblemDetails;
+    OpenAPI_list_t *PatchItemList;
 
-    ogs_sbi_subscription_data_t *subscription_data;
+    OpenAPI_subscription_data_t *SubscriptionData;
+    OpenAPI_notification_data_t *NotificationData;
 } ogs_sbi_message_t;
 
 void ogs_sbi_message_init(int num_of_request_pool, int num_of_response_pool);

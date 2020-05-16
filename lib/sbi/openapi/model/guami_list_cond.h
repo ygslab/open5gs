@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_guami_list_cond_H_
-#define _ogs_sbi_guami_list_cond_H_
+#ifndef _OpenAPI_guami_list_cond_H_
+#define _OpenAPI_guami_list_cond_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,21 +18,21 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_guami_list_cond_s ogs_sbi_guami_list_cond_t;
-typedef struct ogs_sbi_guami_list_cond_s {
-    ogs_sbi_list_t *guami_list;
-} ogs_sbi_guami_list_cond_t;
+typedef struct OpenAPI_guami_list_cond_s OpenAPI_guami_list_cond_t;
+typedef struct OpenAPI_guami_list_cond_s {
+    OpenAPI_list_t *guami_list;
+} OpenAPI_guami_list_cond_t;
 
-ogs_sbi_guami_list_cond_t *ogs_sbi_guami_list_cond_create(
-    ogs_sbi_list_t *guami_list
+OpenAPI_guami_list_cond_t *OpenAPI_guami_list_cond_create(
+    OpenAPI_list_t *guami_list
     );
-void ogs_sbi_guami_list_cond_free(ogs_sbi_guami_list_cond_t *guami_list_cond);
-ogs_sbi_guami_list_cond_t *ogs_sbi_guami_list_cond_parseFromJSON(cJSON *guami_list_condJSON);
-cJSON *ogs_sbi_guami_list_cond_convertToJSON(ogs_sbi_guami_list_cond_t *guami_list_cond);
+void OpenAPI_guami_list_cond_free(OpenAPI_guami_list_cond_t *guami_list_cond);
+OpenAPI_guami_list_cond_t *OpenAPI_guami_list_cond_parseFromJSON(cJSON *guami_list_condJSON);
+cJSON *OpenAPI_guami_list_cond_convertToJSON(OpenAPI_guami_list_cond_t *guami_list_cond);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_guami_list_cond_H_ */
+#endif /* _OpenAPI_guami_list_cond_H_ */
 

@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_problem_details_H_
-#define _ogs_sbi_problem_details_H_
+#ifndef _OpenAPI_problem_details_H_
+#define _OpenAPI_problem_details_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,35 +18,35 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_problem_details_s ogs_sbi_problem_details_t;
-typedef struct ogs_sbi_problem_details_s {
+typedef struct OpenAPI_problem_details_s OpenAPI_problem_details_t;
+typedef struct OpenAPI_problem_details_s {
     char *type;
     char *title;
     int status;
     char *detail;
     char *instance;
     char *cause;
-    ogs_sbi_list_t *invalid_params;
+    OpenAPI_list_t *invalid_params;
     char *supported_features;
-} ogs_sbi_problem_details_t;
+} OpenAPI_problem_details_t;
 
-ogs_sbi_problem_details_t *ogs_sbi_problem_details_create(
+OpenAPI_problem_details_t *OpenAPI_problem_details_create(
     char *type,
     char *title,
     int status,
     char *detail,
     char *instance,
     char *cause,
-    ogs_sbi_list_t *invalid_params,
+    OpenAPI_list_t *invalid_params,
     char *supported_features
     );
-void ogs_sbi_problem_details_free(ogs_sbi_problem_details_t *problem_details);
-ogs_sbi_problem_details_t *ogs_sbi_problem_details_parseFromJSON(cJSON *problem_detailsJSON);
-cJSON *ogs_sbi_problem_details_convertToJSON(ogs_sbi_problem_details_t *problem_details);
+void OpenAPI_problem_details_free(OpenAPI_problem_details_t *problem_details);
+OpenAPI_problem_details_t *OpenAPI_problem_details_parseFromJSON(cJSON *problem_detailsJSON);
+cJSON *OpenAPI_problem_details_convertToJSON(OpenAPI_problem_details_t *problem_details);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_problem_details_H_ */
+#endif /* _OpenAPI_problem_details_H_ */
 

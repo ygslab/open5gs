@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_patch_operation_H_
-#define _ogs_sbi_patch_operation_H_
+#ifndef _OpenAPI_patch_operation_H_
+#define _OpenAPI_patch_operation_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,15 +17,15 @@
 extern "C" {
 #endif
 
-typedef enum { ogs_sbi_patch_operation_NULL = 0, ogs_sbi_patch_operation_add, ogs_sbi_patch_operation_copy, ogs_sbi_patch_operation_move, ogs_sbi_patch_operation__remove, ogs_sbi_patch_operation_replace, ogs_sbi_patch_operation_test } ogs_sbi_patch_operation_e;
+typedef enum { OpenAPI_patch_operation_NULL = 0, OpenAPI_patch_operation_add, OpenAPI_patch_operation_copy, OpenAPI_patch_operation_move, OpenAPI_patch_operation__remove, OpenAPI_patch_operation_replace, OpenAPI_patch_operation_test } OpenAPI_patch_operation_e;
 
-char* ogs_sbi_patch_operation_ToString(ogs_sbi_patch_operation_e patch_operation);
+char* OpenAPI_patch_operation_ToString(OpenAPI_patch_operation_e patch_operation);
 
-ogs_sbi_patch_operation_e ogs_sbi_patch_operation_FromString(char* patch_operation);
+OpenAPI_patch_operation_e OpenAPI_patch_operation_FromString(char* patch_operation);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_patch_operation_H_ */
+#endif /* _OpenAPI_patch_operation_H_ */
 

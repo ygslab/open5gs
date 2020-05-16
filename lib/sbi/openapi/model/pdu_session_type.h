@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_pdu_session_type_H_
-#define _ogs_sbi_pdu_session_type_H_
+#ifndef _OpenAPI_pdu_session_type_H_
+#define _OpenAPI_pdu_session_type_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,19 +17,19 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_pdu_session_type_s ogs_sbi_pdu_session_type_t;
-typedef struct ogs_sbi_pdu_session_type_s {
-} ogs_sbi_pdu_session_type_t;
+typedef struct OpenAPI_pdu_session_type_s OpenAPI_pdu_session_type_t;
+typedef struct OpenAPI_pdu_session_type_s {
+} OpenAPI_pdu_session_type_t;
 
-ogs_sbi_pdu_session_type_t *ogs_sbi_pdu_session_type_create(
+OpenAPI_pdu_session_type_t *OpenAPI_pdu_session_type_create(
     );
-void ogs_sbi_pdu_session_type_free(ogs_sbi_pdu_session_type_t *pdu_session_type);
-ogs_sbi_pdu_session_type_t *ogs_sbi_pdu_session_type_parseFromJSON(cJSON *pdu_session_typeJSON);
-cJSON *ogs_sbi_pdu_session_type_convertToJSON(ogs_sbi_pdu_session_type_t *pdu_session_type);
+void OpenAPI_pdu_session_type_free(OpenAPI_pdu_session_type_t *pdu_session_type);
+OpenAPI_pdu_session_type_t *OpenAPI_pdu_session_type_parseFromJSON(cJSON *pdu_session_typeJSON);
+cJSON *OpenAPI_pdu_session_type_convertToJSON(OpenAPI_pdu_session_type_t *pdu_session_type);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_pdu_session_type_H_ */
+#endif /* _OpenAPI_pdu_session_type_H_ */
 

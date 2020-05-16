@@ -84,6 +84,13 @@ typedef struct ogs_config_s {
         int tunnel;
         int pf;
     } pool;
+
+    struct {
+        struct {
+            int heartbeat;
+            int validity;
+        } sbi;
+    } time;
 } ogs_config_t;
 
 int ogs_config_init(void);

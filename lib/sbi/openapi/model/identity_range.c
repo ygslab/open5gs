@@ -4,13 +4,13 @@
 #include <stdio.h>
 #include "identity_range.h"
 
-ogs_sbi_identity_range_t *ogs_sbi_identity_range_create(
+OpenAPI_identity_range_t *OpenAPI_identity_range_create(
     char *start,
     char *end,
     char *pattern
     )
 {
-    ogs_sbi_identity_range_t *identity_range_local_var = ogs_sbi_malloc(sizeof(ogs_sbi_identity_range_t));
+    OpenAPI_identity_range_t *identity_range_local_var = OpenAPI_malloc(sizeof(OpenAPI_identity_range_t));
     if (!identity_range_local_var) {
         return NULL;
     }
@@ -21,38 +21,45 @@ ogs_sbi_identity_range_t *ogs_sbi_identity_range_create(
     return identity_range_local_var;
 }
 
-void ogs_sbi_identity_range_free(ogs_sbi_identity_range_t *identity_range)
+void OpenAPI_identity_range_free(OpenAPI_identity_range_t *identity_range)
 {
     if (NULL == identity_range) {
         return;
     }
-    ogs_sbi_lnode_t *node;
+    OpenAPI_lnode_t *node;
     ogs_free(identity_range->start);
     ogs_free(identity_range->end);
     ogs_free(identity_range->pattern);
     ogs_free(identity_range);
 }
 
-cJSON *ogs_sbi_identity_range_convertToJSON(ogs_sbi_identity_range_t *identity_range)
+cJSON *OpenAPI_identity_range_convertToJSON(OpenAPI_identity_range_t *identity_range)
 {
-    cJSON *item = cJSON_CreateObject();
+    cJSON *item = NULL;
+
+    if (identity_range == NULL) {
+        ogs_error("OpenAPI_identity_range_convertToJSON() failed [IdentityRange]");
+        return NULL;
+    }
+
+    item = cJSON_CreateObject();
     if (identity_range->start) {
         if (cJSON_AddStringToObject(item, "start", identity_range->start) == NULL) {
-            ogs_error("ogs_sbi_identity_range_convertToJSON() failed [start]");
+            ogs_error("OpenAPI_identity_range_convertToJSON() failed [start]");
             goto end;
         }
     }
 
     if (identity_range->end) {
         if (cJSON_AddStringToObject(item, "end", identity_range->end) == NULL) {
-            ogs_error("ogs_sbi_identity_range_convertToJSON() failed [end]");
+            ogs_error("OpenAPI_identity_range_convertToJSON() failed [end]");
             goto end;
         }
     }
 
     if (identity_range->pattern) {
         if (cJSON_AddStringToObject(item, "pattern", identity_range->pattern) == NULL) {
-            ogs_error("ogs_sbi_identity_range_convertToJSON() failed [pattern]");
+            ogs_error("OpenAPI_identity_range_convertToJSON() failed [pattern]");
             goto end;
         }
     }
@@ -61,14 +68,14 @@ end:
     return item;
 }
 
-ogs_sbi_identity_range_t *ogs_sbi_identity_range_parseFromJSON(cJSON *identity_rangeJSON)
+OpenAPI_identity_range_t *OpenAPI_identity_range_parseFromJSON(cJSON *identity_rangeJSON)
 {
-    ogs_sbi_identity_range_t *identity_range_local_var = NULL;
+    OpenAPI_identity_range_t *identity_range_local_var = NULL;
     cJSON *start = cJSON_GetObjectItemCaseSensitive(identity_rangeJSON, "start");
 
     if (start) {
         if (!cJSON_IsString(start)) {
-            ogs_error("ogs_sbi_identity_range_parseFromJSON() failed [start]");
+            ogs_error("OpenAPI_identity_range_parseFromJSON() failed [start]");
             goto end;
         }
     }
@@ -77,7 +84,7 @@ ogs_sbi_identity_range_t *ogs_sbi_identity_range_parseFromJSON(cJSON *identity_r
 
     if (end) {
         if (!cJSON_IsString(end)) {
-            ogs_error("ogs_sbi_identity_range_parseFromJSON() failed [end]");
+            ogs_error("OpenAPI_identity_range_parseFromJSON() failed [end]");
             goto end;
         }
     }
@@ -86,12 +93,12 @@ ogs_sbi_identity_range_t *ogs_sbi_identity_range_parseFromJSON(cJSON *identity_r
 
     if (pattern) {
         if (!cJSON_IsString(pattern)) {
-            ogs_error("ogs_sbi_identity_range_parseFromJSON() failed [pattern]");
+            ogs_error("OpenAPI_identity_range_parseFromJSON() failed [pattern]");
             goto end;
         }
     }
 
-    identity_range_local_var = ogs_sbi_identity_range_create (
+    identity_range_local_var = OpenAPI_identity_range_create (
         start ? ogs_strdup(start->valuestring) : NULL,
         end ? ogs_strdup(end->valuestring) : NULL,
         pattern ? ogs_strdup(pattern->valuestring) : NULL

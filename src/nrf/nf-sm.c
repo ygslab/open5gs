@@ -22,9 +22,32 @@
 #include "sbi-path.h"
 #include "nnrf-handler.h"
 
+void nrf_nf_fsm_init(ogs_sbi_nf_instance_t *nf_instance)
+{
+    nrf_event_t e;
+
+    ogs_assert(nf_instance);
+    e.nf_instance = nf_instance;
+
+    ogs_fsm_create(&nf_instance->sm,
+            nrf_nf_state_initial, nrf_nf_state_final);
+    ogs_fsm_init(&nf_instance->sm, &e);
+}
+
+void nrf_nf_fsm_fini(ogs_sbi_nf_instance_t *nf_instance)
+{
+    nrf_event_t e;
+
+    ogs_assert(nf_instance);
+    e.nf_instance = nf_instance;
+
+    ogs_fsm_fini(&nf_instance->sm, &e);
+    ogs_fsm_delete(&nf_instance->sm);
+}
+
 void nrf_nf_state_initial(ogs_fsm_t *s, nrf_event_t *e)
 {
-    nrf_nf_instance_t *nf_instance = NULL;
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
 
     ogs_assert(s);
     ogs_assert(e);
@@ -43,7 +66,7 @@ void nrf_nf_state_initial(ogs_fsm_t *s, nrf_event_t *e)
 
 void nrf_nf_state_final(ogs_fsm_t *s, nrf_event_t *e)
 {
-    nrf_nf_instance_t *nf_instance = NULL;
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
 
     ogs_assert(s);
     ogs_assert(e);
@@ -59,8 +82,9 @@ void nrf_nf_state_final(ogs_fsm_t *s, nrf_event_t *e)
 void nrf_nf_state_will_register(ogs_fsm_t *s, nrf_event_t *e)
 {
     bool handled;
-    nrf_nf_instance_t *nf_instance = NULL;
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
 
+    ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
     ogs_sbi_message_t *message = NULL;
 
@@ -84,9 +108,11 @@ void nrf_nf_state_will_register(ogs_fsm_t *s, nrf_event_t *e)
         ogs_assert(message);
         session = e->sbi.session;
         ogs_assert(session);
+        server = e->sbi.server;
+        ogs_assert(server);
 
-        SWITCH(message->h.api.name)
-        CASE(OGS_SBI_API_NAME_NRF_NFM)
+        SWITCH(message->h.service.name)
+        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
 
             SWITCH(message->h.resource.name)
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
@@ -95,7 +121,7 @@ void nrf_nf_state_will_register(ogs_fsm_t *s, nrf_event_t *e)
                 CASE(OGS_SBI_HTTP_METHOD_PUT)
 
                     handled = nrf_nnrf_handle_nf_register(
-                            nf_instance, session, message);
+                            nf_instance, server, session, message);
                     if (handled == false)
                         OGS_FSM_TRAN(s, nrf_nf_state_exception);
                     break;
@@ -119,10 +145,10 @@ void nrf_nf_state_will_register(ogs_fsm_t *s, nrf_event_t *e)
             break;
 
         DEFAULT
-            ogs_error("Invalid API name [%s]", message->h.api.name);
+            ogs_error("Invalid API name [%s]", message->h.service.name);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
-                    "Invalid resource name", message->h.api.name);
+                    "Invalid resource name", message->h.service.name);
         END
 
         OGS_FSM_TRAN(s, nrf_nf_state_registered);
@@ -141,8 +167,9 @@ void nrf_nf_state_will_register(ogs_fsm_t *s, nrf_event_t *e)
 void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
 {
     bool handled;
-    nrf_nf_instance_t *nf_instance = NULL;
+    ogs_sbi_nf_instance_t *nf_instance = NULL;
 
+    ogs_sbi_server_t *server = NULL;
     ogs_sbi_session_t *session = NULL;
     ogs_sbi_message_t *message = NULL;
     ogs_sbi_response_t *response = NULL;
@@ -157,8 +184,9 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
 
     switch (e->id) {
     case OGS_FSM_ENTRY_SIG:
+        ogs_info("NF registred [%s]", nf_instance->id);
         nrf_timer_cfg(NRF_TIMER_SBI_NO_HEARTBEAT)->duration =
-            ogs_time_from_sec(nf_instance->heart_beat_timer) *
+            ogs_time_from_sec(nf_instance->time.heartbeat) *
                 OGS_SBI_HEARTBEAT_RETRYCOUNT;
 
         /* check whether Heartbeat is enabled or not */
@@ -166,12 +194,16 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
             ogs_timer_start(nf_instance->t_no_heartbeat,
                     nrf_timer_cfg(NRF_TIMER_SBI_NO_HEARTBEAT)->duration);
 
-        ogs_info("NF registred [%s]", nf_instance->id);
+        nrf_sbi_send_nf_status_notify_all(
+                OpenAPI_notification_event_type_NF_REGISTERED, nf_instance);
         break;
 
     case OGS_FSM_EXIT_SIG:
-        ogs_info("NF de-associated [%s]", nf_instance->id);
+        ogs_info("NF de-registered [%s]", nf_instance->id);
         ogs_timer_stop(nf_instance->t_no_heartbeat);
+
+        nrf_sbi_send_nf_status_notify_all(
+                OpenAPI_notification_event_type_NF_DEREGISTERED, nf_instance);
         break;
 
     case NRF_EVT_SBI_SERVER:
@@ -179,9 +211,11 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
         ogs_assert(message);
         session = e->sbi.session;
         ogs_assert(session);
+        server = e->sbi.server;
+        ogs_assert(server);
 
-        SWITCH(message->h.api.name)
-        CASE(OGS_SBI_API_NAME_NRF_NFM)
+        SWITCH(message->h.service.name)
+        CASE(OGS_SBI_SERVICE_NAME_NRF_NFM)
 
             SWITCH(message->h.resource.name)
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
@@ -195,34 +229,7 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
                                 NRF_TIMER_SBI_NO_HEARTBEAT)->duration);
 
                     handled = nrf_nnrf_handle_nf_update(
-                            nf_instance, session, message);
-                    if (handled == false)
-                        OGS_FSM_TRAN(s, nrf_nf_state_exception);
-                    break;
-
-                CASE(OGS_SBI_HTTP_METHOD_DELETE)
-                    response = ogs_sbi_build_response(message);
-                    ogs_assert(response);
-                    ogs_sbi_server_send_response(session, response,
-                        OGS_SBI_HTTP_STATUS_NO_CONTENT);
-                    OGS_FSM_TRAN(s, nrf_nf_state_de_registered);
-                    break;
-
-                DEFAULT
-                    ogs_error("Invalid HTTP method [%s]",
-                            message->h.method);
-                    ogs_sbi_server_send_error(session,
-                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
-                            "Invalid HTTP method", message->h.method);
-                END
-                break;
-
-            CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS)
-
-                SWITCH(message->h.method)
-                CASE(OGS_SBI_HTTP_METHOD_POST)
-                    handled = nrf_nnrf_handle_nf_status_subscribe(
-                            nf_instance, session, message);
+                            nf_instance, server, session, message);
                     if (handled == false)
                         OGS_FSM_TRAN(s, nrf_nf_state_exception);
                     break;
@@ -254,26 +261,12 @@ void nrf_nf_state_registered(ogs_fsm_t *s, nrf_event_t *e)
             break;
 
         DEFAULT
-            ogs_error("Invalid API name [%s]", message->h.api.name);
+            ogs_error("Invalid API name [%s]", message->h.service.name);
             ogs_sbi_server_send_error(session,
                     OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
-                    "Invalid resource name", message->h.api.name);
+                    "Invalid resource name", message->h.service.name);
         END
         break;
-
-    case NRF_EVT_SBI_TIMER:
-        switch(e->timer_id) {
-        case NRF_TIMER_SBI_NO_HEARTBEAT:
-            ogs_warn("No heartbeat [%s]", nf_instance->id);
-            OGS_FSM_TRAN(s, &nrf_nf_state_de_registered);
-            break;
-        default:
-            ogs_error("Unknown timer[%s:%d]",
-                    nrf_timer_get_name(e->timer_id), e->timer_id);
-            break;
-        }
-        break;
-
 
     default:
         ogs_error("Unknown event %s", nrf_event_get_name(e));

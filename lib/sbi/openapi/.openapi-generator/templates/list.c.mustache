@@ -3,9 +3,9 @@
 #include <stdio.h>
 
 #include "../include/list.h"
-static ogs_sbi_lnode_t *listEntry_create(void *data)
+static OpenAPI_lnode_t *listEntry_create(void *data)
 {
-    ogs_sbi_lnode_t *created = ogs_malloc(sizeof(ogs_sbi_lnode_t));
+    OpenAPI_lnode_t *created = ogs_malloc(sizeof(OpenAPI_lnode_t));
 
     if (created == NULL) {
         // TODO Malloc Failure
@@ -16,19 +16,19 @@ static ogs_sbi_lnode_t *listEntry_create(void *data)
     return created;
 }
 
-void ogs_sbi_lnode_free(ogs_sbi_lnode_t *listEntry, void *additionalData)
+void OpenAPI_lnode_free(OpenAPI_lnode_t *listEntry, void *additionalData)
 {
     ogs_free(listEntry);
 }
 
-void ogs_sbi_lnode_print(ogs_sbi_lnode_t *listEntry, void *additionalData)
+void OpenAPI_lnode_print(OpenAPI_lnode_t *listEntry, void *additionalData)
 {
     printf("%i\n", *((int *) (listEntry->data)));
 }
 
-ogs_sbi_list_t *ogs_sbi_list_create(void)
+OpenAPI_list_t *OpenAPI_list_create(void)
 {
-    ogs_sbi_list_t *createdList = ogs_malloc(sizeof(ogs_sbi_list_t));
+    OpenAPI_list_t *createdList = ogs_malloc(sizeof(OpenAPI_list_t));
 
     if (createdList == NULL) {
         // TODO Malloc Failure
@@ -41,13 +41,13 @@ ogs_sbi_list_t *ogs_sbi_list_create(void)
     return createdList;
 }
 
-void ogs_sbi_list_iterate_forward(ogs_sbi_list_t *list,
+void OpenAPI_list_iterate_forward(OpenAPI_list_t *list,
         void (*operationToPerform)(
-            ogs_sbi_lnode_t *, void *callbackFunctionUsedData),
+            OpenAPI_lnode_t *, void *callbackFunctionUsedData),
         void *additionalDataNeededForCallbackFunction)
 {
-    ogs_sbi_lnode_t *current = list->first;
-    ogs_sbi_lnode_t *next;
+    OpenAPI_lnode_t *current = list->first;
+    OpenAPI_lnode_t *next;
 
     if (current == NULL) {
         return;
@@ -65,13 +65,13 @@ void ogs_sbi_list_iterate_forward(ogs_sbi_list_t *list,
     }
 }
 
-void ogs_sbi_list_iterate_backward(ogs_sbi_list_t *list,
+void OpenAPI_list_iterate_backward(OpenAPI_list_t *list,
          void (*operationToPerform)(
-             ogs_sbi_lnode_t *, void *callbackFunctionUsedData),
+             OpenAPI_lnode_t *, void *callbackFunctionUsedData),
          void *additionalDataNeededForCallbackFunction)
 {
-    ogs_sbi_lnode_t *current = list->last;
-    ogs_sbi_lnode_t *next = current->prev;
+    OpenAPI_lnode_t *current = list->last;
+    OpenAPI_lnode_t *next = current->prev;
 
     if (current == NULL) {
         return;
@@ -87,17 +87,17 @@ void ogs_sbi_list_iterate_backward(ogs_sbi_list_t *list,
     }
 }
 
-void ogs_sbi_list_free(ogs_sbi_list_t *list)
+void OpenAPI_list_free(OpenAPI_list_t *list)
 {
     if (list){
-        ogs_sbi_list_iterate_forward(list, ogs_sbi_lnode_free, NULL);
+        OpenAPI_list_iterate_forward(list, OpenAPI_lnode_free, NULL);
         ogs_free(list);
     }
 }
 
-void ogs_sbi_list_add(ogs_sbi_list_t *list, void *dataToAddInList)
+void OpenAPI_list_add(OpenAPI_list_t *list, void *dataToAddInList)
 {
-    ogs_sbi_lnode_t *newListEntry = listEntry_create(dataToAddInList);
+    OpenAPI_lnode_t *newListEntry = listEntry_create(dataToAddInList);
     if (newListEntry == NULL) {
         // TODO Malloc Failure
         return;
@@ -122,10 +122,10 @@ void ogs_sbi_list_add(ogs_sbi_list_t *list, void *dataToAddInList)
     list->count++;
 }
 
-void ogs_sbi_list_remove(ogs_sbi_list_t *list, ogs_sbi_lnode_t *elementToRemove)
+void OpenAPI_list_remove(OpenAPI_list_t *list, OpenAPI_lnode_t *elementToRemove)
 {
-    ogs_sbi_lnode_t *elementBeforeElementToRemove = elementToRemove->prev;
-    ogs_sbi_lnode_t *elementAfterElementToRemove = elementToRemove->next;
+    OpenAPI_lnode_t *elementBeforeElementToRemove = elementToRemove->prev;
+    OpenAPI_lnode_t *elementAfterElementToRemove = elementToRemove->next;
 
     if (elementBeforeElementToRemove != NULL) {
         elementBeforeElementToRemove->next = elementAfterElementToRemove;
@@ -139,14 +139,14 @@ void ogs_sbi_list_remove(ogs_sbi_list_t *list, ogs_sbi_lnode_t *elementToRemove)
         list->last = elementBeforeElementToRemove;
     }
 
-    ogs_sbi_lnode_free(elementToRemove, NULL);
+    OpenAPI_lnode_free(elementToRemove, NULL);
 
     list->count--;
 }
 
-ogs_sbi_lnode_t *ogs_sbi_list_find(ogs_sbi_list_t *list, long indexOfElement)
+OpenAPI_lnode_t *OpenAPI_list_find(OpenAPI_list_t *list, long indexOfElement)
 {
-    ogs_sbi_lnode_t *current;
+    OpenAPI_lnode_t *current;
 	int i;
 
     if ((list->count / 2) > indexOfElement) {

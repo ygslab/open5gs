@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_amf_cond_H_
-#define _ogs_sbi_amf_cond_H_
+#ifndef _OpenAPI_amf_cond_H_
+#define _OpenAPI_amf_cond_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,23 +17,23 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_amf_cond_s ogs_sbi_amf_cond_t;
-typedef struct ogs_sbi_amf_cond_s {
+typedef struct OpenAPI_amf_cond_s OpenAPI_amf_cond_t;
+typedef struct OpenAPI_amf_cond_s {
     char *amf_set_id;
     char *amf_region_id;
-} ogs_sbi_amf_cond_t;
+} OpenAPI_amf_cond_t;
 
-ogs_sbi_amf_cond_t *ogs_sbi_amf_cond_create(
+OpenAPI_amf_cond_t *OpenAPI_amf_cond_create(
     char *amf_set_id,
     char *amf_region_id
     );
-void ogs_sbi_amf_cond_free(ogs_sbi_amf_cond_t *amf_cond);
-ogs_sbi_amf_cond_t *ogs_sbi_amf_cond_parseFromJSON(cJSON *amf_condJSON);
-cJSON *ogs_sbi_amf_cond_convertToJSON(ogs_sbi_amf_cond_t *amf_cond);
+void OpenAPI_amf_cond_free(OpenAPI_amf_cond_t *amf_cond);
+OpenAPI_amf_cond_t *OpenAPI_amf_cond_parseFromJSON(cJSON *amf_condJSON);
+cJSON *OpenAPI_amf_cond_convertToJSON(OpenAPI_amf_cond_t *amf_cond);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_amf_cond_H_ */
+#endif /* _OpenAPI_amf_cond_H_ */
 

@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_dnn_smf_info_item_H_
-#define _ogs_sbi_dnn_smf_info_item_H_
+#ifndef _OpenAPI_dnn_smf_info_item_H_
+#define _OpenAPI_dnn_smf_info_item_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -17,21 +17,21 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_dnn_smf_info_item_s ogs_sbi_dnn_smf_info_item_t;
-typedef struct ogs_sbi_dnn_smf_info_item_s {
+typedef struct OpenAPI_dnn_smf_info_item_s OpenAPI_dnn_smf_info_item_t;
+typedef struct OpenAPI_dnn_smf_info_item_s {
     char *dnn;
-} ogs_sbi_dnn_smf_info_item_t;
+} OpenAPI_dnn_smf_info_item_t;
 
-ogs_sbi_dnn_smf_info_item_t *ogs_sbi_dnn_smf_info_item_create(
+OpenAPI_dnn_smf_info_item_t *OpenAPI_dnn_smf_info_item_create(
     char *dnn
     );
-void ogs_sbi_dnn_smf_info_item_free(ogs_sbi_dnn_smf_info_item_t *dnn_smf_info_item);
-ogs_sbi_dnn_smf_info_item_t *ogs_sbi_dnn_smf_info_item_parseFromJSON(cJSON *dnn_smf_info_itemJSON);
-cJSON *ogs_sbi_dnn_smf_info_item_convertToJSON(ogs_sbi_dnn_smf_info_item_t *dnn_smf_info_item);
+void OpenAPI_dnn_smf_info_item_free(OpenAPI_dnn_smf_info_item_t *dnn_smf_info_item);
+OpenAPI_dnn_smf_info_item_t *OpenAPI_dnn_smf_info_item_parseFromJSON(cJSON *dnn_smf_info_itemJSON);
+cJSON *OpenAPI_dnn_smf_info_item_convertToJSON(OpenAPI_dnn_smf_info_item_t *dnn_smf_info_item);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_dnn_smf_info_item_H_ */
+#endif /* _OpenAPI_dnn_smf_info_item_H_ */
 

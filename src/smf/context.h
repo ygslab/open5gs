@@ -49,7 +49,7 @@ typedef struct smf_context_s {
     const char*         diam_conf_path;   /* SMF Diameter conf path */
     ogs_diam_config_t   *diam_config;     /* SMF Diameter config */
 
-    ogs_sbi_nf_type_e   nf_type;
+    OpenAPI_nf_type_e   nf_type;
 
     uint32_t        gtpc_port;      /* Default: SMF GTP-C local port */
 

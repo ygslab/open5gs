@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef _ogs_sbi_ip_end_point_H_
-#define _ogs_sbi_ip_end_point_H_
+#ifndef _OpenAPI_ip_end_point_H_
+#define _OpenAPI_ip_end_point_H_
 
 #include <string.h>
 #include "../external/cJSON.h"
@@ -18,27 +18,27 @@
 extern "C" {
 #endif
 
-typedef struct ogs_sbi_ip_end_point_s ogs_sbi_ip_end_point_t;
-typedef struct ogs_sbi_ip_end_point_s {
+typedef struct OpenAPI_ip_end_point_s OpenAPI_ip_end_point_t;
+typedef struct OpenAPI_ip_end_point_s {
     char *ipv4_address;
     char *ipv6_address;
-    ogs_sbi_transport_protocol_e transport;
+    OpenAPI_transport_protocol_e transport;
     int port;
-} ogs_sbi_ip_end_point_t;
+} OpenAPI_ip_end_point_t;
 
-ogs_sbi_ip_end_point_t *ogs_sbi_ip_end_point_create(
+OpenAPI_ip_end_point_t *OpenAPI_ip_end_point_create(
     char *ipv4_address,
     char *ipv6_address,
-    ogs_sbi_transport_protocol_e transport,
+    OpenAPI_transport_protocol_e transport,
     int port
     );
-void ogs_sbi_ip_end_point_free(ogs_sbi_ip_end_point_t *ip_end_point);
-ogs_sbi_ip_end_point_t *ogs_sbi_ip_end_point_parseFromJSON(cJSON *ip_end_pointJSON);
-cJSON *ogs_sbi_ip_end_point_convertToJSON(ogs_sbi_ip_end_point_t *ip_end_point);
+void OpenAPI_ip_end_point_free(OpenAPI_ip_end_point_t *ip_end_point);
+OpenAPI_ip_end_point_t *OpenAPI_ip_end_point_parseFromJSON(cJSON *ip_end_pointJSON);
+cJSON *OpenAPI_ip_end_point_convertToJSON(OpenAPI_ip_end_point_t *ip_end_point);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ogs_sbi_ip_end_point_H_ */
+#endif /* _OpenAPI_ip_end_point_H_ */
 
