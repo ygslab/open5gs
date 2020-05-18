@@ -75,10 +75,10 @@ void smf_nnrf_handle_nf_status_subscribe(
             ogs_localtime(tv.tv_sec, &local);
             diff = ogs_mktime(&next) - ogs_mktime(&local);
 #define VALIDITY_MARGIN 5 /* 5 seconds */
-#define VALIDITY_MINIMUM 5 /* 5 seconds */
-            duration = diff - VALIDITY_MARGIN;
+#define VALIDITY_MINIMUM 60 /* 60 seconds */
+            duration = diff - (int)VALIDITY_MARGIN;
 
-            if (duration < VALIDITY_MINIMUM) {
+            if (duration < (int)VALIDITY_MINIMUM) {
                 ogs_warn("Validation period [%d seconds, %s] is too small",
                         (int)diff, SubscriptionData->validity_time);
                 duration = VALIDITY_MINIMUM;
