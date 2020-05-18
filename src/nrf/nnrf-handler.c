@@ -278,6 +278,7 @@ bool nrf_nnrf_handle_nf_list_retrieval(ogs_sbi_server_t *server,
 
     memset(&sendmsg, 0, sizeof(sendmsg));
     sendmsg.links = links;
+    sendmsg.http.content_type = (char *)OGS_SBI_CONTENT_3GPPHAL_TYPE;
 
     response = ogs_sbi_build_response(&sendmsg);
     ogs_assert(response);

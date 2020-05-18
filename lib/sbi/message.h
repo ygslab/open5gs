@@ -97,6 +97,7 @@ extern "C" {
 #define OGS_SBI_CONTENT_PROBLEM_TYPE                "application/problem+json"
 #define OGS_SBI_CONTENT_PATCH_TYPE                  \
         "application/json-patch+json"
+#define OGS_SBI_CONTENT_3GPPHAL_TYPE                "application/3gppHal+json"
 
 typedef struct ogs_sbi_request_s ogs_sbi_request_t;
 typedef struct ogs_sbi_response_s ogs_sbi_response_t;
