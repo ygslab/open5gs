@@ -38,7 +38,7 @@ static int server_cb(ogs_sbi_server_t *server,
 
     rv = ogs_queue_push(smf_self()->queue, e);
     if (rv != OGS_OK) {
-        ogs_error("ogs_queue_push() failed:%d", (int)rv);
+        ogs_warn("ogs_queue_push() failed:%d", (int)rv);
         smf_event_free(e);
         return OGS_ERROR;
     }
@@ -60,7 +60,7 @@ static int client_cb(ogs_sbi_response_t *response, void *data)
 
     rv = ogs_queue_push(smf_self()->queue, e);
     if (rv != OGS_OK) {
-        ogs_error("ogs_queue_push() failed:%d", (int)rv);
+        ogs_warn("ogs_queue_push() failed:%d", (int)rv);
         smf_event_free(e);
         return OGS_ERROR;
     }

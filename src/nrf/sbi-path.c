@@ -37,7 +37,7 @@ static int server_cb(ogs_sbi_server_t *server,
 
     rv = ogs_queue_push(nrf_self()->queue, e);
     if (rv != OGS_OK) {
-        ogs_error("ogs_queue_push() failed:%d", (int)rv);
+        ogs_warn("ogs_queue_push() failed:%d", (int)rv);
         nrf_event_free(e);
         return OGS_ERROR;
     }
