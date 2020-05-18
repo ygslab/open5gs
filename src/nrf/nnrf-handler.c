@@ -260,13 +260,15 @@ bool nrf_nnrf_handle_nf_list_retrieval(ogs_sbi_server_t *server,
             recvmsg->h.service.name, recvmsg->h.api.version,
             recvmsg->h.resource.name, NULL);
 
+    i = 0;
     ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
+
+        if (recvmsg->param.limit && i >= recvmsg->param.limit)
+            break;
 
         if (recvmsg->param.nf_type &&
                 recvmsg->param.nf_type != nf_instance->nf_type)
             continue;
-        if (recvmsg->param.limit && i >= recvmsg->param.limit)
-            break;
 
         OpenAPI_list_add(links->items,
             ogs_msprintf("%s/%s", links->self, nf_instance->id));
@@ -341,6 +343,7 @@ bool nrf_nnrf_handle_nf_discover(ogs_sbi_server_t *server,
 
     OpenAPI_search_result_t *SearchResult = NULL;
     OpenAPI_lnode_t *node = NULL;
+    int i;
 
     ogs_assert(session);
     ogs_assert(recvmsg);
@@ -367,6 +370,7 @@ bool nrf_nnrf_handle_nf_discover(ogs_sbi_server_t *server,
     SearchResult->nf_instances = OpenAPI_list_create();
     ogs_assert(SearchResult->nf_instances);
 
+    i = 0;
     ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
         OpenAPI_nf_profile_t *NFProfile = NULL;
 
@@ -375,15 +379,18 @@ bool nrf_nnrf_handle_nf_discover(ogs_sbi_server_t *server,
         if (nf_instance->nf_type == recvmsg->param.requester_nf_type)
             continue;
 
-        NFProfile = ogs_sbi_nnrf_build_nf_profile(nf_instance);
-        ogs_assert(NFProfile);
+        if (!recvmsg->param.limit ||
+             (recvmsg->param.limit && i < recvmsg->param.limit)) {
+            NFProfile = ogs_sbi_nnrf_build_nf_profile(nf_instance);
+            ogs_assert(NFProfile);
 
-        OpenAPI_list_add(SearchResult->nf_instances, NFProfile);
+            OpenAPI_list_add(SearchResult->nf_instances, NFProfile);
+        }
+
+        i++;
     }
 
-#if 0 /* limit */
-    SearchResult->num_nf_inst_complete = SearchResult->nf_instances->count;
-#endif
+    if (recvmsg->param.limit) SearchResult->num_nf_inst_complete = i;
 
     memset(&sendmsg, 0, sizeof(sendmsg));
     sendmsg.SearchResult = SearchResult;

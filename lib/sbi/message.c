@@ -182,13 +182,13 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
     if (message->param.nf_type) {
         char *v = OpenAPI_nf_type_ToString(message->param.nf_type);
         ogs_assert(v);
-        ogs_sbi_header_set(request->http.params,
-                OGS_SBI_PARAM_REQUESTER_NF_TYPE, v);
+        ogs_sbi_header_set(request->http.params, OGS_SBI_PARAM_NF_TYPE, v);
     }
     if (message->param.requester_nf_type) {
         char *v = OpenAPI_nf_type_ToString(message->param.requester_nf_type);
         ogs_assert(v);
-        ogs_sbi_header_set(request->http.params, OGS_SBI_PARAM_NF_TYPE, v);
+        ogs_sbi_header_set(request->http.params,
+                OGS_SBI_PARAM_REQUESTER_NF_TYPE, v);
     }
     if (message->param.target_nf_type) {
         char *v = OpenAPI_nf_type_ToString(message->param.target_nf_type);
