@@ -10,6 +10,11 @@ RUN dnf -y install epel-release && \
         dnf -y update
 
 RUN dnf -y install \
+        https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm && \
+        dnf config-manager --set-enabled elrepo-testing && \
+        dnf -y update
+
+RUN dnf -y install \
         python3 \
         ninja-build \
         gcc \
@@ -23,6 +28,7 @@ RUN dnf -y install \
         openssl-devel \
         cyrus-sasl-devel \
         libyaml-devel \
+        mongo-c-driver-devel \
         libmicrohttpd-devel \
         libcurl-devel \
         iproute

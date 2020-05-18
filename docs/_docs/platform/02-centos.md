@@ -23,8 +23,13 @@ EOF'
 
 Install MongoDB with Package Manager.
 ```bash
-sudo yum -y install mongodb-org
-sudo systemctl start mongod (if '/usr/bin/mongod' is not running)
+sudo dnf -y install mongodb-org
+```
+
+Run MongoDB server.
+```bash
+$ mkdir -p ./data/db
+$ mongod --dbpath ./data/db
 ```
 
 ### Setting up TUN device (No persistent after rebooting)
@@ -83,6 +88,13 @@ Enable PowerTools.
 $ sudo dnf install 'dnf-command(config-manager)'
 $ sudo dnf config-manager --set-enabled PowerTools
 $ sudo update
+```
+
+Configure ELRepo(with testing) package.
+```bash
+$ sudo dnf install https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
+$ sudo dnf config-manager --set-enabled elrepo-testing
+$ sudo dnf update
 ```
 
 Install the depedencies for building the source code.
