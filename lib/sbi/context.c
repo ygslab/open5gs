@@ -47,7 +47,7 @@ void ogs_sbi_context_init(ogs_pollset_t *pollset, ogs_timer_mgr_t *timer_mgr)
     /* FIXME : number of pool size */
     ogs_sbi_message_init(32, 32);
     ogs_sbi_server_init(32);
-    ogs_sbi_client_init(32, 32);
+    ogs_sbi_client_init(512, 512);
 
     ogs_list_init(&self.nf_instance_list);
     ogs_pool_init(&nf_instance_pool, ogs_config()->pool.sbi);
@@ -431,7 +431,7 @@ ogs_sbi_nf_instance_t *ogs_sbi_nf_instance_add(char *id)
     nf_instance->id = ogs_strdup(id);
     ogs_assert(nf_instance->id);
 
-    nf_instance->time.heartbeat = ogs_config()->time.sbi.heartbeat;
+    nf_instance->time.heartbeat = ogs_config()->time.nf_instance.heartbeat;
 
     ogs_list_add(&ogs_sbi_self()->nf_instance_list, nf_instance);
 
@@ -462,6 +462,8 @@ void ogs_sbi_nf_instance_remove(ogs_sbi_nf_instance_t *nf_instance)
     ogs_assert(nf_instance);
 
     ogs_list_remove(&ogs_sbi_self()->nf_instance_list, nf_instance);
+
+    ogs_sbi_subscription_remove_all_by_nf_instance_id(nf_instance->id);
 
     ogs_assert(nf_instance->id);
     ogs_free(nf_instance->id);
@@ -824,7 +826,7 @@ ogs_sbi_subscription_t *ogs_sbi_subscription_add(void)
     ogs_assert(subscription);
     memset(subscription, 0, sizeof(ogs_sbi_subscription_t));
 
-    subscription->time.validity = ogs_config()->time.sbi.validity;
+    subscription->time.validity = ogs_config()->time.subscription.validity;
 
     ogs_list_add(&ogs_sbi_self()->subscription_list, subscription);
 
@@ -852,10 +854,28 @@ void ogs_sbi_subscription_remove(ogs_sbi_subscription_t *subscription)
     if (subscription->notification_uri)
         ogs_free(subscription->notification_uri);
 
+    if (subscription->nf_instance_id)
+        ogs_free(subscription->nf_instance_id);
+
     if (subscription->t_validity)
         ogs_timer_delete(subscription->t_validity);
 
     ogs_pool_free(&subscription_pool, subscription);
+}
+
+void ogs_sbi_subscription_remove_all_by_nf_instance_id(char *nf_instance_id)
+{
+    ogs_sbi_subscription_t *subscription = NULL, *next_subscription = NULL;
+
+    ogs_assert(nf_instance_id);
+
+    ogs_list_for_each_safe(&ogs_sbi_self()->subscription_list,
+            next_subscription, subscription) {
+        if (subscription->nf_instance_id &&
+            strcmp(subscription->nf_instance_id, nf_instance_id) == 0) {
+            ogs_sbi_subscription_remove(subscription);
+        }
+    }
 }
 
 void ogs_sbi_subscription_remove_all(void)

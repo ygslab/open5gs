@@ -343,13 +343,13 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
                 nf_instance = e->sbi.data;
                 ogs_assert(nf_instance);
+                ogs_assert(OGS_FSM_STATE(&nf_instance->sm));
+
                 e->sbi.message = &sbi_message;
                 ogs_fsm_dispatch(&nf_instance->sm, e);
 
                 if (OGS_FSM_CHECK(&nf_instance->sm, smf_nf_state_exception)) {
                     ogs_error("State machine exception");
-                    ogs_sbi_message_free(&sbi_message);
-                    ogs_sbi_response_free(sbi_response);
                 }
                 break;
 
@@ -390,6 +390,23 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
             END
             break;
 
+        CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
+            SWITCH(sbi_message.h.resource.name)
+            CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
+                if (sbi_message.res_status == OGS_SBI_HTTP_STATUS_OK) {
+                    smf_nnrf_handle_nf_discover(&sbi_message);
+                } else {
+                    ogs_error("HTTP response error : %d",
+                            sbi_message.res_status);
+                }
+                break;
+
+            DEFAULT
+                ogs_error("Invalid resource name [%s]",
+                        sbi_message.h.resource.name);
+            END
+            break;
+
         DEFAULT
             ogs_error("Invalid API name [%s]", sbi_message.h.service.name);
         END
@@ -402,27 +419,34 @@ void smf_state_operational(ogs_fsm_t *s, smf_event_t *e)
         ogs_assert(e);
 
         switch(e->timer_id) {
-        case SMF_TIMER_SBI_REGISTRATION:
-        case SMF_TIMER_SBI_HEARTBEAT:
-        case SMF_TIMER_SBI_NO_HEARTBEAT:
+        case SMF_TIMER_NF_INSTANCE_REGISTRATION_INTERVAL:
+        case SMF_TIMER_NF_INSTANCE_HEARTBEAT_INTERVAL:
+        case SMF_TIMER_NF_INSTANCE_HEARTBEAT:
+        case SMF_TIMER_NF_INSTANCE_VALIDITY:
             nf_instance = e->sbi.data;
             ogs_assert(nf_instance);
             ogs_assert(OGS_FSM_STATE(&nf_instance->sm));
 
             ogs_fsm_dispatch(&nf_instance->sm, e);
-            if (OGS_FSM_CHECK(&nf_instance->sm, smf_nf_state_exception))
+            if (OGS_FSM_CHECK(&nf_instance->sm, smf_nf_state_de_registered)) {
+                smf_nf_fsm_fini(nf_instance);
+                ogs_sbi_nf_instance_remove(nf_instance);
+
+            } else if (OGS_FSM_CHECK(&nf_instance->sm,
+                        smf_nf_state_exception)) {
                 ogs_error("State machine exception");
+            }
             break;
 
-        case SMF_TIMER_SBI_NO_VALIDITY:
+        case SMF_TIMER_SUBSCRIPTION_VALIDITY:
             subscription = e->sbi.data;
             ogs_assert(subscription);
 
             ogs_info("Subscription validity expired [%s]", subscription->id);
             ogs_sbi_subscription_remove(subscription);
 
-            smf_sbi_send_nf_status_subscribe(
-                    subscription->client, smf_self()->nf_type);
+            smf_sbi_send_nf_status_subscribe(subscription->client,
+                    smf_self()->nf_type, subscription->nf_instance_id);
             break;
 
         default:

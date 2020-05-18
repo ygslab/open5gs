@@ -35,9 +35,12 @@ ogs_sbi_request_t *smf_nnrf_build_nf_de_register(
         ogs_sbi_nf_instance_t *nf_instance);
 
 ogs_sbi_request_t *smf_nnrf_build_nf_status_subscribe(
-        OpenAPI_nf_type_e nf_type);
+        ogs_sbi_subscription_t *subscription);
 ogs_sbi_request_t *smf_nnrf_build_nf_status_unsubscribe(
         ogs_sbi_subscription_t *subscription);
+
+ogs_sbi_request_t *smf_nnrf_build_nf_discover(
+        OpenAPI_nf_type_e target_nf_type, OpenAPI_nf_type_e requester_nf_type);
 
 #ifdef __cplusplus
 }

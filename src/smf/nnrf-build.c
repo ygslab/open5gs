@@ -116,7 +116,7 @@ ogs_sbi_request_t *smf_nnrf_build_nf_de_register(
 }
 
 ogs_sbi_request_t *smf_nnrf_build_nf_status_subscribe(
-        OpenAPI_nf_type_e nf_type)
+        ogs_sbi_subscription_t *subscription)
 {
     ogs_sbi_message_t message;
     ogs_sbi_request_t *request = NULL;
@@ -124,7 +124,8 @@ ogs_sbi_request_t *smf_nnrf_build_nf_status_subscribe(
 
     OpenAPI_subscription_data_t *SubscriptionData = NULL;
 
-    ogs_assert(nf_type);
+    ogs_assert(subscription);
+    ogs_assert(subscription->nf_type);
 
     memset(&message, 0, sizeof(message));
     message.h.method = (char *)OGS_SBI_HTTP_METHOD_POST;
@@ -143,7 +144,8 @@ ogs_sbi_request_t *smf_nnrf_build_nf_status_subscribe(
                 OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY, NULL);
     ogs_assert(SubscriptionData->nf_status_notification_uri);
 
-	SubscriptionData->req_nf_type = nf_type;
+	SubscriptionData->req_nf_type = subscription->nf_type;
+    SubscriptionData->req_nf_instance_id = subscription->nf_instance_id;
 
     message.SubscriptionData = SubscriptionData;
 
@@ -170,6 +172,30 @@ ogs_sbi_request_t *smf_nnrf_build_nf_status_unsubscribe(
     message.h.api.version = (char *)OGS_SBI_API_VERSION;
     message.h.resource.name = (char *)OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS;
     message.h.resource.id = subscription->id;
+
+    request = ogs_sbi_build_request(&message);
+    ogs_assert(request);
+
+    return request;
+}
+
+ogs_sbi_request_t *smf_nnrf_build_nf_discover(
+        OpenAPI_nf_type_e target_nf_type, OpenAPI_nf_type_e requester_nf_type)
+{
+    ogs_sbi_message_t message;
+    ogs_sbi_request_t *request = NULL;
+
+    ogs_assert(target_nf_type);
+    ogs_assert(requester_nf_type);
+
+    memset(&message, 0, sizeof(message));
+    message.h.method = (char *)OGS_SBI_HTTP_METHOD_GET;
+    message.h.service.name = (char *)OGS_SBI_SERVICE_NAME_NRF_DISC;
+    message.h.api.version = (char *)OGS_SBI_API_VERSION;
+    message.h.resource.name = (char *)OGS_SBI_RESOURCE_NAME_NF_INSTANCES;
+
+    message.param.target_nf_type = target_nf_type;
+    message.param.requester_nf_type = requester_nf_type;
 
     request = ogs_sbi_build_request(&message);
     ogs_assert(request);

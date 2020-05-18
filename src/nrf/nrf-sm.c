@@ -94,45 +94,60 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
 
             SWITCH(message.h.resource.name)
             CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
+                SWITCH(message.h.method)
+                CASE(OGS_SBI_HTTP_METHOD_GET)
+                    if (message.h.resource.id) {
+                        nrf_nnrf_handle_nf_profile_retrieval(
+                                server, session, &message);
+                    } else {
+                        nrf_nnrf_handle_nf_list_retrieval(
+                                server, session, &message);
+                    }
+                    break;
 
-                nf_instance = ogs_sbi_nf_instance_find(message.h.resource.id);
-                if (!nf_instance) {
-                    SWITCH(message.h.method)
-                    CASE(OGS_SBI_HTTP_METHOD_PUT)
-                        nf_instance = ogs_sbi_nf_instance_add(
-                                message.h.resource.id);
-                        ogs_assert(nf_instance);
-                        nrf_nf_fsm_init(nf_instance);
-                        break;
-                    DEFAULT
-                        ogs_error("Not found [%s]", message.h.resource.id);
-                        ogs_sbi_server_send_error(session,
+                DEFAULT
+                    nf_instance = ogs_sbi_nf_instance_find(
+                            message.h.resource.id);
+                    if (!nf_instance) {
+                        SWITCH(message.h.method)
+                        CASE(OGS_SBI_HTTP_METHOD_PUT)
+                            nf_instance = ogs_sbi_nf_instance_add(
+                                    message.h.resource.id);
+                            ogs_assert(nf_instance);
+                            nrf_nf_fsm_init(nf_instance);
+                            break;
+                        DEFAULT
+                            ogs_error("Not found [%s]", message.h.resource.id);
+                            ogs_sbi_server_send_error(session,
                                 OGS_SBI_HTTP_STATUS_NOT_FOUND,
                                 &message, "Not found", message.h.resource.id);
-                    END
-                }
-
-                if (nf_instance) {
-                    e->nf_instance = nf_instance;
-                    e->sbi.message = &message;
-                    ogs_fsm_dispatch(&nf_instance->sm, e);
-                    if (OGS_FSM_CHECK(&nf_instance->sm,
-                                nrf_nf_state_de_registered)) {
-                        nrf_nf_fsm_fini(nf_instance);
-                        ogs_sbi_nf_instance_remove(nf_instance);
-
-                        /* FIXME : Remove unnecessary Client */
-                    } else if (OGS_FSM_CHECK(&nf_instance->sm,
-                                nrf_nf_state_exception)) {
-                        ogs_error("State machine exception");
-                        ogs_sbi_message_free(&message);
-
-                        nrf_nf_fsm_fini(nf_instance);
-                        ogs_sbi_nf_instance_remove(nf_instance);
-
-                        /* FIXME : Remove unnecessary Client */
+                        END
                     }
-                }
+
+                    if (nf_instance) {
+                        e->nf_instance = nf_instance;
+                        ogs_assert(OGS_FSM_STATE(&nf_instance->sm));
+
+                        e->sbi.message = &message;
+                        ogs_fsm_dispatch(&nf_instance->sm, e);
+                        if (OGS_FSM_CHECK(&nf_instance->sm,
+                                    nrf_nf_state_de_registered)) {
+                            nrf_nf_fsm_fini(nf_instance);
+                            ogs_sbi_nf_instance_remove(nf_instance);
+
+                            /* FIXME : Remove unnecessary Client */
+                        } else if (OGS_FSM_CHECK(&nf_instance->sm,
+                                    nrf_nf_state_exception)) {
+                            ogs_error("State machine exception");
+                            ogs_sbi_message_free(&message);
+
+                            nrf_nf_fsm_fini(nf_instance);
+                            ogs_sbi_nf_instance_remove(nf_instance);
+
+                            /* FIXME : Remove unnecessary Client */
+                        }
+                    }
+                END
                 break;
 
             CASE(OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS)
@@ -165,6 +180,36 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
             END
             break;
 
+        CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
+
+            SWITCH(message.h.resource.name)
+            CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
+
+                SWITCH(message.h.method)
+                CASE(OGS_SBI_HTTP_METHOD_GET)
+                    nrf_nnrf_handle_nf_discover(server, session, &message);
+                    break;
+
+                DEFAULT
+                    ogs_error("Invalid HTTP method [%s]",
+                            message.h.method);
+                    ogs_sbi_server_send_error(session,
+                            OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED,
+                            &message,
+                            "Invalid HTTP method", message.h.method);
+                END
+
+                break;
+
+            DEFAULT
+                ogs_error("Invalid resource name [%s]",
+                        message.h.resource.name);
+                ogs_sbi_server_send_error(session,
+                        OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, &message,
+                        "Unknown resource name", message.h.resource.name);
+            END
+            break;
+
         DEFAULT
             ogs_error("Invalid API name [%s]", message.h.service.name);
             ogs_sbi_server_send_error(session,
@@ -178,12 +223,12 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
 
     case NRF_EVT_SBI_TIMER:
         switch(e->timer_id) {
-        case NRF_TIMER_SBI_NO_HEARTBEAT:
+        case NRF_TIMER_NF_INSTANCE_HEARTBEAT:
             nf_instance = e->nf_instance;
             ogs_assert(nf_instance);
 
             ogs_warn("No heartbeat [%s]", nf_instance->id);
-            nf_instance->nf_type = OpenAPI_nf_status_SUSPENDED;
+            nf_instance->nf_status = OpenAPI_nf_status_SUSPENDED;
 
             nrf_nf_fsm_fini(nf_instance);
             ogs_sbi_nf_instance_remove(nf_instance);
@@ -191,7 +236,7 @@ void nrf_state_operational(ogs_fsm_t *s, nrf_event_t *e)
             /* FIXME : Remove unnecessary Client */
             break;
 
-        case NRF_TIMER_SBI_NO_VALIDITY:
+        case NRF_TIMER_SUBSCRIPTION_VALIDITY:
             subscription = e->subscription;
             ogs_assert(subscription);
 

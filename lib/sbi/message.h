@@ -78,12 +78,18 @@ extern "C" {
 #define OGS_SBI_API_VERSION                         "v1"
 #define OGS_SBI_API_FULL_VERSION                    "1.0.0"
 #define OGS_SBI_SERVICE_NAME_NRF_NFM                "nnrf-nfm"
+#define OGS_SBI_SERVICE_NAME_NRF_DISC               "nnrf-disc"
 #define OGS_SBI_SERVICE_NAME_SMF_PDUSESSION         "nsmf-pdusession"
 #define OGS_SBI_SERVICE_NAME_SMF_EVENT_EXPOSURE     "nsmf-event-exposure"
 
 #define OGS_SBI_RESOURCE_NAME_NF_INSTANCES          "nf-instances"
 #define OGS_SBI_RESOURCE_NAME_SUBSCRIPTIONS         "subscriptions"
 #define OGS_SBI_RESOURCE_NAME_NF_STATUS_NOTIFY      "nf-status-notify"
+
+#define OGS_SBI_PARAM_NF_TYPE                       "nf-type"
+#define OGS_SBI_PARAM_TARGET_NF_TYPE                "target-nf-type"
+#define OGS_SBI_PARAM_REQUESTER_NF_TYPE             "requester-nf-type"
+#define OGS_SBI_PARAM_LIMIT                         "limit"
 
 #define OGS_SBI_ACCEPT_ENCODING                     "Accept-Encoding"
 #define OGS_SBI_CONTENT_TYPE                        "Content-Type"
@@ -120,7 +126,15 @@ typedef struct ogs_sbi_message_s {
         char *content_encoding;
         char *content_type;
         bool location;
+        char *cache_control;
     } http;
+
+    struct {
+        OpenAPI_nf_type_e target_nf_type;
+        OpenAPI_nf_type_e requester_nf_type;
+        OpenAPI_nf_type_e nf_type;
+        int limit;
+    } param;
 
     int res_status;
 
@@ -130,6 +144,9 @@ typedef struct ogs_sbi_message_s {
 
     OpenAPI_subscription_data_t *SubscriptionData;
     OpenAPI_notification_data_t *NotificationData;
+    OpenAPI_search_result_t *SearchResult;
+
+    ogs_sbi_links_t *links;
 } ogs_sbi_message_t;
 
 void ogs_sbi_message_init(int num_of_request_pool, int num_of_response_pool);

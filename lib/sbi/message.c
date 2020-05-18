@@ -55,6 +55,8 @@ void ogs_sbi_message_free(ogs_sbi_message_t *message)
         OpenAPI_subscription_data_free(message->SubscriptionData);
     if (message->NotificationData)
         OpenAPI_notification_data_free(message->NotificationData);
+    if (message->SearchResult)
+        OpenAPI_search_result_free(message->SearchResult);
 }
 
 ogs_sbi_request_t *ogs_sbi_request_new(void)
@@ -66,6 +68,7 @@ ogs_sbi_request_t *ogs_sbi_request_new(void)
     ogs_assert(request);
     memset(request, 0, sizeof(ogs_sbi_request_t));
 
+    request->http.params = ogs_hash_make();
     request->http.headers = ogs_hash_make();
 
     return request;
@@ -79,6 +82,7 @@ ogs_sbi_response_t *ogs_sbi_response_new(void)
     ogs_assert(response);
     memset(response, 0, sizeof(ogs_sbi_response_t));
 
+    response->http.params = ogs_hash_make();
     response->http.headers = ogs_hash_make();
 
     return response;
@@ -128,6 +132,15 @@ static void http_message_free(http_message_t *http)
 {
     ogs_assert(http);
 
+    if (http->params) {
+        ogs_hash_index_t *hi;
+        for (hi = ogs_hash_first(http->params); hi; hi = ogs_hash_next(hi)) {
+            char *val = ogs_hash_this_val(hi);
+            ogs_free(val);
+        }
+        ogs_hash_destroy(http->params);
+    }
+
     if (http->headers) {
         ogs_hash_index_t *hi;
         for (hi = ogs_hash_first(http->headers); hi; hi = ogs_hash_next(hi)) {
@@ -163,6 +176,30 @@ ogs_sbi_request_t *ogs_sbi_build_request(ogs_sbi_message_t *message)
         request->h.resource.name = ogs_strdup(message->h.resource.name);
         if (message->h.resource.id)
             request->h.resource.id = ogs_strdup(message->h.resource.id);
+    }
+
+    /* URL Param */
+    if (message->param.nf_type) {
+        char *v = OpenAPI_nf_type_ToString(message->param.nf_type);
+        ogs_assert(v);
+        ogs_sbi_header_set(request->http.params,
+                OGS_SBI_PARAM_REQUESTER_NF_TYPE, v);
+    }
+    if (message->param.requester_nf_type) {
+        char *v = OpenAPI_nf_type_ToString(message->param.requester_nf_type);
+        ogs_assert(v);
+        ogs_sbi_header_set(request->http.params, OGS_SBI_PARAM_NF_TYPE, v);
+    }
+    if (message->param.target_nf_type) {
+        char *v = OpenAPI_nf_type_ToString(message->param.target_nf_type);
+        ogs_assert(v);
+        ogs_sbi_header_set(request->http.params,
+                OGS_SBI_PARAM_TARGET_NF_TYPE, v);
+    }
+    if (message->param.limit) {
+        char *v = ogs_msprintf("%d", message->param.limit);
+        ogs_assert(v);
+        ogs_sbi_header_set(request->http.params, OGS_SBI_PARAM_LIMIT, v);
     }
 
     /* HTTP Message */
@@ -205,7 +242,9 @@ ogs_sbi_response_t *ogs_sbi_build_response(ogs_sbi_message_t *message)
 
     if (message->http.location == true)
         ogs_sbi_header_set(response->http.headers, "Location", message->h.url);
-
+    if (message->http.cache_control)
+        ogs_sbi_header_set(response->http.headers, "Cache-Control",
+                message->http.cache_control);
 
     return response;
 }
@@ -241,6 +280,12 @@ static char *build_content(ogs_sbi_message_t *message)
         item = OpenAPI_notification_data_convertToJSON(
                 message->NotificationData);
         ogs_assert(item);
+    } else if (message->SearchResult) {
+        item = OpenAPI_search_result_convertToJSON(message->SearchResult);
+        ogs_assert(item);
+    } else if (message->links) {
+        item = ogs_sbi_links_convertToJSON(message->links);
+        ogs_assert(item);
     }
 
     if (item) {
@@ -269,6 +314,25 @@ int ogs_sbi_parse_request(
     if (rv != OGS_OK) {
         ogs_error("sbi_parse_header() failed");
         return OGS_ERROR;
+    }
+
+    for (hi = ogs_hash_first(request->http.params);
+            hi; hi = ogs_hash_next(hi)) {
+        if (!strcmp(ogs_hash_this_key(hi), OGS_SBI_PARAM_NF_TYPE)) {
+            message->param.nf_type =
+                OpenAPI_nf_type_FromString(ogs_hash_this_val(hi));
+        } else if (!strcmp(ogs_hash_this_key(hi),
+                    OGS_SBI_PARAM_TARGET_NF_TYPE)) {
+            message->param.target_nf_type =
+                OpenAPI_nf_type_FromString(ogs_hash_this_val(hi));
+        } else if (!strcmp(ogs_hash_this_key(hi),
+                    OGS_SBI_PARAM_REQUESTER_NF_TYPE)) {
+            message->param.requester_nf_type =
+                OpenAPI_nf_type_FromString(ogs_hash_this_val(hi));
+        } else if (!strcmp(ogs_hash_this_key(hi),
+                    OGS_SBI_PARAM_LIMIT)) {
+            message->param.limit = atoi(ogs_hash_this_val(hi));
+        }
     }
 
     for (hi = ogs_hash_first(request->http.headers);
@@ -463,14 +527,33 @@ static int parse_content(ogs_sbi_message_t *message, char *content)
 
                 DEFAULT
                     rv = OGS_ERROR;
-                    ogs_error("Unknown resource name - %s",
+                    ogs_error("Unknown resource name [%s]",
+                            message->h.resource.name);
+                END
+                break;
+
+            CASE(OGS_SBI_SERVICE_NAME_NRF_DISC)
+                SWITCH(message->h.resource.name)
+                CASE(OGS_SBI_RESOURCE_NAME_NF_INSTANCES)
+                    message->SearchResult =
+                        OpenAPI_search_result_parseFromJSON(item);
+                    if (!message->SearchResult) {
+                        rv = OGS_ERROR;
+                        ogs_error("JSON parse error");
+                    }
+                    break;
+
+                DEFAULT
+                    rv = OGS_ERROR;
+                    ogs_error("Unknown resource name [%s]",
                             message->h.resource.name);
                 END
                 break;
 
             DEFAULT
                 rv = OGS_ERROR;
-                ogs_error("Not implemented API name - %s", message->h.service.name);
+                ogs_error("Not implemented API name [%s]",
+                        message->h.service.name);
             END
         }
     }

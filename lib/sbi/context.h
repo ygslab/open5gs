@@ -51,16 +51,23 @@ typedef struct ogs_sbi_context_s {
 typedef struct ogs_sbi_nf_instance_s {
     ogs_lnode_t     lnode;
 
-    ogs_fsm_t       sm;                 /* A state machine */
-    ogs_timer_t     *t_registration;    /* timer to retry
-                                           to register peer node */
+    ogs_fsm_t       sm;                         /* A state machine */
+    ogs_timer_t     *t_registration_interval;   /* timer to retry
+                                                   to register peer node */
 #define OGS_SBI_HEARTBEAT_RETRYCOUNT 4
     struct {
         int heartbeat;
+        int validity;
     } time;
 
-    ogs_timer_t     *t_heartbeat;       /* heartbeat period */
-    ogs_timer_t     *t_no_heartbeat;    /* check NF aliveness */
+    ogs_timer_t     *t_heartbeat_interval;  /* heartbeat interval */
+    ogs_timer_t     *t_heartbeat;           /* check heartbeat */
+    ogs_timer_t     *t_validity;            /* check validation */
+
+#define NF_INSTANCE_IS_SELF(_iD) \
+    strcmp((_iD), ogs_sbi_self()->nf_instance_id) == 0
+#define NF_INSTANCE_IS_OTHERS(_iD) \
+    strcmp((_iD), ogs_sbi_self()->nf_instance_id) != 0
 
     char *id;                           /* NFInstanceId */
 
@@ -77,7 +84,7 @@ typedef struct ogs_sbi_nf_instance_s {
 
     ogs_list_t nf_service_list;
 
-    void *client; /* Only used in CLIENT */
+    void *client; /* only used in CLIENT */
 } ogs_sbi_nf_instance_t;
 
 typedef struct ogs_sbi_nf_service_s {
@@ -113,19 +120,19 @@ typedef struct ogs_sbi_nf_service_s {
 typedef struct ogs_sbi_subscription_s {
     ogs_lnode_t lnode;
 
-#define OGS_SBI_VALIDITY_RETRYCOUNT 5
-    struct              {
-        int             validity;
+    struct {
+        int validity;
     } time;
 
+    ogs_timer_t *t_validity;            /* check validation */
+
     char *id;                           /* SubscriptionId */
+    char *nf_instance_id;               /* NFInstanceId */
     OpenAPI_nf_type_e nf_type;
     OpenAPI_nf_status_e nf_status;
     char *notification_uri;
 
-    ogs_timer_t *t_validity;            /* Validation Timer */
-
-    void *client;                       /* Only used in SERVER */
+    void *client;                       /* only used in SERVER */
 } ogs_sbi_subscription_t;
 
 void ogs_sbi_context_init(ogs_pollset_t *pollset, ogs_timer_mgr_t *timer_mgr);
@@ -165,6 +172,7 @@ ogs_sbi_subscription_t *ogs_sbi_subscription_add(void);
 void ogs_sbi_subscription_set_id(
         ogs_sbi_subscription_t *subscription, char *id);
 void ogs_sbi_subscription_remove(ogs_sbi_subscription_t *subscription);
+void ogs_sbi_subscription_remove_all_by_nf_instance_id(char *nf_instance_id);
 void ogs_sbi_subscription_remove_all(void);
 ogs_sbi_subscription_t *ogs_sbi_subscription_find(char *id);
 

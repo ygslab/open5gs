@@ -35,12 +35,6 @@ void smf_event_init(void)
     ogs_assert(smf_self()->pollset);
 }
 
-void smf_event_term(void)
-{
-    ogs_queue_term(smf_self()->queue);
-    ogs_pollset_notify(smf_self()->pollset);
-}
-
 void smf_event_final(void)
 {
     if (smf_self()->pollset)
