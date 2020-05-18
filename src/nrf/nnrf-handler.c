@@ -263,15 +263,15 @@ bool nrf_nnrf_handle_nf_list_retrieval(ogs_sbi_server_t *server,
     i = 0;
     ogs_list_for_each(&ogs_sbi_self()->nf_instance_list, nf_instance) {
 
-        if (recvmsg->param.limit && i >= recvmsg->param.limit)
-            break;
-
         if (recvmsg->param.nf_type &&
                 recvmsg->param.nf_type != nf_instance->nf_type)
             continue;
 
-        OpenAPI_list_add(links->items,
-            ogs_msprintf("%s/%s", links->self, nf_instance->id));
+        if (!recvmsg->param.limit ||
+             (recvmsg->param.limit && i < recvmsg->param.limit)) {
+            OpenAPI_list_add(links->items,
+                ogs_msprintf("%s/%s", links->self, nf_instance->id));
+        }
 
         i++;
     }
