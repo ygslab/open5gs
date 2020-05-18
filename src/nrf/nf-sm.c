@@ -131,7 +131,7 @@ void nrf_nf_state_will_register(ogs_fsm_t *s, nrf_event_t *e)
                             message->h.method);
                     ogs_sbi_server_send_error(session,
                             OGS_SBI_HTTP_STATUS_MEHTOD_NOT_ALLOWED, message,
-                            "Invalid HTT method", message->h.method);
+                            "Invalid HTTP method", message->h.method);
                 END
                 break;
 

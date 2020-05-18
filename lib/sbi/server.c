@@ -591,7 +591,12 @@ suspend:
     if (server->cb) {
         if (server->cb(server, session, request) != OGS_OK) {
             ogs_error("server callback error");
-            return MHD_NO;
+
+            ogs_sbi_server_send_error(session,
+                    OGS_SBI_HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL,
+                    "server callback error", NULL);
+
+            return MHD_YES;
         }
     } else {
         ogs_fatal("server callback is not registered");
