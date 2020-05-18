@@ -23,7 +23,8 @@ RUN dnf -y install \
         openssl-devel \
         cyrus-sasl-devel \
         libyaml-devel \
-        iproute \
-        mongo-c-driver-devel
+        libmicrohttpd-devel \
+        libcurl-devel \
+        iproute
 
-RUN pip3 install --upgrade pip && pip install meson
+RUN dnf -y install meson
