@@ -483,7 +483,7 @@ static void check_multi_info(ogs_sbi_client_t *client)
                     ogs_assert_if_reached();
                 }
             } else
-                ogs_error("[%d] %s", res, conn->error);
+                ogs_warn("[%d] %s", res, conn->error);
 
             connection_remove(conn);
             break;
