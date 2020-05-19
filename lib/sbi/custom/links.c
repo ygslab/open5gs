@@ -10,6 +10,8 @@ cJSON *ogs_sbi_links_convertToJSON(ogs_sbi_links_t *links)
     cJSON *linksJSON = NULL;
     cJSON *itemsJSON = NULL;
     cJSON *self = NULL;
+    cJSON *object = NULL;
+
     OpenAPI_lnode_t *node;
 
     ogs_assert(links);
@@ -25,8 +27,6 @@ cJSON *ogs_sbi_links_convertToJSON(ogs_sbi_links_t *links)
     ogs_assert(itemsJSON);
 
     OpenAPI_list_for_each(links->items, node) {
-        cJSON *object = NULL;
-
         if (!node->data) continue;
 
         object = cJSON_CreateObject();
