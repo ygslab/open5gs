@@ -9,7 +9,7 @@ cJSON *ogs_sbi_links_convertToJSON(ogs_sbi_links_t *links)
     cJSON *root = NULL;
     cJSON *linksJSON = NULL;
     cJSON *itemsJSON = NULL;
-    cJSON *selfJSON = NULL;
+    cJSON *self = NULL;
     OpenAPI_lnode_t *node;
 
     ogs_assert(links);
@@ -36,9 +36,15 @@ cJSON *ogs_sbi_links_convertToJSON(ogs_sbi_links_t *links)
         cJSON_AddItemToArray(itemsJSON, object);
     }
 
-    selfJSON = cJSON_AddObjectToObject(linksJSON, "self");
-    ogs_assert(selfJSON);
-    cJSON_AddStringToObject(selfJSON, "href", links->self);
+    self = cJSON_CreateObject();
+    ogs_assert(self);
+
+    ogs_assert(links->self);
+    object = cJSON_CreateString(links->self);
+    ogs_assert(object);
+
+    cJSON_AddItemToObject(self, "href", object);
+    cJSON_AddItemToObject(linksJSON, "self", self);
 
     return root;
 }
