@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:57:29.673998 by acetcom
+ * Created on: 2020-05-20 17:27:20.096077 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -84,11 +84,11 @@ int ogs_nas_encode_registration_request(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *m
 
     ogs_trace("[NAS] Encode REGISTRATION_REQUEST");
 
-    size = ogs_nas_encode_5gs_registration_type(pkbuf, &registration_request->5gs_registration_type);
+    size = ogs_nas_encode_5gs_registration_type(pkbuf, &registration_request->registration_type);
     ogs_assert(size >= 0);
     encoded += size;
 
-    size = ogs_nas_encode_5gs_mobile_identity(pkbuf, &registration_request->5gs_mobile_identity);
+    size = ogs_nas_encode_5gs_mobile_identity(pkbuf, &registration_request->mobile_identity);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -107,7 +107,7 @@ int ogs_nas_encode_registration_request(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *m
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gmm_capability(pkbuf, &registration_request->5gmm_capability);
+        size = ogs_nas_encode_5gmm_capability(pkbuf, &registration_request->gmm_capability);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -299,7 +299,7 @@ int ogs_nas_encode_registration_request(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *m
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gs_update_type(pkbuf, &registration_request->5gs_update_type);
+        size = ogs_nas_encode_5gs_update_type(pkbuf, &registration_request->update_type);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -436,7 +436,7 @@ int ogs_nas_encode_registration_accept(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *me
 
     ogs_trace("[NAS] Encode REGISTRATION_ACCEPT");
 
-    size = ogs_nas_encode_5gs_registration_result(pkbuf, &registration_accept->5gs_registration_result);
+    size = ogs_nas_encode_5gs_registration_result(pkbuf, &registration_accept->registration_result);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -446,7 +446,7 @@ int ogs_nas_encode_registration_accept(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *me
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gs_mobile_identity(pkbuf, &registration_accept->5g_guti);
+        size = ogs_nas_encode_5gs_mobile_identity(pkbuf, &registration_accept->guti);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -512,7 +512,7 @@ int ogs_nas_encode_registration_accept(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *me
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gs_network_feature_support(pkbuf, &registration_accept->5gs_network_feature_support);
+        size = ogs_nas_encode_5gs_network_feature_support(pkbuf, &registration_accept->network_feature_support);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -821,7 +821,7 @@ int ogs_nas_encode_registration_accept(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *me
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_truncated_5g_s_tmsi_configuration(pkbuf, &registration_accept->truncated_5g_s_tmsi_configuration);
+        size = ogs_nas_encode_truncated_5g_s_tmsi_configuration(pkbuf, &registration_accept->truncated_s_tmsi_configuration);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -870,7 +870,7 @@ int ogs_nas_encode_registration_reject(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *me
 
     ogs_trace("[NAS] Encode REGISTRATION_REJECT");
 
-    size = ogs_nas_encode_5gmm_cause(pkbuf, &registration_reject->5gmm_cause);
+    size = ogs_nas_encode_5gmm_cause(pkbuf, &registration_reject->gmm_cause);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -933,7 +933,7 @@ int ogs_nas_encode_deregistration_request_from_ue(ogs_pkbuf_t *pkbuf, ogs_nas_me
     ogs_assert(size >= 0);
     encoded += size;
 
-    size = ogs_nas_encode_5gs_mobile_identity(pkbuf, &deregistration_request_from_ue->5gs_mobile_identity);
+    size = ogs_nas_encode_5gs_mobile_identity(pkbuf, &deregistration_request_from_ue->mobile_identity);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -958,7 +958,7 @@ int ogs_nas_encode_deregistration_request_to_ue(ogs_pkbuf_t *pkbuf, ogs_nas_mess
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gmm_cause(pkbuf, &deregistration_request_to_ue->5gmm_cause);
+        size = ogs_nas_encode_5gmm_cause(pkbuf, &deregistration_request_to_ue->gmm_cause);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -1000,7 +1000,7 @@ int ogs_nas_encode_service_request(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *messag
     ogs_assert(size >= 0);
     encoded += size;
 
-    size = ogs_nas_encode_5gs_mobile_identity(pkbuf, &service_request->5g_s_tmsi);
+    size = ogs_nas_encode_5gs_mobile_identity(pkbuf, &service_request->s_tmsi);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -1059,7 +1059,7 @@ int ogs_nas_encode_service_reject(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *message
 
     ogs_trace("[NAS] Encode SERVICE_REJECT");
 
-    size = ogs_nas_encode_5gmm_cause(pkbuf, &service_reject->5gmm_cause);
+    size = ogs_nas_encode_5gmm_cause(pkbuf, &service_reject->gmm_cause);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -1199,7 +1199,7 @@ int ogs_nas_encode_configuration_update_command(ogs_pkbuf_t *pkbuf, ogs_nas_mess
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gs_mobile_identity(pkbuf, &configuration_update_command->5g_guti);
+        size = ogs_nas_encode_5gs_mobile_identity(pkbuf, &configuration_update_command->guti);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -1411,7 +1411,7 @@ int ogs_nas_encode_configuration_update_command(ogs_pkbuf_t *pkbuf, ogs_nas_mess
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gs_registration_result(pkbuf, &configuration_update_command->5gs_registration_result);
+        size = ogs_nas_encode_5gs_registration_result(pkbuf, &configuration_update_command->registration_result);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -1422,7 +1422,7 @@ int ogs_nas_encode_configuration_update_command(ogs_pkbuf_t *pkbuf, ogs_nas_mess
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_truncated_5g_s_tmsi_configuration(pkbuf, &configuration_update_command->truncated_5g_s_tmsi_configuration);
+        size = ogs_nas_encode_truncated_5g_s_tmsi_configuration(pkbuf, &configuration_update_command->truncated_s_tmsi_configuration);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -1644,7 +1644,7 @@ int ogs_nas_encode_authentication_failure(ogs_pkbuf_t *pkbuf, ogs_nas_message_t 
 
     ogs_trace("[NAS] Encode AUTHENTICATION_FAILURE");
 
-    size = ogs_nas_encode_5gmm_cause(pkbuf, &authentication_failure->5gmm_cause);
+    size = ogs_nas_encode_5gmm_cause(pkbuf, &authentication_failure->gmm_cause);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -1768,7 +1768,7 @@ int ogs_nas_encode_security_mode_command(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_additional_5g_security_information(pkbuf, &security_mode_command->additional_5g_security_information);
+        size = ogs_nas_encode_additional_5g_security_information(pkbuf, &security_mode_command->additional_security_information);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -1861,7 +1861,7 @@ int ogs_nas_encode_security_mode_reject(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *m
 
     ogs_trace("[NAS] Encode SECURITY_MODE_REJECT");
 
-    size = ogs_nas_encode_5gmm_cause(pkbuf, &security_mode_reject->5gmm_cause);
+    size = ogs_nas_encode_5gmm_cause(pkbuf, &security_mode_reject->gmm_cause);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -1870,13 +1870,13 @@ int ogs_nas_encode_security_mode_reject(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *m
 
 int ogs_nas_encode_5gmm_status(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *message)
 {
-    ogs_nas_5gmm_status_t *5gmm_status = &message->emm.5gmm_status;
+    ogs_nas_5gmm_status_t *gmm_status = &message->emm.gmm_status;
     int encoded = 0;
     int size = 0;
 
     ogs_trace("[NAS] Encode 5GMM_STATUS");
 
-    size = ogs_nas_encode_5gmm_cause(pkbuf, &5gmm_status->5gmm_cause);
+    size = ogs_nas_encode_5gmm_cause(pkbuf, &gmm_status->gmm_cause);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -2043,7 +2043,7 @@ int ogs_nas_encode_dl_nas_transport(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *messa
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gmm_cause(pkbuf, &dl_nas_transport->5gmm_cause);
+        size = ogs_nas_encode_5gmm_cause(pkbuf, &dl_nas_transport->gmm_cause);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -2254,7 +2254,7 @@ int ogs_nas_encode_pdu_session_authentication_complete(ogs_pkbuf_t *pkbuf, ogs_n
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gsm_capability(pkbuf, &pdu_session_authentication_complete->5gsm_capability);
+        size = ogs_nas_encode_5gsm_capability(pkbuf, &pdu_session_authentication_complete->gsm_capability);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -2374,7 +2374,7 @@ int ogs_nas_encode_pdu_session_authentication_result(ogs_pkbuf_t *pkbuf, ogs_nas
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_authentication_result->5gsm_cause);
+        size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_authentication_result->gsm_cause);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -2482,7 +2482,7 @@ int ogs_nas_encode_pdu_session_authentication_result(ogs_pkbuf_t *pkbuf, ogs_nas
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gsm_network_feature_support(pkbuf, &pdu_session_authentication_result->5gsm_network_feature_support);
+        size = ogs_nas_encode_5gsm_network_feature_support(pkbuf, &pdu_session_authentication_result->gsm_network_feature_support);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -2540,7 +2540,7 @@ int ogs_nas_encode_pdu_session_modification_request(ogs_pkbuf_t *pkbuf, ogs_nas_
 
     ogs_trace("[NAS] Encode PDU_SESSION_MODIFICATION_REQUEST");
 
-    size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_modification_request->5gsm_cause);
+    size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_modification_request->gsm_cause);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -2603,7 +2603,7 @@ int ogs_nas_encode_pdu_session_modification_request(ogs_pkbuf_t *pkbuf, ogs_nas_
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gsm_congestion_re_attempt_indicator(pkbuf, &pdu_session_modification_request->5gsm_congestion_re_attempt_indicator);
+        size = ogs_nas_encode_5gsm_congestion_re_attempt_indicator(pkbuf, &pdu_session_modification_request->gsm_congestion_re_attempt_indicator);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -2710,7 +2710,7 @@ int ogs_nas_encode_pdu_session_modification_command_reject(ogs_pkbuf_t *pkbuf, o
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gsm_capability(pkbuf, &pdu_session_modification_command_reject->5gsm_capability);
+        size = ogs_nas_encode_5gsm_capability(pkbuf, &pdu_session_modification_command_reject->gsm_capability);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -2721,7 +2721,7 @@ int ogs_nas_encode_pdu_session_modification_command_reject(ogs_pkbuf_t *pkbuf, o
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_modification_command_reject->5gsm_cause);
+        size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_modification_command_reject->gsm_cause);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -2834,7 +2834,7 @@ int ogs_nas_encode_pdu_session_release_request(ogs_pkbuf_t *pkbuf, ogs_nas_messa
 
     ogs_trace("[NAS] Encode PDU_SESSION_RELEASE_REQUEST");
 
-    size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_release_request->5gsm_cause);
+    size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_release_request->gsm_cause);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -2877,7 +2877,7 @@ int ogs_nas_encode_pdu_session_release_request(ogs_pkbuf_t *pkbuf, ogs_nas_messa
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gsm_congestion_re_attempt_indicator(pkbuf, &pdu_session_release_request->5gsm_congestion_re_attempt_indicator);
+        size = ogs_nas_encode_5gsm_congestion_re_attempt_indicator(pkbuf, &pdu_session_release_request->gsm_congestion_re_attempt_indicator);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -2899,7 +2899,7 @@ int ogs_nas_encode_pdu_session_release_reject(ogs_pkbuf_t *pkbuf, ogs_nas_messag
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_release_reject->5gsm_cause);
+        size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_release_reject->gsm_cause);
         ogs_assert(size >= 0);
         encoded += size;
     }
@@ -3067,7 +3067,7 @@ int ogs_nas_encode_pdu_session_release_complete(ogs_pkbuf_t *pkbuf, ogs_nas_mess
 
     ogs_trace("[NAS] Encode PDU_SESSION_RELEASE_COMPLETE");
 
-    size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_release_complete->5gsm_cause);
+    size = ogs_nas_encode_5gsm_cause(pkbuf, &pdu_session_release_complete->gsm_cause);
     ogs_assert(size >= 0);
     encoded += size;
 
@@ -3087,30 +3087,30 @@ int ogs_nas_encode_pdu_session_release_complete(ogs_pkbuf_t *pkbuf, ogs_nas_mess
 
 int ogs_nas_encode_5gsm_status(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *message)
 {
-    ogs_nas_5gsm_status_t *5gsm_status = &message->esm.5gsm_status;
+    ogs_nas_5gsm_status_t *gsm_status = &message->esm.gsm_status;
     int encoded = 0;
     int size = 0;
 
     ogs_trace("[NAS] Encode 5GSM_STATUS");
 
-    if (5gsm_status->presencemask & OGS_NAS_5GSM_STATUS_5GSM_CAUSE_PRESENT)
+    if (gsm_status->presencemask & OGS_NAS_5GSM_STATUS_5GSM_CAUSE_PRESENT)
     {
         size = ogs_nas_encode_optional_type(pkbuf, OGS_NAS_5GSM_STATUS_5GSM_CAUSE_TYPE);
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_5gsm_cause(pkbuf, &5gsm_status->5gsm_cause);
+        size = ogs_nas_encode_5gsm_cause(pkbuf, &gsm_status->gsm_cause);
         ogs_assert(size >= 0);
         encoded += size;
     }
 
-    if (5gsm_status->presencemask & OGS_NAS_5GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT)
+    if (gsm_status->presencemask & OGS_NAS_5GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT)
     {
         size = ogs_nas_encode_optional_type(pkbuf, OGS_NAS_5GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE);
         ogs_assert(size >= 0);
         encoded += size;
 
-        size = ogs_nas_encode_extended_protocol_configuration_options(pkbuf, &5gsm_status->extended_protocol_configuration_options);
+        size = ogs_nas_encode_extended_protocol_configuration_options(pkbuf, &gsm_status->extended_protocol_configuration_options);
         ogs_assert(size >= 0);
         encoded += size;
     }
