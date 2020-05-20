@@ -106,7 +106,7 @@ def usage():
     print "-h        Print this help and return"
 
 def v_upper(v):
-    return re.sub('_TO_UE', '', re.sub('_FROM_UE', '', re.sub('3GPP', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).upper())))
+    return re.sub('_TO_UE', '', re.sub('_FROM_UE', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).upper()))
 
 def v_lower(v):
     return re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower()

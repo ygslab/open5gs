@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:54:30.931357 by acetcom
+ * Created on: 2020-05-20 16:56:11.676596 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -1553,7 +1553,7 @@ int ogs_nas_decode_non_3gpp_nw_provided_policies(ogs_nas_non_3gpp_nw_provided_po
 {
     memcpy(non_3gpp_nw_provided_policies, pkbuf->data - 1, 1);
 
-    ogs_trace("  NON__NW_PROVIDED_POLICIES - ");
+    ogs_trace("  NON_3GPP_NW_PROVIDED_POLICIES - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - 1, 1);
 
     return 0;
@@ -1566,7 +1566,7 @@ int ogs_nas_encode_non_3gpp_nw_provided_policies(ogs_pkbuf_t *pkbuf, ogs_nas_non
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, non_3gpp_nw_provided_policies, size);
 
-    ogs_trace("  NON__NW_PROVIDED_POLICIES - ");
+    ogs_trace("  NON_3GPP_NW_PROVIDED_POLICIES - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
 
     return size;

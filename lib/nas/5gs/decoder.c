@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:54:30.948023 by acetcom
+ * Created on: 2020-05-20 16:56:11.692421 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -411,10 +411,10 @@ int ogs_nas_decode_registration_accept(ogs_nas_message_t *message, ogs_pkbuf_t *
                  registration_accept->presencemask |= OGS_NAS_REGISTRATION_ACCEPT_T3512_VALUE_PRESENT;
                  decoded += size;
                  break;
-             case OGS_NAS_REGISTRATION_ACCEPT_NON__DE_REGISTRATION_TIMER_VALUE_TYPE:
+             case OGS_NAS_REGISTRATION_ACCEPT_NON_3GPP_DE_REGISTRATION_TIMER_VALUE_TYPE:
                  size = ogs_nas_decode_gprs_timer_2(&registration_accept->non_3gpp_de_registration_timer_value, pkbuf);
                  ogs_assert(size >= 0);
-                 registration_accept->presencemask |= OGS_NAS_REGISTRATION_ACCEPT_NON__DE_REGISTRATION_TIMER_VALUE_PRESENT;
+                 registration_accept->presencemask |= OGS_NAS_REGISTRATION_ACCEPT_NON_3GPP_DE_REGISTRATION_TIMER_VALUE_PRESENT;
                  decoded += size;
                  break;
              case OGS_NAS_REGISTRATION_ACCEPT_T3502_VALUE_TYPE:
@@ -465,10 +465,10 @@ int ogs_nas_decode_registration_accept(ogs_nas_message_t *message, ogs_pkbuf_t *
                  registration_accept->presencemask |= OGS_NAS_REGISTRATION_ACCEPT_NEGOTIATED_DRX_PARAMETERS_PRESENT;
                  decoded += size;
                  break;
-             case OGS_NAS_REGISTRATION_ACCEPT_NON__NW_POLICIES_TYPE:
+             case OGS_NAS_REGISTRATION_ACCEPT_NON_3GPP_NW_POLICIES_TYPE:
                  size = ogs_nas_decode_non_3gpp_nw_provided_policies(&registration_accept->non_3gpp_nw_policies, pkbuf);
                  ogs_assert(size >= 0);
-                 registration_accept->presencemask |= OGS_NAS_REGISTRATION_ACCEPT_NON__NW_POLICIES_PRESENT;
+                 registration_accept->presencemask |= OGS_NAS_REGISTRATION_ACCEPT_NON_3GPP_NW_POLICIES_PRESENT;
                  decoded += size;
                  break;
              case OGS_NAS_REGISTRATION_ACCEPT_EPS_BEARER_CONTEXT_STATUS_TYPE:
