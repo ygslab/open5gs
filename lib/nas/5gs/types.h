@@ -1427,6 +1427,25 @@ ED8(uint8_t ebi15:1;,
     uint8_t ebi8:1;)
 } __attribute__ ((packed)) ogs_nas_serving_plmn_rate_control_t;
 
+
+
+
+
+
+/* 9.11.2.2 EAP message
+ * O TLV-E 7-1503 */
+typedef struct ogs_nas_eap_message_s {
+    uint16_t length;
+    uint8_t *buffer;
+} ogs_nas_eap_message_t;
+
+/* 9.11.3.10 ABBA
+ * M LV 3-n */
+typedef struct ogs_nas_abba_s {
+    uint8_t length;
+    uint8_t *buffer;
+} ogs_nas_abba_t;
+
 #ifdef __cplusplus
 }
 #endif
