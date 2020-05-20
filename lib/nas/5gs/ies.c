@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:15:55.281785 by acetcom
+ * Created on: 2020-05-20 16:42:41.818015 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -317,10 +317,10 @@ int ogs_nas_encode_s_nssai(ogs_pkbuf_t *pkbuf, ogs_nas_s_nssai_t *s_nssai)
 
 /* 9.11.3.1 5GMM capability
  * O TLV 3-15 */
-int ogs_nas_decode_gmm_capability(ogs_nas_gmm_capability_t *gmm_capability, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gmm_capability(ogs_nas_5gmm_capability_t *gmm_capability, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
-    ogs_nas_gmm_capability_t *source = (ogs_nas_gmm_capability_t *)pkbuf->data;
+    ogs_nas_5gmm_capability_t *source = (ogs_nas_5gmm_capability_t *)pkbuf->data;
 
     gmm_capability->length = source->length;
     size = gmm_capability->length + sizeof(gmm_capability->length);
@@ -334,12 +334,12 @@ int ogs_nas_decode_gmm_capability(ogs_nas_gmm_capability_t *gmm_capability, ogs_
     return size;
 }
 
-int ogs_nas_encode_gmm_capability(ogs_pkbuf_t *pkbuf, ogs_nas_gmm_capability_t *gmm_capability)
+int ogs_nas_encode_5gmm_capability(ogs_pkbuf_t *pkbuf, ogs_nas_5gmm_capability_t *gmm_capability)
 {
     uint16_t size = gmm_capability->length + sizeof(gmm_capability->length);
-    ogs_nas_gmm_capability_t target;
+    ogs_nas_5gmm_capability_t target;
 
-    memcpy(&target, gmm_capability, sizeof(ogs_nas_gmm_capability_t));
+    memcpy(&target, gmm_capability, sizeof(ogs_nas_5gmm_capability_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -826,9 +826,9 @@ int ogs_nas_encode_daylight_saving_time(ogs_pkbuf_t *pkbuf, ogs_nas_daylight_sav
 
 /* 9.11.3.2 5GMM cause
  * M V 1 */
-int ogs_nas_decode_gmm_cause(ogs_nas_gmm_cause_t *gmm_cause, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gmm_cause(ogs_nas_5gmm_cause_t *gmm_cause, ogs_pkbuf_t *pkbuf)
 {
-    uint16_t size = sizeof(ogs_nas_gmm_cause_t);
+    uint16_t size = sizeof(ogs_nas_5gmm_cause_t);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(gmm_cause, pkbuf->data - size, size);
@@ -839,10 +839,10 @@ int ogs_nas_decode_gmm_cause(ogs_nas_gmm_cause_t *gmm_cause, ogs_pkbuf_t *pkbuf)
     return size;
 }
 
-int ogs_nas_encode_gmm_cause(ogs_pkbuf_t *pkbuf, ogs_nas_gmm_cause_t *gmm_cause)
+int ogs_nas_encode_5gmm_cause(ogs_pkbuf_t *pkbuf, ogs_nas_5gmm_cause_t *gmm_cause)
 {
-    uint16_t size = sizeof(ogs_nas_gmm_cause_t);
-    ogs_nas_gmm_cause_t target;
+    uint16_t size = sizeof(ogs_nas_5gmm_cause_t);
+    ogs_nas_5gmm_cause_t target;
 
     memcpy(&target, gmm_cause, size);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));

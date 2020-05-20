@@ -109,6 +109,9 @@ def v_upper(v):
     return re.sub('_TO_UE', '', re.sub('_FROM_UE', '', re.sub('3GPP', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).upper())))
 
 def v_lower(v):
+    return re.sub('3gpp', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower())
+
+def get_value(v):
     return re.sub('5gmm', 'gmm', re.sub('3gpp', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower()))
 
 def get_cells(cells):
@@ -180,7 +183,7 @@ msg_list["IDENTITY RESPONSE"] = { "type" : "92" }
 msg_list["SECURITY MODE COMMAND"] = { "type" : "93" }
 msg_list["SECURITY MODE COMPLETE"] = { "type" : "94" }
 msg_list["SECURITY MODE REJECT"] = { "type" : "95" }
-msg_list["GMM STATUS"] = { "type" : "100" }
+msg_list["5GMM STATUS"] = { "type" : "100" }
 msg_list["NOTIFICATION"] = { "type" : "101" }
 msg_list["NOTIFICATION RESPONSE"] = { "type" : "102" }
 msg_list["UL NAS TRANSPORT"] = { "type" : "103" }
@@ -201,7 +204,7 @@ msg_list["PDU SESSION RELEASE REQUEST"] = { "type" : "209" }
 msg_list["PDU SESSION RELEASE REJECT"] = { "type" : "210" }
 msg_list["PDU SESSION RELEASE COMMAND"] = { "type" : "211" }
 msg_list["PDU SESSION RELEASE COMPLETE"] = { "type" : "212" }
-msg_list["GSM STATUS"] = { "type" : "214" }
+msg_list["5GSM STATUS"] = { "type" : "214" }
 
 # Table number for Message List
 msg_list["AUTHENTICATION REQUEST"]["table"] = 0
@@ -231,7 +234,7 @@ msg_list["NOTIFICATION RESPONSE"]["table"] = 23
 msg_list["SECURITY MODE COMMAND"]["table"] = 24
 msg_list["SECURITY MODE COMPLETE"]["table"] = 25
 msg_list["SECURITY MODE REJECT"]["table"] = 26
-msg_list["GMM STATUS"]["table"] = 28
+msg_list["5GMM STATUS"]["table"] = 28
 
 msg_list["PDU SESSION ESTABLISHMENT REQUEST"]["table"] = 29
 msg_list["PDU SESSION ESTABLISHMENT ACCEPT"]["table"] = 30
@@ -248,7 +251,7 @@ msg_list["PDU SESSION RELEASE REQUEST"]["table"] = 40
 msg_list["PDU SESSION RELEASE REJECT"]["table"] = 41
 msg_list["PDU SESSION RELEASE COMMAND"]["table"] = 42
 msg_list["PDU SESSION RELEASE COMPLETE"]["table"] = 43
-msg_list["GSM STATUS"]["table"] = 44
+msg_list["5GSM STATUS"]["table"] = 44
 
 for key in msg_list.keys():
     if "table" not in msg_list[key].keys():
@@ -343,11 +346,11 @@ int ogs_nas_encode_optional_type(ogs_pkbuf_t *pkbuf, uint8_t type);
 """)
 
 for (k, v) in sorted_type_list:
-    f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf);\n" % (v_lower(k), v_lower(k), v_lower(k)))
+    f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf);\n" % (v_lower(k), v_lower(k), get_value(k)))
 f.write("\n")
 
 for (k, v) in sorted_type_list:
-    f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_%s_t *%s);\n" % (v_lower(k), v_lower(k), v_lower(k)))
+    f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_%s_t *%s);\n" % (v_lower(k), v_lower(k), get_value(k)))
 f.write("\n")
 
 
@@ -380,45 +383,45 @@ for (k, v) in sorted_type_list:
     f.write("/* %s %s\n" % (type_list[k]["reference"], k))
     f.write(" * %s %s %s */\n" % (type_list[k]["presence"], type_list[k]["format"], type_list[k]["length"]))
     if type_list[k]["format"] == "TV" and type_list[k]["length"] == "1":
-        f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf)\n" % (v_lower(k), v_lower(k), v_lower(k)))
+        f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf)\n" % (v_lower(k), v_lower(k), get_value(k)))
         f.write("{\n")
-        f.write("    memcpy(%s, pkbuf->data - 1, 1);\n\n" % v_lower(k))
+        f.write("    memcpy(%s, pkbuf->data - 1, 1);\n\n" % get_value(k))
         f.write("    ogs_trace(\"  %s - \");\n" % v_upper(k))
         f.write("    ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - 1, 1);\n\n");
         f.write("    return 0;\n")
         f.write("}\n\n")
-        f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_%s_t *%s)\n" % (v_lower(k), v_lower(k), v_lower(k)))
+        f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_%s_t *%s)\n" % (v_lower(k), v_lower(k), get_value(k)))
         f.write("{\n")
         f.write("    uint16_t size = sizeof(ogs_nas_%s_t);\n\n" % v_lower(k))
         f.write("    ogs_assert(ogs_pkbuf_pull(pkbuf, size));\n")
-        f.write("    memcpy(pkbuf->data - size, %s, size);\n\n" % v_lower(k))
+        f.write("    memcpy(pkbuf->data - size, %s, size);\n\n" % get_value(k))
         f.write("    ogs_trace(\"  %s - \");\n" % v_upper(k))
         f.write("    ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);\n\n");
         f.write("    return size;\n")
         f.write("}\n\n")
     elif type_list[k]["format"] == "TV" or type_list[k]["format"] == "V":
-        f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf)\n" % (v_lower(k), v_lower(k), v_lower(k)))
+        f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf)\n" % (v_lower(k), v_lower(k), get_value(k)))
         f.write("{\n")
         if type_list[k]["length"] == "4":
             f.write("    uint16_t size = 3;\n\n")
         else:
             f.write("    uint16_t size = sizeof(ogs_nas_%s_t);\n\n" % v_lower(k))
         f.write("    ogs_assert(ogs_pkbuf_pull(pkbuf, size));\n")
-        f.write("    memcpy(%s, pkbuf->data - size, size);\n\n" % v_lower(k))
+        f.write("    memcpy(%s, pkbuf->data - size, size);\n\n" % get_value(k))
         if "decode" in type_list[k]:
             f.write("%s" % type_list[k]["decode"])
         f.write("    ogs_trace(\"  %s - \");\n" % v_upper(k))
         f.write("    ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);\n\n");
         f.write("    return size;\n")
         f.write("}\n\n")
-        f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_%s_t *%s)\n" % (v_lower(k), v_lower(k), v_lower(k)))
+        f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_%s_t *%s)\n" % (v_lower(k), v_lower(k), get_value(k)))
         f.write("{\n")
         if type_list[k]["length"] == "4":
             f.write("    uint16_t size = 3;\n")
         else:
             f.write("    uint16_t size = sizeof(ogs_nas_%s_t);\n" % v_lower(k))
         f.write("    ogs_nas_%s_t target;\n\n" % v_lower(k))
-        f.write("    memcpy(&target, %s, size);\n" % v_lower(k))
+        f.write("    memcpy(&target, %s, size);\n" % get_value(k))
         if "encode" in type_list[k]:
             f.write("%s" % type_list[k]["encode"])
         f.write("    ogs_assert(ogs_pkbuf_pull(pkbuf, size));\n")
@@ -428,55 +431,55 @@ for (k, v) in sorted_type_list:
         f.write("    return size;\n")
         f.write("}\n\n")
     elif type_list[k]["format"] == "LV-E" or type_list[k]["format"] == "TLV-E":
-        f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf)\n" % (v_lower(k), v_lower(k), v_lower(k)))
+        f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf)\n" % (v_lower(k), v_lower(k), get_value(k)))
         f.write("{\n")
         f.write("    uint16_t size = 0;\n")
         f.write("    ogs_nas_%s_t *source = (ogs_nas_%s_t *)pkbuf->data;\n\n" % (v_lower(k), v_lower(k)))
-        f.write("    %s->length = be16toh(source->length);\n" % v_lower(k))
-        f.write("    size = %s->length + sizeof(%s->length);\n\n" % (v_lower(k), v_lower(k)))
+        f.write("    %s->length = be16toh(source->length);\n" % get_value(k))
+        f.write("    size = %s->length + sizeof(%s->length);\n\n" % (get_value(k), get_value(k)))
         f.write("    ogs_assert(ogs_pkbuf_pull(pkbuf, size));\n")
-        f.write("    %s->buffer = pkbuf->data - size + sizeof(%s->length);\n\n" % (v_lower(k), v_lower(k)))
+        f.write("    %s->buffer = pkbuf->data - size + sizeof(%s->length);\n\n" % (get_value(k), get_value(k)))
         f.write("    ogs_trace(\"  %s - \");\n" % v_upper(k))
-        f.write("    ogs_log_hexdump(OGS_LOG_TRACE, (void*)%s->buffer, %s->length);\n\n" % (v_lower(k), v_lower(k)));
+        f.write("    ogs_log_hexdump(OGS_LOG_TRACE, (void*)%s->buffer, %s->length);\n\n" % (get_value(k), get_value(k)));
         f.write("    return size;\n")
         f.write("}\n\n")
-        f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_%s_t *%s)\n" % (v_lower(k), v_lower(k), v_lower(k)))
+        f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_%s_t *%s)\n" % (v_lower(k), v_lower(k), get_value(k)))
         f.write("{\n")
         f.write("    uint16_t size = 0;\n")
         f.write("    uint16_t target;\n\n")
-        f.write("    ogs_assert(%s);\n" % v_lower(k))
-        f.write("    ogs_assert(%s->buffer);\n\n" % v_lower(k))
-        f.write("    size = sizeof(%s->length);\n" % v_lower(k))
+        f.write("    ogs_assert(%s);\n" % get_value(k))
+        f.write("    ogs_assert(%s->buffer);\n\n" % get_value(k))
+        f.write("    size = sizeof(%s->length);\n" % get_value(k))
         f.write("    ogs_assert(ogs_pkbuf_pull(pkbuf, size));\n")
-        f.write("    target = htobe16(%s->length);\n" % v_lower(k))
+        f.write("    target = htobe16(%s->length);\n" % get_value(k))
         f.write("    memcpy(pkbuf->data - size, &target, size);\n\n")
-        f.write("    size = %s->length;\n" % v_lower(k))
+        f.write("    size = %s->length;\n" % get_value(k))
         f.write("    ogs_assert(ogs_pkbuf_pull(pkbuf, size));\n")
-        f.write("    memcpy(pkbuf->data - size, %s->buffer, size);\n\n" % v_lower(k))
+        f.write("    memcpy(pkbuf->data - size, %s->buffer, size);\n\n" % get_value(k))
         f.write("    ogs_trace(\"  %s - \");\n" % v_upper(k))
         f.write("    ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);\n\n");
-        f.write("    return %s->length + sizeof(%s->length);\n" % (v_lower(k), v_lower(k)))
+        f.write("    return %s->length + sizeof(%s->length);\n" % (get_value(k), get_value(k)))
         f.write("}\n\n");
     else:
-        f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf)\n" % (v_lower(k), v_lower(k), v_lower(k)))
+        f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf)\n" % (v_lower(k), v_lower(k), get_value(k)))
         f.write("{\n")
         f.write("    uint16_t size = 0;\n")
         f.write("    ogs_nas_%s_t *source = (ogs_nas_%s_t *)pkbuf->data;\n\n" % (v_lower(k), v_lower(k)))
-        f.write("    %s->length = source->length;\n" % v_lower(k))
-        f.write("    size = %s->length + sizeof(%s->length);\n\n" % (v_lower(k), v_lower(k)))
+        f.write("    %s->length = source->length;\n" % get_value(k))
+        f.write("    size = %s->length + sizeof(%s->length);\n\n" % (get_value(k), get_value(k)))
         f.write("    ogs_assert(ogs_pkbuf_pull(pkbuf, size));\n")
-        f.write("    memcpy(%s, pkbuf->data - size, size);\n\n" % v_lower(k))
+        f.write("    memcpy(%s, pkbuf->data - size, size);\n\n" % get_value(k))
         if "decode" in type_list[k]:
             f.write("%s" % type_list[k]["decode"])
         f.write("    ogs_trace(\"  %s - \");\n" % v_upper(k))
         f.write("    ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);\n\n");
         f.write("    return size;\n")
         f.write("}\n\n")
-        f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_%s_t *%s)\n" % (v_lower(k), v_lower(k), v_lower(k)))
+        f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_%s_t *%s)\n" % (v_lower(k), v_lower(k), get_value(k)))
         f.write("{\n")
-        f.write("    uint16_t size = %s->length + sizeof(%s->length);\n" % (v_lower(k), v_lower(k)))
+        f.write("    uint16_t size = %s->length + sizeof(%s->length);\n" % (get_value(k), get_value(k)))
         f.write("    ogs_nas_%s_t target;\n\n" % v_lower(k))
-        f.write("    memcpy(&target, %s, sizeof(ogs_nas_%s_t));\n" % (v_lower(k), v_lower(k)))
+        f.write("    memcpy(&target, %s, sizeof(ogs_nas_%s_t));\n" % (get_value(k), v_lower(k)))
         if "encode" in type_list[k]:
             f.write("%s" % type_list[k]["encode"])
         f.write("    ogs_assert(ogs_pkbuf_pull(pkbuf, size));\n")

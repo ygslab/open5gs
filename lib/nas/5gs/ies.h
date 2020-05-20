@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:15:55.278856 by acetcom
+ * Created on: 2020-05-20 16:42:41.815280 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -53,7 +53,7 @@ int ogs_nas_decode_gprs_timer(ogs_nas_gprs_timer_t *gprs_timer, ogs_pkbuf_t *pkb
 int ogs_nas_decode_gprs_timer_2(ogs_nas_gprs_timer_2_t *gprs_timer_2, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_gprs_timer_3(ogs_nas_gprs_timer_3_t *gprs_timer_3, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_s_nssai(ogs_nas_s_nssai_t *s_nssai, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_gmm_capability(ogs_nas_gmm_capability_t *gmm_capability, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gmm_capability(ogs_nas_5gmm_capability_t *gmm_capability, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_abba(ogs_nas_abba_t *abba, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_additional_5g_security_information(ogs_nas_additional_5g_security_information_t *additional_5g_security_information, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_additional_information_requested(ogs_nas_additional_information_requested_t *additional_information_requested, ogs_pkbuf_t *pkbuf);
@@ -68,7 +68,7 @@ int ogs_nas_decode_ciot_small_data_container(ogs_nas_ciot_small_data_container_t
 int ogs_nas_decode_ciphering_key_data(ogs_nas_ciphering_key_data_t *ciphering_key_data, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_control_plane_service_type(ogs_nas_control_plane_service_type_t *control_plane_service_type, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_daylight_saving_time(ogs_nas_daylight_saving_time_t *daylight_saving_time, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_gmm_cause(ogs_nas_gmm_cause_t *gmm_cause, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gmm_cause(ogs_nas_5gmm_cause_t *gmm_cause, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_de_registration_type(ogs_nas_de_registration_type_t *de_registration_type, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_emergency_number_list(ogs_nas_emergency_number_list_t *emergency_number_list, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_eps_bearer_context_status(ogs_nas_eps_bearer_context_status_t *eps_bearer_context_status, ogs_pkbuf_t *pkbuf);
@@ -163,7 +163,7 @@ int ogs_nas_encode_gprs_timer(ogs_pkbuf_t *pkbuf, ogs_nas_gprs_timer_t *gprs_tim
 int ogs_nas_encode_gprs_timer_2(ogs_pkbuf_t *pkbuf, ogs_nas_gprs_timer_2_t *gprs_timer_2);
 int ogs_nas_encode_gprs_timer_3(ogs_pkbuf_t *pkbuf, ogs_nas_gprs_timer_3_t *gprs_timer_3);
 int ogs_nas_encode_s_nssai(ogs_pkbuf_t *pkbuf, ogs_nas_s_nssai_t *s_nssai);
-int ogs_nas_encode_gmm_capability(ogs_pkbuf_t *pkbuf, ogs_nas_gmm_capability_t *gmm_capability);
+int ogs_nas_encode_5gmm_capability(ogs_pkbuf_t *pkbuf, ogs_nas_5gmm_capability_t *gmm_capability);
 int ogs_nas_encode_abba(ogs_pkbuf_t *pkbuf, ogs_nas_abba_t *abba);
 int ogs_nas_encode_additional_5g_security_information(ogs_pkbuf_t *pkbuf, ogs_nas_additional_5g_security_information_t *additional_5g_security_information);
 int ogs_nas_encode_additional_information_requested(ogs_pkbuf_t *pkbuf, ogs_nas_additional_information_requested_t *additional_information_requested);
@@ -178,7 +178,7 @@ int ogs_nas_encode_ciot_small_data_container(ogs_pkbuf_t *pkbuf, ogs_nas_ciot_sm
 int ogs_nas_encode_ciphering_key_data(ogs_pkbuf_t *pkbuf, ogs_nas_ciphering_key_data_t *ciphering_key_data);
 int ogs_nas_encode_control_plane_service_type(ogs_pkbuf_t *pkbuf, ogs_nas_control_plane_service_type_t *control_plane_service_type);
 int ogs_nas_encode_daylight_saving_time(ogs_pkbuf_t *pkbuf, ogs_nas_daylight_saving_time_t *daylight_saving_time);
-int ogs_nas_encode_gmm_cause(ogs_pkbuf_t *pkbuf, ogs_nas_gmm_cause_t *gmm_cause);
+int ogs_nas_encode_5gmm_cause(ogs_pkbuf_t *pkbuf, ogs_nas_5gmm_cause_t *gmm_cause);
 int ogs_nas_encode_de_registration_type(ogs_pkbuf_t *pkbuf, ogs_nas_de_registration_type_t *de_registration_type);
 int ogs_nas_encode_emergency_number_list(ogs_pkbuf_t *pkbuf, ogs_nas_emergency_number_list_t *emergency_number_list);
 int ogs_nas_encode_eps_bearer_context_status(ogs_pkbuf_t *pkbuf, ogs_nas_eps_bearer_context_status_t *eps_bearer_context_status);
