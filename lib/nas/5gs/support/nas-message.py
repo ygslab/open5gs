@@ -109,10 +109,10 @@ def v_upper(v):
     return re.sub('_TO_UE', '', re.sub('_FROM_UE', '', re.sub('3GPP', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).upper())))
 
 def v_lower(v):
-    return re.sub('3gpp', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower())
+    return re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower()
 
 def get_value(v):
-    return re.sub('5g_', '', re.sub('5gsm', 'gsm', re.sub('5gmm', 'gmm', re.sub('3gpp', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower()))))
+    return re.sub('5g_', '', re.sub('5gsm', 'gsm', re.sub('5gmm', 'gmm', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower())))
 
 def get_cells(cells):
     iei = cells[0].text.encode('ascii', 'ignore')
@@ -578,7 +578,7 @@ for (k, v) in sorted_msg_list:
             optional_fields = True;
 
         f.write("    ogs_nas_" + v_lower(ie["type"]) + "_t " + \
-                v_lower(ie["value"]) + ";\n")
+                get_value(ie["value"]) + ";\n")
 
     f.write("} ogs_nas_%s_t;\n\n" % v_lower(k))
 
@@ -594,7 +594,7 @@ for (k, v) in sorted_msg_list:
     if len(msg_list[k]["ies"]) == 0:
         continue;
     if float(msg_list[k]["type"]) < 192:
-        f.write("        ogs_nas_%s_t %s;\n" % (v_lower(k), v_lower(k)))
+        f.write("        ogs_nas_%s_t %s;\n" % (v_lower(k), get_value(k)))
 f.write("""    };
 } ogs_nas_emm_message_t;
 
@@ -608,7 +608,7 @@ for (k, v) in sorted_msg_list:
     if len(msg_list[k]["ies"]) == 0:
         continue;
     if float(msg_list[k]["type"]) >= 192:
-        f.write("        ogs_nas_%s_t %s;\n" % (v_lower(k), v_lower(k)))
+        f.write("        ogs_nas_%s_t %s;\n" % (v_lower(k), get_value(k)))
 
 f.write("""    };
 } ogs_nas_esm_message_t;

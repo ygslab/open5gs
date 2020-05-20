@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:46:21.459740 by acetcom
+ * Created on: 2020-05-20 16:54:30.948023 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -412,7 +412,7 @@ int ogs_nas_decode_registration_accept(ogs_nas_message_t *message, ogs_pkbuf_t *
                  decoded += size;
                  break;
              case OGS_NAS_REGISTRATION_ACCEPT_NON__DE_REGISTRATION_TIMER_VALUE_TYPE:
-                 size = ogs_nas_decode_gprs_timer_2(&registration_accept->non__de_registration_timer_value, pkbuf);
+                 size = ogs_nas_decode_gprs_timer_2(&registration_accept->non_3gpp_de_registration_timer_value, pkbuf);
                  ogs_assert(size >= 0);
                  registration_accept->presencemask |= OGS_NAS_REGISTRATION_ACCEPT_NON__DE_REGISTRATION_TIMER_VALUE_PRESENT;
                  decoded += size;
@@ -466,7 +466,7 @@ int ogs_nas_decode_registration_accept(ogs_nas_message_t *message, ogs_pkbuf_t *
                  decoded += size;
                  break;
              case OGS_NAS_REGISTRATION_ACCEPT_NON__NW_POLICIES_TYPE:
-                 size = ogs_nas_decode_non__nw_provided_policies(&registration_accept->non__nw_policies, pkbuf);
+                 size = ogs_nas_decode_non_3gpp_nw_provided_policies(&registration_accept->non_3gpp_nw_policies, pkbuf);
                  ogs_assert(size >= 0);
                  registration_accept->presencemask |= OGS_NAS_REGISTRATION_ACCEPT_NON__NW_POLICIES_PRESENT;
                  decoded += size;

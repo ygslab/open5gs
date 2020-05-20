@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:46:21.451608 by acetcom
+ * Created on: 2020-05-20 16:54:30.939973 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -197,7 +197,7 @@ typedef struct ogs_nas_registration_request_s {
     /* Optional fields */
     uint32_t presencemask;
     ogs_nas_key_set_identifier_t non_current_native_nas_key_set_identifier;
-    ogs_nas_5gmm_capability_t 5gmm_capability;
+    ogs_nas_5gmm_capability_t gmm_capability;
     ogs_nas_ue_security_capability_t ue_security_capability;
     ogs_nas_nssai_t requested_nssai;
     ogs_nas_5gs_tracking_area_identity_t last_visited_registered_tai;
@@ -314,7 +314,7 @@ typedef struct ogs_nas_registration_accept_s {
 
     /* Optional fields */
     uint32_t presencemask;
-    ogs_nas_5gs_mobile_identity_t 5g_guti;
+    ogs_nas_5gs_mobile_identity_t guti;
     ogs_nas_plmn_list_t equivalent_plmns;
     ogs_nas_5gs_tracking_area_identity_list_t tai_list;
     ogs_nas_nssai_t allowed_nssai;
@@ -329,7 +329,7 @@ typedef struct ogs_nas_registration_accept_s {
     ogs_nas_network_slicing_indication_t network_slicing_indication;
     ogs_nas_service_area_list_t service_area_list;
     ogs_nas_gprs_timer_3_t t3512_value;
-    ogs_nas_gprs_timer_2_t non__de_registration_timer_value;
+    ogs_nas_gprs_timer_2_t non_3gpp_de_registration_timer_value;
     ogs_nas_gprs_timer_2_t t3502_value;
     ogs_nas_emergency_number_list_t emergency_number_list;
     ogs_nas_extended_emergency_number_list_t extended_emergency_number_list;
@@ -338,7 +338,7 @@ typedef struct ogs_nas_registration_accept_s {
     ogs_nas_nssai_inclusion_mode_t nssai_inclusion_mode;
     ogs_nas_operator_defined_access_category_definitions_t operator_defined_access_category_definitions;
     ogs_nas_5gs_drx_parameters_t negotiated_drx_parameters;
-    ogs_nas_non__nw_provided_policies_t non__nw_policies;
+    ogs_nas_non_3gpp_nw_provided_policies_t non_3gpp_nw_policies;
     ogs_nas_eps_bearer_context_status_t eps_bearer_context_status;
     ogs_nas_extended_drx_parameters_t negotiated_extended_drx_parameters;
     ogs_nas_gprs_timer_3_t t3447_value;
@@ -349,7 +349,7 @@ typedef struct ogs_nas_registration_accept_s {
     ogs_nas_nssai_t pending_nssai;
     ogs_nas_ciphering_key_data_t ciphering_key_data;
     ogs_nas_cag_information_list_t cag_information_list;
-    ogs_nas_truncated_5g_s_tmsi_configuration_t truncated_5g_s_tmsi_configuration;
+    ogs_nas_truncated_5g_s_tmsi_configuration_t truncated_s_tmsi_configuration;
     ogs_nas_wus_assistance_information_t negotiated_wus_assistance_information;
 } ogs_nas_registration_accept_t;
 
@@ -382,7 +382,7 @@ typedef struct ogs_nas_registration_complete_s {
 
 typedef struct ogs_nas_registration_reject_s {
     /* Mandatory fields */
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_5gmm_cause_t gmm_cause;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -420,7 +420,7 @@ typedef struct ogs_nas_deregistration_request_to_ue_s {
 
     /* Optional fields */
     uint32_t presencemask;
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_5gmm_cause_t gmm_cause;
     ogs_nas_gprs_timer_2_t t3346_value;
     ogs_nas_rejected_nssai_t rejected_nssai;
 } ogs_nas_deregistration_request_to_ue_t;
@@ -441,7 +441,7 @@ typedef struct ogs_nas_deregistration_request_to_ue_s {
 typedef struct ogs_nas_service_request_s {
     /* Mandatory fields */
     ogs_nas_key_set_identifier_t ngksi;
-    ogs_nas_5gs_mobile_identity_t 5g_s_tmsi;
+    ogs_nas_5gs_mobile_identity_t s_tmsi;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -466,7 +466,7 @@ typedef struct ogs_nas_service_request_s {
 
 typedef struct ogs_nas_service_reject_s {
     /* Mandatory fields */
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_5gmm_cause_t gmm_cause;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -558,7 +558,7 @@ typedef struct ogs_nas_configuration_update_command_s {
     /* Optional fields */
     uint32_t presencemask;
     ogs_nas_configuration_update_indication_t configuration_update_indication;
-    ogs_nas_5gs_mobile_identity_t 5g_guti;
+    ogs_nas_5gs_mobile_identity_t guti;
     ogs_nas_5gs_tracking_area_identity_list_t tai_list;
     ogs_nas_nssai_t allowed_nssai;
     ogs_nas_service_area_list_t service_area_list;
@@ -579,7 +579,7 @@ typedef struct ogs_nas_configuration_update_command_s {
     ogs_nas_ue_radio_capability_id_t ue_radio_capability_id;
     ogs_nas_ue_radio_capability_id_deletion_indication_t ue_radio_capability_id_deletion_indication;
     ogs_nas_5gs_registration_result_t 5gs_registration_result;
-    ogs_nas_truncated_5g_s_tmsi_configuration_t truncated_5g_s_tmsi_configuration;
+    ogs_nas_truncated_5g_s_tmsi_configuration_t truncated_s_tmsi_configuration;
 } ogs_nas_configuration_update_command_t;
 
 
@@ -683,7 +683,7 @@ typedef struct ogs_nas_authentication_reject_s {
 
 typedef struct ogs_nas_authentication_failure_s {
     /* Mandatory fields */
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_5gmm_cause_t gmm_cause;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -754,7 +754,7 @@ typedef struct ogs_nas_security_mode_command_s {
     uint32_t presencemask;
     ogs_nas_imeisv_request_t imeisv_request;
     ogs_nas_eps_nas_security_algorithms_t selected_eps_nas_security_algorithms;
-    ogs_nas_additional_5g_security_information_t additional_5g_security_information;
+    ogs_nas_additional_5g_security_information_t additional_security_information;
     ogs_nas_eap_message_t eap_message;
     ogs_nas_abba_t abba;
     ogs_nas_s1_ue_security_capability_t replayed_s1_ue_security_capabilities;
@@ -787,7 +787,7 @@ typedef struct ogs_nas_security_mode_complete_s {
 
 typedef struct ogs_nas_security_mode_reject_s {
     /* Mandatory fields */
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_5gmm_cause_t gmm_cause;
 } ogs_nas_security_mode_reject_t;
 
 
@@ -797,7 +797,7 @@ typedef struct ogs_nas_security_mode_reject_s {
 
 typedef struct ogs_nas_5gmm_status_s {
     /* Mandatory fields */
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_5gmm_cause_t gmm_cause;
 } ogs_nas_5gmm_status_t;
 
 
@@ -880,7 +880,7 @@ typedef struct ogs_nas_dl_nas_transport_s {
     /* Optional fields */
     uint32_t presencemask;
     ogs_nas_additional_information_t additional_information;
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_5gmm_cause_t gmm_cause;
     ogs_nas_gprs_timer_3_t back_off_timer_value;
 } ogs_nas_dl_nas_transport_t;
 
@@ -990,7 +990,7 @@ typedef struct ogs_nas_pdu_session_authentication_complete_s {
     uint32_t presencemask;
     ogs_nas_pdu_session_type_t pdu_session_type;
     ogs_nas_ssc_mode_t ssc_mode;
-    ogs_nas_5gsm_capability_t 5gsm_capability;
+    ogs_nas_5gsm_capability_t gsm_capability;
     ogs_nas_maximum_number_of_supported_packet_filters_t maximum_number_of_supported_packet_filters;
     ogs_nas_always_on_pdu_session_requested_t always_on_pdu_session_requested;
     ogs_nas_sm_pdu_dn_request_container_t sm_pdu_dn_request_container;
@@ -1044,7 +1044,7 @@ typedef struct ogs_nas_pdu_session_authentication_result_s {
 
     /* Optional fields */
     uint32_t presencemask;
-    ogs_nas_5gsm_cause_t 5gsm_cause;
+    ogs_nas_5gsm_cause_t gsm_cause;
     ogs_nas_pdu_address_t pdu_address;
     ogs_nas_gprs_timer_t rq_timer_value;
     ogs_nas_s_nssai_t s_nssai;
@@ -1054,7 +1054,7 @@ typedef struct ogs_nas_pdu_session_authentication_result_s {
     ogs_nas_qos_flow_descriptions_t authorized_qos_flow_descriptions;
     ogs_nas_extended_protocol_configuration_options_t extended_protocol_configuration_options;
     ogs_nas_dnn_t dnn;
-    ogs_nas_5gsm_network_feature_support_t 5gsm_network_feature_support;
+    ogs_nas_5gsm_network_feature_support_t gsm_network_feature_support;
     ogs_nas_serving_plmn_rate_control_t serving_plmn_rate_control;
     ogs_nas_atsss_container_t atsss_container;
     ogs_nas_control_plane_only_indication_t control_plane_only_indication;
@@ -1080,7 +1080,7 @@ typedef struct ogs_nas_pdu_session_authentication_result_s {
 
 typedef struct ogs_nas_pdu_session_modification_request_s {
     /* Mandatory fields */
-    ogs_nas_5gsm_cause_t 5gsm_cause;
+    ogs_nas_5gsm_cause_t gsm_cause;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -1089,7 +1089,7 @@ typedef struct ogs_nas_pdu_session_modification_request_s {
     ogs_nas_eap_message_t eap_message;
     ogs_nas_extended_protocol_configuration_options_t extended_protocol_configuration_options;
     ogs_nas_re_attempt_indicator_t re_attempt_indicator;
-    ogs_nas_5gsm_congestion_re_attempt_indicator_t 5gsm_congestion_re_attempt_indicator;
+    ogs_nas_5gsm_congestion_re_attempt_indicator_t gsm_congestion_re_attempt_indicator;
 } ogs_nas_pdu_session_modification_request_t;
 
 
@@ -1172,8 +1172,8 @@ typedef struct ogs_nas_pdu_session_modification_command_reject_s {
 
     /* Optional fields */
     uint32_t presencemask;
-    ogs_nas_5gsm_capability_t 5gsm_capability;
-    ogs_nas_5gsm_cause_t 5gsm_cause;
+    ogs_nas_5gsm_capability_t gsm_capability;
+    ogs_nas_5gsm_cause_t gsm_cause;
     ogs_nas_maximum_number_of_supported_packet_filters_t maximum_number_of_supported_packet_filters;
     ogs_nas_always_on_pdu_session_requested_t always_on_pdu_session_requested;
     ogs_nas_integrity_protection_maximum_data_rate_t integrity_protection_maximum_data_rate;
@@ -1200,14 +1200,14 @@ typedef struct ogs_nas_pdu_session_modification_command_reject_s {
 
 typedef struct ogs_nas_pdu_session_release_request_s {
     /* Mandatory fields */
-    ogs_nas_5gsm_cause_t 5gsm_cause;
+    ogs_nas_5gsm_cause_t gsm_cause;
 
     /* Optional fields */
     uint32_t presencemask;
     ogs_nas_gprs_timer_3_t back_off_timer_value;
     ogs_nas_extended_protocol_configuration_options_t extended_protocol_configuration_options;
     ogs_nas_re_attempt_indicator_t re_attempt_indicator;
-    ogs_nas_5gsm_congestion_re_attempt_indicator_t 5gsm_congestion_re_attempt_indicator;
+    ogs_nas_5gsm_congestion_re_attempt_indicator_t gsm_congestion_re_attempt_indicator;
 } ogs_nas_pdu_session_release_request_t;
 
 
@@ -1243,7 +1243,7 @@ typedef struct ogs_nas_pdu_session_release_reject_s {
 
     /* Optional fields */
     uint32_t presencemask;
-    ogs_nas_5gsm_cause_t 5gsm_cause;
+    ogs_nas_5gsm_cause_t gsm_cause;
     ogs_nas_session_ambr_t session_ambr;
     ogs_nas_gprs_timer_t rq_timer_value;
     ogs_nas_always_on_pdu_session_indication_t always_on_pdu_session_indication;
@@ -1283,7 +1283,7 @@ typedef struct ogs_nas_pdu_session_release_command_s {
 
 typedef struct ogs_nas_pdu_session_release_complete_s {
     /* Mandatory fields */
-    ogs_nas_5gsm_cause_t 5gsm_cause;
+    ogs_nas_5gsm_cause_t gsm_cause;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -1303,7 +1303,7 @@ typedef struct ogs_nas_5gsm_status_s {
 
     /* Optional fields */
     uint32_t presencemask;
-    ogs_nas_5gsm_cause_t 5gsm_cause;
+    ogs_nas_5gsm_cause_t gsm_cause;
     ogs_nas_extended_protocol_configuration_options_t extended_protocol_configuration_options;
 } ogs_nas_5gsm_status_t;
 
@@ -1332,7 +1332,7 @@ typedef struct ogs_nas_emm_message_s {
         ogs_nas_security_mode_command_t security_mode_command;
         ogs_nas_security_mode_complete_t security_mode_complete;
         ogs_nas_security_mode_reject_t security_mode_reject;
-        ogs_nas_5gmm_status_t 5gmm_status;
+        ogs_nas_5gmm_status_t gmm_status;
         ogs_nas_notification_t notification;
         ogs_nas_notification_response_t notification_response;
         ogs_nas_ul_nas_transport_t ul_nas_transport;
@@ -1358,7 +1358,7 @@ typedef struct ogs_nas_esm_message_s {
         ogs_nas_pdu_session_release_reject_t pdu_session_release_reject;
         ogs_nas_pdu_session_release_command_t pdu_session_release_command;
         ogs_nas_pdu_session_release_complete_t pdu_session_release_complete;
-        ogs_nas_5gsm_status_t 5gsm_status;
+        ogs_nas_5gsm_status_t gsm_status;
     };
 } ogs_nas_esm_message_t;
 

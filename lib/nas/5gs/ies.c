@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:46:21.441388 by acetcom
+ * Created on: 2020-05-20 16:54:30.931357 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -1549,9 +1549,9 @@ int ogs_nas_encode_network_slicing_indication(ogs_pkbuf_t *pkbuf, ogs_nas_networ
 
 /* 9.11.3.36A Non-3GPP NW provided policies
  * O TV 1 */
-int ogs_nas_decode_non__nw_provided_policies(ogs_nas_non__nw_provided_policies_t *non__nw_provided_policies, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_non_3gpp_nw_provided_policies(ogs_nas_non_3gpp_nw_provided_policies_t *non_3gpp_nw_provided_policies, ogs_pkbuf_t *pkbuf)
 {
-    memcpy(non__nw_provided_policies, pkbuf->data - 1, 1);
+    memcpy(non_3gpp_nw_provided_policies, pkbuf->data - 1, 1);
 
     ogs_trace("  NON__NW_PROVIDED_POLICIES - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - 1, 1);
@@ -1559,12 +1559,12 @@ int ogs_nas_decode_non__nw_provided_policies(ogs_nas_non__nw_provided_policies_t
     return 0;
 }
 
-int ogs_nas_encode_non__nw_provided_policies(ogs_pkbuf_t *pkbuf, ogs_nas_non__nw_provided_policies_t *non__nw_provided_policies)
+int ogs_nas_encode_non_3gpp_nw_provided_policies(ogs_pkbuf_t *pkbuf, ogs_nas_non_3gpp_nw_provided_policies_t *non_3gpp_nw_provided_policies)
 {
-    uint16_t size = sizeof(ogs_nas_non__nw_provided_policies_t);
+    uint16_t size = sizeof(ogs_nas_non_3gpp_nw_provided_policies_t);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(pkbuf->data - size, non__nw_provided_policies, size);
+    memcpy(pkbuf->data - size, non_3gpp_nw_provided_policies, size);
 
     ogs_trace("  NON__NW_PROVIDED_POLICIES - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
