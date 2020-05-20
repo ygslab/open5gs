@@ -1093,14 +1093,6 @@ ED2(uint8_t paging_time_window:4;,
     uint8_t e_drx_value:4;)
 } __attribute__ ((packed)) ogs_nas_extended_drx_parameters_t;
 
-/* 9.9.4.1 Access point name
- * See subclause 10.5.6.1 in 3GPP TS 24.008 [13].
- * O TLV 3-102 */
-typedef struct ogs_nas_access_point_name_s {
-    uint8_t length;
-    char apn[OGS_MAX_APN_LEN];
-} __attribute__ ((packed)) ogs_nas_access_point_name_t;
-
 /* 9.9.4.2 APN aggregate maximum bit rate
  * O TLV 4-8  */
 typedef struct ogs_nas_apn_aggregate_maximum_bit_rate_s {
@@ -1431,6 +1423,12 @@ ED8(uint8_t ebi15:1;,
 
 
 
+/* 9.11.2.1A DNN
+ * O TLV 3-102 */
+typedef struct ogs_nas_dnn_s {
+    uint8_t length;
+    char value[OGS_MAX_DNN_LEN];
+} __attribute__ ((packed)) ogs_nas_dnn_t;
 
 /* 9.11.2.2 EAP message
  * O TLV-E 7-1503 */
@@ -1439,12 +1437,45 @@ typedef struct ogs_nas_eap_message_s {
     uint8_t *buffer;
 } ogs_nas_eap_message_t;
 
+/* 9.11.2.8.1 S-NSSAI
+ * O TLV 3-10 */
+#define OGS_NAS_S_NSSAI_SST_LEN 1
+#define OGS_NAS_S_NSSAI_SST_AND_MAPPED_HPLMN_SST_LEN 2
+#define OGS_NAS_S_NSSAI_SST_AND_SD 4
+#define OGS_NAS_S_NSSAI_SST_SD_AND_MAPPED_HPLMN_SST_LEN 5
+#define OGS_NAS_MAX_S_NSSAI_LEN 8
+typedef struct ogs_nas_s_nssai_s {
+    uint8_t length;
+    uint32_t sst_sd;
+    uint32_t mapped_sst_sd;
+} __attribute__ ((packed)) ogs_nas_s_nssai_t;
+
 /* 9.11.3.10 ABBA
  * M LV 3-n */
 typedef struct ogs_nas_abba_s {
     uint8_t length;
     uint8_t *buffer;
 } ogs_nas_abba_t;
+
+/* 9.11.3.11 Access Type
+ * M V 1/2 */
+#define OGS_NAS_NOTIFICATION_ACCESS_TYPE_3GPP           1
+#define OGS_NAS_NOTIFICATION_ACCESS_TYPE_NON_3GPP       2
+typedef struct ogs_nas_access_type_s {
+    uint8_t length;
+    uint32_t sst_sd;
+    uint32_t mapped_sst_sd;
+} __attribute__ ((packed)) ogs_nas_access_type_t;
+
+/* 9.11.3.1 5GMM capability
+ * O TLV 3-15 */
+typedef struct ogs_nas_5gmm_capability_s {
+    uint8_t length;
+ED4(uint8_t spare:5;,
+    uint8_t lpp:1;,
+    uint8_t ho:1;,
+    uint8_t s1:1;)
+} __attribute__ ((packed)) ogs_nas_5gmm_capability_t;
 
 #ifdef __cplusplus
 }

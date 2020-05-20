@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 15:42:59.228675 by acetcom
+ * Created on: 2020-05-20 16:15:55.290722 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -100,7 +100,7 @@ ED2(uint8_t security_header_type:4;,
 #define OGS_NAS_SECURITY_MODE_COMMAND 93
 #define OGS_NAS_SECURITY_MODE_COMPLETE 94
 #define OGS_NAS_SECURITY_MODE_REJECT 95
-#define OGS_NAS_5GMM_STATUS 100
+#define OGS_NAS_GMM_STATUS 100
 #define OGS_NAS_NOTIFICATION 101
 #define OGS_NAS_NOTIFICATION_RESPONSE 102
 #define OGS_NAS_UL_NAS_TRANSPORT 103
@@ -120,7 +120,7 @@ ED2(uint8_t security_header_type:4;,
 #define OGS_NAS_PDU_SESSION_RELEASE_REJECT 210
 #define OGS_NAS_PDU_SESSION_RELEASE_COMMAND 211
 #define OGS_NAS_PDU_SESSION_RELEASE_COMPLETE 212
-#define OGS_NAS_5GSM_STATUS 214
+#define OGS_NAS_GSM_STATUS 214
 
 
 /*******************************************************
@@ -197,7 +197,7 @@ typedef struct ogs_nas_registration_request_s {
     /* Optional fields */
     uint32_t presencemask;
     ogs_nas_key_set_identifier_t non_current_native_nas_key_set_identifier;
-    ogs_nas_5gmm_capability_t 5gmm_capability;
+    ogs_nas_gmm_capability_t gmm_capability;
     ogs_nas_ue_security_capability_t ue_security_capability;
     ogs_nas_nssai_t requested_nssai;
     ogs_nas_5gs_tracking_area_identity_t last_visited_registered_tai;
@@ -382,7 +382,7 @@ typedef struct ogs_nas_registration_complete_s {
 
 typedef struct ogs_nas_registration_reject_s {
     /* Mandatory fields */
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_gmm_cause_t gmm_cause;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -420,7 +420,7 @@ typedef struct ogs_nas_deregistration_request_to_ue_s {
 
     /* Optional fields */
     uint32_t presencemask;
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_gmm_cause_t gmm_cause;
     ogs_nas_gprs_timer_2_t t3346_value;
     ogs_nas_rejected_nssai_t rejected_nssai;
 } ogs_nas_deregistration_request_to_ue_t;
@@ -466,7 +466,7 @@ typedef struct ogs_nas_service_request_s {
 
 typedef struct ogs_nas_service_reject_s {
     /* Mandatory fields */
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_gmm_cause_t gmm_cause;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -683,7 +683,7 @@ typedef struct ogs_nas_authentication_reject_s {
 
 typedef struct ogs_nas_authentication_failure_s {
     /* Mandatory fields */
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_gmm_cause_t gmm_cause;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -787,18 +787,18 @@ typedef struct ogs_nas_security_mode_complete_s {
 
 typedef struct ogs_nas_security_mode_reject_s {
     /* Mandatory fields */
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_gmm_cause_t gmm_cause;
 } ogs_nas_security_mode_reject_t;
 
 
 /*******************************************************
- * 5GMM STATUS
+ * GMM STATUS
  ******************************************************/
 
-typedef struct ogs_nas_5gmm_status_s {
+typedef struct ogs_nas_gmm_status_s {
     /* Mandatory fields */
-    ogs_nas_5gmm_cause_t 5gmm_cause;
-} ogs_nas_5gmm_status_t;
+    ogs_nas_gmm_cause_t gmm_cause;
+} ogs_nas_gmm_status_t;
 
 
 /*******************************************************
@@ -880,7 +880,7 @@ typedef struct ogs_nas_dl_nas_transport_s {
     /* Optional fields */
     uint32_t presencemask;
     ogs_nas_additional_information_t additional_information;
-    ogs_nas_5gmm_cause_t 5gmm_cause;
+    ogs_nas_gmm_cause_t gmm_cause;
     ogs_nas_gprs_timer_3_t back_off_timer_value;
 } ogs_nas_dl_nas_transport_t;
 
@@ -1292,20 +1292,20 @@ typedef struct ogs_nas_pdu_session_release_complete_s {
 
 
 /*******************************************************
- * 5GSM STATUS
+ * GSM STATUS
  ******************************************************/
-#define OGS_NAS_5GSM_STATUS_5GSM_CAUSE_PRESENT (1<<0)
-#define OGS_NAS_5GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT (1<<1)
-#define OGS_NAS_5GSM_STATUS_5GSM_CAUSE_TYPE 0x59
-#define OGS_NAS_5GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE 0x7B
+#define OGS_NAS_GSM_STATUS_5GSM_CAUSE_PRESENT (1<<0)
+#define OGS_NAS_GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT (1<<1)
+#define OGS_NAS_GSM_STATUS_5GSM_CAUSE_TYPE 0x59
+#define OGS_NAS_GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE 0x7B
 
-typedef struct ogs_nas_5gsm_status_s {
+typedef struct ogs_nas_gsm_status_s {
 
     /* Optional fields */
     uint32_t presencemask;
     ogs_nas_5gsm_cause_t 5gsm_cause;
     ogs_nas_extended_protocol_configuration_options_t extended_protocol_configuration_options;
-} ogs_nas_5gsm_status_t;
+} ogs_nas_gsm_status_t;
 
 
 typedef struct ogs_nas_emm_message_s {
@@ -1332,7 +1332,7 @@ typedef struct ogs_nas_emm_message_s {
         ogs_nas_security_mode_command_t security_mode_command;
         ogs_nas_security_mode_complete_t security_mode_complete;
         ogs_nas_security_mode_reject_t security_mode_reject;
-        ogs_nas_5gmm_status_t 5gmm_status;
+        ogs_nas_gmm_status_t gmm_status;
         ogs_nas_notification_t notification;
         ogs_nas_notification_response_t notification_response;
         ogs_nas_ul_nas_transport_t ul_nas_transport;
@@ -1358,7 +1358,7 @@ typedef struct ogs_nas_esm_message_s {
         ogs_nas_pdu_session_release_reject_t pdu_session_release_reject;
         ogs_nas_pdu_session_release_command_t pdu_session_release_command;
         ogs_nas_pdu_session_release_complete_t pdu_session_release_complete;
-        ogs_nas_5gsm_status_t 5gsm_status;
+        ogs_nas_gsm_status_t gsm_status;
     };
 } ogs_nas_esm_message_t;
 

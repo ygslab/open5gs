@@ -109,7 +109,7 @@ def v_upper(v):
     return re.sub('_TO_UE', '', re.sub('_FROM_UE', '', re.sub('3GPP', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).upper())))
 
 def v_lower(v):
-    return re.sub('3gpp', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower())
+    return re.sub('5gmm', 'gmm', re.sub('3gpp', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower()))
 
 def get_cells(cells):
     iei = cells[0].text.encode('ascii', 'ignore')
@@ -180,7 +180,7 @@ msg_list["IDENTITY RESPONSE"] = { "type" : "92" }
 msg_list["SECURITY MODE COMMAND"] = { "type" : "93" }
 msg_list["SECURITY MODE COMPLETE"] = { "type" : "94" }
 msg_list["SECURITY MODE REJECT"] = { "type" : "95" }
-msg_list["5GMM STATUS"] = { "type" : "100" }
+msg_list["GMM STATUS"] = { "type" : "100" }
 msg_list["NOTIFICATION"] = { "type" : "101" }
 msg_list["NOTIFICATION RESPONSE"] = { "type" : "102" }
 msg_list["UL NAS TRANSPORT"] = { "type" : "103" }
@@ -201,7 +201,7 @@ msg_list["PDU SESSION RELEASE REQUEST"] = { "type" : "209" }
 msg_list["PDU SESSION RELEASE REJECT"] = { "type" : "210" }
 msg_list["PDU SESSION RELEASE COMMAND"] = { "type" : "211" }
 msg_list["PDU SESSION RELEASE COMPLETE"] = { "type" : "212" }
-msg_list["5GSM STATUS"] = { "type" : "214" }
+msg_list["GSM STATUS"] = { "type" : "214" }
 
 # Table number for Message List
 msg_list["AUTHENTICATION REQUEST"]["table"] = 0
@@ -231,7 +231,7 @@ msg_list["NOTIFICATION RESPONSE"]["table"] = 23
 msg_list["SECURITY MODE COMMAND"]["table"] = 24
 msg_list["SECURITY MODE COMPLETE"]["table"] = 25
 msg_list["SECURITY MODE REJECT"]["table"] = 26
-msg_list["5GMM STATUS"]["table"] = 28
+msg_list["GMM STATUS"]["table"] = 28
 
 msg_list["PDU SESSION ESTABLISHMENT REQUEST"]["table"] = 29
 msg_list["PDU SESSION ESTABLISHMENT ACCEPT"]["table"] = 30
@@ -248,7 +248,7 @@ msg_list["PDU SESSION RELEASE REQUEST"]["table"] = 40
 msg_list["PDU SESSION RELEASE REJECT"]["table"] = 41
 msg_list["PDU SESSION RELEASE COMMAND"]["table"] = 42
 msg_list["PDU SESSION RELEASE COMPLETE"]["table"] = 43
-msg_list["5GSM STATUS"]["table"] = 44
+msg_list["GSM STATUS"]["table"] = 44
 
 for key in msg_list.keys():
     if "table" not in msg_list[key].keys():

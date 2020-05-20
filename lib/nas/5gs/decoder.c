@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 15:42:59.236665 by acetcom
+ * Created on: 2020-05-20 16:15:55.299077 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -55,7 +55,7 @@ int ogs_nas_decode_identity_response(ogs_nas_message_t *message, ogs_pkbuf_t *pk
 int ogs_nas_decode_security_mode_command(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_security_mode_complete(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_security_mode_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gmm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_gmm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_notification(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_notification_response(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_ul_nas_transport(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
@@ -75,7 +75,7 @@ int ogs_nas_decode_pdu_session_release_request(ogs_nas_message_t *message, ogs_p
 int ogs_nas_decode_pdu_session_release_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_pdu_session_release_command(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_pdu_session_release_complete(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gsm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_gsm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_registration_request(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
     ogs_nas_registration_request_t *registration_request = &message->emm.registration_request;
@@ -110,7 +110,7 @@ int ogs_nas_decode_registration_request(ogs_nas_message_t *message, ogs_pkbuf_t 
                  decoded += size;
                  break;
              case OGS_NAS_REGISTRATION_REQUEST_5GMM_CAPABILITY_TYPE:
-                 size = ogs_nas_decode_5gmm_capability(&registration_request->5gmm_capability, pkbuf);
+                 size = ogs_nas_decode_gmm_capability(&registration_request->gmm_capability, pkbuf);
                  ogs_assert(size >= 0);
                  registration_request->presencemask |= OGS_NAS_REGISTRATION_REQUEST_5GMM_CAPABILITY_PRESENT;
                  decoded += size;
@@ -594,7 +594,7 @@ int ogs_nas_decode_registration_reject(ogs_nas_message_t *message, ogs_pkbuf_t *
 
     ogs_trace("[NAS] Decode REGISTRATION_REJECT\n");
 
-    size = ogs_nas_decode_5gmm_cause(&registration_reject->5gmm_cause, pkbuf);
+    size = ogs_nas_decode_gmm_cause(&registration_reject->gmm_cause, pkbuf);
     ogs_assert(size >= 0);
     decoded += size;
 
@@ -685,7 +685,7 @@ int ogs_nas_decode_deregistration_request_to_ue(ogs_nas_message_t *message, ogs_
         switch(type)
         {
              case OGS_NAS_DEREGISTRATION_REQUEST_5GMM_CAUSE_TYPE:
-                 size = ogs_nas_decode_5gmm_cause(&deregistration_request_to_ue->5gmm_cause, pkbuf);
+                 size = ogs_nas_decode_gmm_cause(&deregistration_request_to_ue->gmm_cause, pkbuf);
                  ogs_assert(size >= 0);
                  deregistration_request_to_ue->presencemask |= OGS_NAS_DEREGISTRATION_REQUEST_5GMM_CAUSE_PRESENT;
                  decoded += size;
@@ -779,7 +779,7 @@ int ogs_nas_decode_service_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf
 
     ogs_trace("[NAS] Decode SERVICE_REJECT\n");
 
-    size = ogs_nas_decode_5gmm_cause(&service_reject->5gmm_cause, pkbuf);
+    size = ogs_nas_decode_gmm_cause(&service_reject->gmm_cause, pkbuf);
     ogs_assert(size >= 0);
     decoded += size;
 
@@ -1267,7 +1267,7 @@ int ogs_nas_decode_authentication_failure(ogs_nas_message_t *message, ogs_pkbuf_
 
     ogs_trace("[NAS] Decode AUTHENTICATION_FAILURE\n");
 
-    size = ogs_nas_decode_5gmm_cause(&authentication_failure->5gmm_cause, pkbuf);
+    size = ogs_nas_decode_gmm_cause(&authentication_failure->gmm_cause, pkbuf);
     ogs_assert(size >= 0);
     decoded += size;
 
@@ -1499,22 +1499,22 @@ int ogs_nas_decode_security_mode_reject(ogs_nas_message_t *message, ogs_pkbuf_t 
 
     ogs_trace("[NAS] Decode SECURITY_MODE_REJECT\n");
 
-    size = ogs_nas_decode_5gmm_cause(&security_mode_reject->5gmm_cause, pkbuf);
+    size = ogs_nas_decode_gmm_cause(&security_mode_reject->gmm_cause, pkbuf);
     ogs_assert(size >= 0);
     decoded += size;
 
     return decoded;
 }
 
-int ogs_nas_decode_5gmm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_gmm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_5gmm_status_t *5gmm_status = &message->emm.5gmm_status;
+    ogs_nas_gmm_status_t *gmm_status = &message->emm.gmm_status;
     int decoded = 0;
     int size = 0;
 
-    ogs_trace("[NAS] Decode 5GMM_STATUS\n");
+    ogs_trace("[NAS] Decode GMM_STATUS\n");
 
-    size = ogs_nas_decode_5gmm_cause(&5gmm_status->5gmm_cause, pkbuf);
+    size = ogs_nas_decode_gmm_cause(&gmm_status->gmm_cause, pkbuf);
     ogs_assert(size >= 0);
     decoded += size;
 
@@ -1682,7 +1682,7 @@ int ogs_nas_decode_dl_nas_transport(ogs_nas_message_t *message, ogs_pkbuf_t *pkb
                  decoded += size;
                  break;
              case OGS_NAS_DL_NAS_TRANSPORT_5GMM_CAUSE_TYPE:
-                 size = ogs_nas_decode_5gmm_cause(&dl_nas_transport->5gmm_cause, pkbuf);
+                 size = ogs_nas_decode_gmm_cause(&dl_nas_transport->gmm_cause, pkbuf);
                  ogs_assert(size >= 0);
                  dl_nas_transport->presencemask |= OGS_NAS_DL_NAS_TRANSPORT_5GMM_CAUSE_PRESENT;
                  decoded += size;
@@ -2579,13 +2579,13 @@ int ogs_nas_decode_pdu_session_release_complete(ogs_nas_message_t *message, ogs_
     return decoded;
 }
 
-int ogs_nas_decode_5gsm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_gsm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_5gsm_status_t *5gsm_status = &message->esm.5gsm_status;
+    ogs_nas_gsm_status_t *gsm_status = &message->esm.gsm_status;
     int decoded = 0;
     int size = 0;
 
-    ogs_trace("[NAS] Decode 5GSM_STATUS\n");
+    ogs_trace("[NAS] Decode GSM_STATUS\n");
 
     while(pkbuf->len > 0) 
     {
@@ -2598,16 +2598,16 @@ int ogs_nas_decode_5gsm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 
         switch(type)
         {
-             case OGS_NAS_5GSM_STATUS_5GSM_CAUSE_TYPE:
-                 size = ogs_nas_decode_5gsm_cause(&5gsm_status->5gsm_cause, pkbuf);
+             case OGS_NAS_GSM_STATUS_5GSM_CAUSE_TYPE:
+                 size = ogs_nas_decode_5gsm_cause(&gsm_status->5gsm_cause, pkbuf);
                  ogs_assert(size >= 0);
-                 5gsm_status->presencemask |= OGS_NAS_5GSM_STATUS_5GSM_CAUSE_PRESENT;
+                 gsm_status->presencemask |= OGS_NAS_GSM_STATUS_5GSM_CAUSE_PRESENT;
                  decoded += size;
                  break;
-             case OGS_NAS_5GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
-                 size = ogs_nas_decode_extended_protocol_configuration_options(&5gsm_status->extended_protocol_configuration_options, pkbuf);
+             case OGS_NAS_GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_TYPE:
+                 size = ogs_nas_decode_extended_protocol_configuration_options(&gsm_status->extended_protocol_configuration_options, pkbuf);
                  ogs_assert(size >= 0);
-                 5gsm_status->presencemask |= OGS_NAS_5GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
+                 gsm_status->presencemask |= OGS_NAS_GSM_STATUS_EXTENDED_PROTOCOL_CONFIGURATION_OPTIONS_PRESENT;
                  decoded += size;
                  break;
              default:
@@ -2746,8 +2746,8 @@ int ogs_nas_emm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
             ogs_assert(size >= 0);
             decoded += size;
             break;
-        case OGS_NAS_5GMM_STATUS:
-            size = ogs_nas_decode_5gmm_status(message, pkbuf);
+        case OGS_NAS_GMM_STATUS:
+            size = ogs_nas_decode_gmm_status(message, pkbuf);
             ogs_assert(size >= 0);
             decoded += size;
             break;
@@ -2875,8 +2875,8 @@ int ogs_nas_esm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
             ogs_assert(size >= 0);
             decoded += size;
             break;
-        case OGS_NAS_5GSM_STATUS:
-            size = ogs_nas_decode_5gsm_status(message, pkbuf);
+        case OGS_NAS_GSM_STATUS:
+            size = ogs_nas_decode_gsm_status(message, pkbuf);
             ogs_assert(size >= 0);
             decoded += size;
             break;
