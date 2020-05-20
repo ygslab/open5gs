@@ -1477,9 +1477,85 @@ ED4(uint8_t spare:5;,
     uint8_t s1:1;)
 } __attribute__ ((packed)) ogs_nas_5gmm_capability_t;
 
+
+typedef uint32_t ogs_nas_5gmm_cause_t;
+typedef uint32_t ogs_nas_5gsm_cause_t;
+typedef struct ogs_nas_atsss_container_s {} ogs_nas_atsss_container_t;
+typedef struct ogs_nas_port_management_information_container_s {} ogs_nas_port_management_information_container_t;
+typedef struct ogs_nas_qos_flow_descriptions_s {} ogs_nas_qos_flow_descriptions_t;
+typedef struct ogs_nas_qos_rules_s {} ogs_nas_qos_rules_t;
+typedef struct ogs_nas_always_on_pdu_session_indication_s {} ogs_nas_always_on_pdu_session_indication_t;
+typedef struct ogs_nas_session_ambr_s {} ogs_nas_session_ambr_t;
+typedef struct ogs_nas_5gsm_congestion_re_attempt_indicator_s {} ogs_nas_5gsm_congestion_re_attempt_indicator_t;
+typedef struct ogs_nas_mapped_eps_bearer_contexts_s {} ogs_nas_mapped_eps_bearer_contexts_t;
+typedef struct ogs_nas_integrity_protection_maximum_data_rate_s {} ogs_nas_integrity_protection_maximum_data_rate_t;
+typedef struct ogs_nas_always_on_pdu_session_requested_s {} ogs_nas_always_on_pdu_session_requested_t;
+typedef struct ogs_nas_maximum_number_of_supported_packet_filters_s {} ogs_nas_maximum_number_of_supported_packet_filters_t;
+typedef struct ogs_nas_allowed_ssc_mode_s {} ogs_nas_allowed_ssc_mode_t;
+typedef struct ogs_nas_5gsm_network_feature_support_s {} ogs_nas_5gsm_network_feature_support_t;
+typedef struct ogs_nas_pdu_session_identity_2_s {} ogs_nas_pdu_session_identity_2_t;
+typedef struct ogs_nas_payload_container_s {} ogs_nas_payload_container_t;
+typedef struct ogs_nas_payload_container_type_s {} ogs_nas_payload_container_type_t;
+typedef struct ogs_nas_ciot_small_data_container_s {} ogs_nas_ciot_small_data_container_t;
+typedef struct ogs_nas_control_plane_service_type_s {} ogs_nas_control_plane_service_type_t;
+typedef struct ogs_nas_release_assistance_indication_s {} ogs_nas_release_assistance_indication_t;
+typedef struct ogs_nas_ma_pdu_session_information_s {} ogs_nas_ma_pdu_session_information_t;
+typedef struct ogs_nas_additional_5g_security_information_s {} ogs_nas_additional_5g_security_information_t;
+typedef struct ogs_nas_5gs_mobile_identity_s {} ogs_nas_5gs_mobile_identity_t;
+typedef struct ogs_nas_5gs_identity_type_s {} ogs_nas_5gs_identity_type_t;
+typedef struct ogs_nas_uplink_data_status_s {} ogs_nas_uplink_data_status_t;
+typedef struct ogs_nas_5gs_registration_result_s {} ogs_nas_5gs_registration_result_t;
+typedef struct ogs_nas_ue_radio_capability_id_deletion_indication_s {} ogs_nas_ue_radio_capability_id_deletion_indication_t;
+typedef struct ogs_nas_ue_radio_capability_id_s {} ogs_nas_ue_radio_capability_id_t;
+typedef struct ogs_nas_cag_information_list_s {} ogs_nas_cag_information_list_t;
+typedef struct ogs_nas_sms_indication_s {} ogs_nas_sms_indication_t;
+typedef struct ogs_nas_operator_defined_access_category_definitions_s {} ogs_nas_operator_defined_access_category_definitions_t;
+typedef struct ogs_nas_rejected_nssai_s {} ogs_nas_rejected_nssai_t;
+typedef struct ogs_nas_nssai_s {} ogs_nas_nssai_t;
+typedef struct ogs_nas_network_slicing_indication_s {} ogs_nas_network_slicing_indication_t;
+typedef struct ogs_nas_mico_indication_s {} ogs_nas_mico_indication_t;
+typedef struct ogs_nas_ladn_information_s {} ogs_nas_ladn_information_t;
+typedef struct ogs_nas_service_area_list_s {} ogs_nas_service_area_list_t;
+typedef struct ogs_nas_5gs_tracking_area_identity_list_s {} ogs_nas_5gs_tracking_area_identity_list_t;
+typedef struct ogs_nas_configuration_update_indication_s {} ogs_nas_configuration_update_indication_t;
+typedef struct ogs_nas_pdu_session_reactivation_result_error_cause_s {} ogs_nas_pdu_session_reactivation_result_error_cause_t;
+typedef struct ogs_nas_pdu_session_status_s {} ogs_nas_pdu_session_status_t;
+typedef struct ogs_nas_non_3gpp_nw_provided_policies_s {} ogs_nas_non_3gpp_nw_provided_policies_t;
+typedef struct ogs_nas_nssai_inclusion_mode_s {} ogs_nas_nssai_inclusion_mode_t;
+typedef struct ogs_nas_sor_transparent_container_s {} ogs_nas_sor_transparent_container_t;
+typedef struct ogs_nas_extended_emergency_number_list_s {} ogs_nas_extended_emergency_number_list_t;
+typedef struct ogs_nas_5gsm_capability_s { } ogs_nas_5gsm_capability_t;
+
+typedef struct ogs_nas_pdu_address_s {} ogs_nas_pdu_address_t;
+typedef struct ogs_nas_pdu_session_type_s {} ogs_nas_pdu_session_type_t;
+typedef struct ogs_nas_ue_ds_tt_residence_time_s {} ogs_nas_ue_ds_tt_residence_time_t;
+typedef struct ogs_nas_ds_tt_ethernet_port_mac_address_s {} ogs_nas_ds_tt_ethernet_port_mac_address_t;
+typedef struct ogs_nas_sm_pdu_dn_request_container_s {} ogs_nas_sm_pdu_dn_request_container_t;
+typedef struct ogs_nas_ssc_mode_s {} ogs_nas_ssc_mode_t;
+typedef struct ogs_nas_s1_ue_security_capability_s {} ogs_nas_s1_ue_security_capability_t;
+typedef struct ogs_nas_eps_nas_security_algorithms_s {} ogs_nas_eps_nas_security_algorithms_t;
+typedef struct ogs_nas_truncated_5g_s_tmsi_configuration_s {} ogs_nas_truncated_5g_s_tmsi_configuration_t;
+typedef struct ogs_nas_pdu_session_reactivation_result_s {} ogs_nas_pdu_session_reactivation_result_t;
+typedef struct ogs_nas_allowed_pdu_session_status_s {} ogs_nas_allowed_pdu_session_status_t;
+typedef struct ogs_nas_de_registration_type_s {} ogs_nas_de_registration_type_t;
+typedef struct ogs_nas_wus_assistance_information_s {} ogs_nas_wus_assistance_information_t;
+typedef struct ogs_nas_ciphering_key_data_s {} ogs_nas_ciphering_key_data_t;
+typedef struct ogs_nas_5gs_drx_parameters_s {} ogs_nas_5gs_drx_parameters_t;
+typedef struct ogs_nas_5gs_network_feature_support_s {} ogs_nas_5gs_network_feature_support_t;
+typedef struct ogs_nas_n5gc_indication_s {} ogs_nas_n5gc_indication_t;
+typedef struct ogs_nas_mapped_nssai_s {} ogs_nas_mapped_nssai_t;
+typedef struct ogs_nas_5gs_update_type_s {} ogs_nas_5gs_update_type_t;
+typedef struct ogs_nas_eps_nas_message_container_s {} ogs_nas_eps_nas_message_container_t;
+typedef struct ogs_nas_ue_usage_setting_s {} ogs_nas_ue_usage_setting_t;
+typedef struct ogs_nas_ue_status_s {} ogs_nas_ue_status_t;
+typedef struct ogs_nas_s1_ue_network_capability_s {} ogs_nas_s1_ue_network_capability_t;
+typedef struct ogs_nas_5gs_tracking_area_identity_s {} ogs_nas_5gs_tracking_area_identity_t;
+typedef struct ogs_nas_5gs_registration_type_s {} ogs_nas_5gs_registration_type_t;
+typedef struct ogs_nas_additional_information_requested_s {} ogs_nas_additional_information_requested_t;
+typedef struct ogs_nas_ladn_indication_s {} ogs_nas_ladn_indication_t;
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* OGS_NAS_TYPES_H */
-

@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:56:11.684936 by acetcom
+ * Created on: 2020-05-20 16:57:29.657289 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -191,8 +191,8 @@ ED2(uint8_t security_header_type:4;,
 
 typedef struct ogs_nas_registration_request_s {
     /* Mandatory fields */
-    ogs_nas_5gs_registration_type_t 5gs_registration_type;
-    ogs_nas_5gs_mobile_identity_t 5gs_mobile_identity;
+    ogs_nas_5gs_registration_type_t registration_type;
+    ogs_nas_5gs_mobile_identity_t mobile_identity;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -215,7 +215,7 @@ typedef struct ogs_nas_registration_request_s {
     ogs_nas_payload_container_type_t payload_container_type;
     ogs_nas_payload_container_t payload_container;
     ogs_nas_network_slicing_indication_t network_slicing_indication;
-    ogs_nas_5gs_update_type_t 5gs_update_type;
+    ogs_nas_5gs_update_type_t update_type;
     ogs_nas_mobile_station_classmark_2_t mobile_station_classmark_2;
     ogs_nas_supported_codec_list_t supported_codecs;
     ogs_nas_message_container_t nas_message_container;
@@ -310,7 +310,7 @@ typedef struct ogs_nas_registration_request_s {
 
 typedef struct ogs_nas_registration_accept_s {
     /* Mandatory fields */
-    ogs_nas_5gs_registration_result_t 5gs_registration_result;
+    ogs_nas_5gs_registration_result_t registration_result;
 
     /* Optional fields */
     uint32_t presencemask;
@@ -320,7 +320,7 @@ typedef struct ogs_nas_registration_accept_s {
     ogs_nas_nssai_t allowed_nssai;
     ogs_nas_rejected_nssai_t rejected_nssai;
     ogs_nas_nssai_t configured_nssai;
-    ogs_nas_5gs_network_feature_support_t 5gs_network_feature_support;
+    ogs_nas_5gs_network_feature_support_t network_feature_support;
     ogs_nas_pdu_session_status_t pdu_session_status;
     ogs_nas_pdu_session_reactivation_result_t pdu_session_reactivation_result;
     ogs_nas_pdu_session_reactivation_result_error_cause_t pdu_session_reactivation_result_error_cause;
@@ -400,7 +400,7 @@ typedef struct ogs_nas_registration_reject_s {
 typedef struct ogs_nas_deregistration_request_from_ue_s {
     /* Mandatory fields */
     ogs_nas_de_registration_type_t de_registration_type;
-    ogs_nas_5gs_mobile_identity_t 5gs_mobile_identity;
+    ogs_nas_5gs_mobile_identity_t mobile_identity;
 } ogs_nas_deregistration_request_from_ue_t;
 
 
@@ -578,7 +578,7 @@ typedef struct ogs_nas_configuration_update_command_s {
     ogs_nas_cag_information_list_t cag_information_list;
     ogs_nas_ue_radio_capability_id_t ue_radio_capability_id;
     ogs_nas_ue_radio_capability_id_deletion_indication_t ue_radio_capability_id_deletion_indication;
-    ogs_nas_5gs_registration_result_t 5gs_registration_result;
+    ogs_nas_5gs_registration_result_t registration_result;
     ogs_nas_truncated_5g_s_tmsi_configuration_t truncated_s_tmsi_configuration;
 } ogs_nas_configuration_update_command_t;
 

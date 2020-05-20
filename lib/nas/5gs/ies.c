@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:56:11.676596 by acetcom
+ * Created on: 2020-05-20 16:57:29.647709 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -1169,16 +1169,16 @@ int ogs_nas_encode_ladn_indication(ogs_pkbuf_t *pkbuf, ogs_nas_ladn_indication_t
 
 /* 9.11.3.2A 5GS DRX parameters
  * O TLV 3 */
-int ogs_nas_decode_5gs_drx_parameters(ogs_nas_5gs_drx_parameters_t *5gs_drx_parameters, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gs_drx_parameters(ogs_nas_5gs_drx_parameters_t *drx_parameters, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_5gs_drx_parameters_t *source = (ogs_nas_5gs_drx_parameters_t *)pkbuf->data;
 
-    5gs_drx_parameters->length = source->length;
-    size = 5gs_drx_parameters->length + sizeof(5gs_drx_parameters->length);
+    drx_parameters->length = source->length;
+    size = drx_parameters->length + sizeof(drx_parameters->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gs_drx_parameters, pkbuf->data - size, size);
+    memcpy(drx_parameters, pkbuf->data - size, size);
 
     ogs_trace("  5GS_DRX_PARAMETERS - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -1186,12 +1186,12 @@ int ogs_nas_decode_5gs_drx_parameters(ogs_nas_5gs_drx_parameters_t *5gs_drx_para
     return size;
 }
 
-int ogs_nas_encode_5gs_drx_parameters(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_drx_parameters_t *5gs_drx_parameters)
+int ogs_nas_encode_5gs_drx_parameters(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_drx_parameters_t *drx_parameters)
 {
-    uint16_t size = 5gs_drx_parameters->length + sizeof(5gs_drx_parameters->length);
+    uint16_t size = drx_parameters->length + sizeof(drx_parameters->length);
     ogs_nas_5gs_drx_parameters_t target;
 
-    memcpy(&target, 5gs_drx_parameters, sizeof(ogs_nas_5gs_drx_parameters_t));
+    memcpy(&target, drx_parameters, sizeof(ogs_nas_5gs_drx_parameters_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -1203,12 +1203,12 @@ int ogs_nas_encode_5gs_drx_parameters(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_drx_parame
 
 /* 9.11.3.3 5GS identity type
  * M V 1/2 */
-int ogs_nas_decode_5gs_identity_type(ogs_nas_5gs_identity_type_t *5gs_identity_type, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gs_identity_type(ogs_nas_5gs_identity_type_t *identity_type, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = sizeof(ogs_nas_5gs_identity_type_t);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gs_identity_type, pkbuf->data - size, size);
+    memcpy(identity_type, pkbuf->data - size, size);
 
     ogs_trace("  5GS_IDENTITY_TYPE - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -1216,12 +1216,12 @@ int ogs_nas_decode_5gs_identity_type(ogs_nas_5gs_identity_type_t *5gs_identity_t
     return size;
 }
 
-int ogs_nas_encode_5gs_identity_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_identity_type_t *5gs_identity_type)
+int ogs_nas_encode_5gs_identity_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_identity_type_t *identity_type)
 {
     uint16_t size = sizeof(ogs_nas_5gs_identity_type_t);
     ogs_nas_5gs_identity_type_t target;
 
-    memcpy(&target, 5gs_identity_type, size);
+    memcpy(&target, identity_type, size);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -1717,44 +1717,44 @@ int ogs_nas_encode_payload_container(ogs_pkbuf_t *pkbuf, ogs_nas_payload_contain
 
 /* 9.11.3.4 5GS mobile identity
  * M LV-E 6-n */
-int ogs_nas_decode_5gs_mobile_identity(ogs_nas_5gs_mobile_identity_t *5gs_mobile_identity, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gs_mobile_identity(ogs_nas_5gs_mobile_identity_t *mobile_identity, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_5gs_mobile_identity_t *source = (ogs_nas_5gs_mobile_identity_t *)pkbuf->data;
 
-    5gs_mobile_identity->length = be16toh(source->length);
-    size = 5gs_mobile_identity->length + sizeof(5gs_mobile_identity->length);
+    mobile_identity->length = be16toh(source->length);
+    size = mobile_identity->length + sizeof(mobile_identity->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    5gs_mobile_identity->buffer = pkbuf->data - size + sizeof(5gs_mobile_identity->length);
+    mobile_identity->buffer = pkbuf->data - size + sizeof(mobile_identity->length);
 
     ogs_trace("  5GS_MOBILE_IDENTITY - ");
-    ogs_log_hexdump(OGS_LOG_TRACE, (void*)5gs_mobile_identity->buffer, 5gs_mobile_identity->length);
+    ogs_log_hexdump(OGS_LOG_TRACE, (void*)mobile_identity->buffer, mobile_identity->length);
 
     return size;
 }
 
-int ogs_nas_encode_5gs_mobile_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_mobile_identity_t *5gs_mobile_identity)
+int ogs_nas_encode_5gs_mobile_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_mobile_identity_t *mobile_identity)
 {
     uint16_t size = 0;
     uint16_t target;
 
-    ogs_assert(5gs_mobile_identity);
-    ogs_assert(5gs_mobile_identity->buffer);
+    ogs_assert(mobile_identity);
+    ogs_assert(mobile_identity->buffer);
 
-    size = sizeof(5gs_mobile_identity->length);
+    size = sizeof(mobile_identity->length);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    target = htobe16(5gs_mobile_identity->length);
+    target = htobe16(mobile_identity->length);
     memcpy(pkbuf->data - size, &target, size);
 
-    size = 5gs_mobile_identity->length;
+    size = mobile_identity->length;
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(pkbuf->data - size, 5gs_mobile_identity->buffer, size);
+    memcpy(pkbuf->data - size, mobile_identity->buffer, size);
 
     ogs_trace("  5GS_MOBILE_IDENTITY - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
 
-    return 5gs_mobile_identity->length + sizeof(5gs_mobile_identity->length);
+    return mobile_identity->length + sizeof(mobile_identity->length);
 }
 
 /* 9.11.3.40 Payload container type
@@ -2144,16 +2144,16 @@ int ogs_nas_encode_service_area_list(ogs_pkbuf_t *pkbuf, ogs_nas_service_area_li
 
 /* 9.11.3.5 5GS network feature support
  * O TLV 3-5 */
-int ogs_nas_decode_5gs_network_feature_support(ogs_nas_5gs_network_feature_support_t *5gs_network_feature_support, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gs_network_feature_support(ogs_nas_5gs_network_feature_support_t *network_feature_support, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_5gs_network_feature_support_t *source = (ogs_nas_5gs_network_feature_support_t *)pkbuf->data;
 
-    5gs_network_feature_support->length = source->length;
-    size = 5gs_network_feature_support->length + sizeof(5gs_network_feature_support->length);
+    network_feature_support->length = source->length;
+    size = network_feature_support->length + sizeof(network_feature_support->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gs_network_feature_support, pkbuf->data - size, size);
+    memcpy(network_feature_support, pkbuf->data - size, size);
 
     ogs_trace("  5GS_NETWORK_FEATURE_SUPPORT - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -2161,12 +2161,12 @@ int ogs_nas_decode_5gs_network_feature_support(ogs_nas_5gs_network_feature_suppo
     return size;
 }
 
-int ogs_nas_encode_5gs_network_feature_support(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_network_feature_support_t *5gs_network_feature_support)
+int ogs_nas_encode_5gs_network_feature_support(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_network_feature_support_t *network_feature_support)
 {
-    uint16_t size = 5gs_network_feature_support->length + sizeof(5gs_network_feature_support->length);
+    uint16_t size = network_feature_support->length + sizeof(network_feature_support->length);
     ogs_nas_5gs_network_feature_support_t target;
 
-    memcpy(&target, 5gs_network_feature_support, sizeof(ogs_nas_5gs_network_feature_support_t));
+    memcpy(&target, network_feature_support, sizeof(ogs_nas_5gs_network_feature_support_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -2475,16 +2475,16 @@ int ogs_nas_encode_uplink_data_status(ogs_pkbuf_t *pkbuf, ogs_nas_uplink_data_st
 
 /* 9.11.3.6 5GS registration result
  * M LV 2 */
-int ogs_nas_decode_5gs_registration_result(ogs_nas_5gs_registration_result_t *5gs_registration_result, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gs_registration_result(ogs_nas_5gs_registration_result_t *registration_result, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_5gs_registration_result_t *source = (ogs_nas_5gs_registration_result_t *)pkbuf->data;
 
-    5gs_registration_result->length = source->length;
-    size = 5gs_registration_result->length + sizeof(5gs_registration_result->length);
+    registration_result->length = source->length;
+    size = registration_result->length + sizeof(registration_result->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gs_registration_result, pkbuf->data - size, size);
+    memcpy(registration_result, pkbuf->data - size, size);
 
     ogs_trace("  5GS_REGISTRATION_RESULT - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -2492,12 +2492,12 @@ int ogs_nas_decode_5gs_registration_result(ogs_nas_5gs_registration_result_t *5g
     return size;
 }
 
-int ogs_nas_encode_5gs_registration_result(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_registration_result_t *5gs_registration_result)
+int ogs_nas_encode_5gs_registration_result(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_registration_result_t *registration_result)
 {
-    uint16_t size = 5gs_registration_result->length + sizeof(5gs_registration_result->length);
+    uint16_t size = registration_result->length + sizeof(registration_result->length);
     ogs_nas_5gs_registration_result_t target;
 
-    memcpy(&target, 5gs_registration_result, sizeof(ogs_nas_5gs_registration_result_t));
+    memcpy(&target, registration_result, sizeof(ogs_nas_5gs_registration_result_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -2568,12 +2568,12 @@ int ogs_nas_encode_ue_radio_capability_id_deletion_indication(ogs_pkbuf_t *pkbuf
 
 /* 9.11.3.7 5GS registration type
  * M V 1/2 */
-int ogs_nas_decode_5gs_registration_type(ogs_nas_5gs_registration_type_t *5gs_registration_type, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gs_registration_type(ogs_nas_5gs_registration_type_t *registration_type, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = sizeof(ogs_nas_5gs_registration_type_t);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gs_registration_type, pkbuf->data - size, size);
+    memcpy(registration_type, pkbuf->data - size, size);
 
     ogs_trace("  5GS_REGISTRATION_TYPE - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -2581,12 +2581,12 @@ int ogs_nas_decode_5gs_registration_type(ogs_nas_5gs_registration_type_t *5gs_re
     return size;
 }
 
-int ogs_nas_encode_5gs_registration_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_registration_type_t *5gs_registration_type)
+int ogs_nas_encode_5gs_registration_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_registration_type_t *registration_type)
 {
     uint16_t size = sizeof(ogs_nas_5gs_registration_type_t);
     ogs_nas_5gs_registration_type_t target;
 
-    memcpy(&target, 5gs_registration_type, size);
+    memcpy(&target, registration_type, size);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -2700,12 +2700,12 @@ int ogs_nas_encode_n5gc_indication(ogs_pkbuf_t *pkbuf, ogs_nas_n5gc_indication_t
 
 /* 9.11.3.8 5GS tracking area identity
  * O TV 7 */
-int ogs_nas_decode_5gs_tracking_area_identity(ogs_nas_5gs_tracking_area_identity_t *5gs_tracking_area_identity, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gs_tracking_area_identity(ogs_nas_5gs_tracking_area_identity_t *tracking_area_identity, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = sizeof(ogs_nas_5gs_tracking_area_identity_t);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gs_tracking_area_identity, pkbuf->data - size, size);
+    memcpy(tracking_area_identity, pkbuf->data - size, size);
 
     ogs_trace("  5GS_TRACKING_AREA_IDENTITY - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -2713,12 +2713,12 @@ int ogs_nas_decode_5gs_tracking_area_identity(ogs_nas_5gs_tracking_area_identity
     return size;
 }
 
-int ogs_nas_encode_5gs_tracking_area_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_tracking_area_identity_t *5gs_tracking_area_identity)
+int ogs_nas_encode_5gs_tracking_area_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_tracking_area_identity_t *tracking_area_identity)
 {
     uint16_t size = sizeof(ogs_nas_5gs_tracking_area_identity_t);
     ogs_nas_5gs_tracking_area_identity_t target;
 
-    memcpy(&target, 5gs_tracking_area_identity, size);
+    memcpy(&target, tracking_area_identity, size);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -2730,16 +2730,16 @@ int ogs_nas_encode_5gs_tracking_area_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_tr
 
 /* 9.11.3.9 5GS tracking area identity list
  * O TLV 9-114 */
-int ogs_nas_decode_5gs_tracking_area_identity_list(ogs_nas_5gs_tracking_area_identity_list_t *5gs_tracking_area_identity_list, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gs_tracking_area_identity_list(ogs_nas_5gs_tracking_area_identity_list_t *tracking_area_identity_list, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_5gs_tracking_area_identity_list_t *source = (ogs_nas_5gs_tracking_area_identity_list_t *)pkbuf->data;
 
-    5gs_tracking_area_identity_list->length = source->length;
-    size = 5gs_tracking_area_identity_list->length + sizeof(5gs_tracking_area_identity_list->length);
+    tracking_area_identity_list->length = source->length;
+    size = tracking_area_identity_list->length + sizeof(tracking_area_identity_list->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gs_tracking_area_identity_list, pkbuf->data - size, size);
+    memcpy(tracking_area_identity_list, pkbuf->data - size, size);
 
     ogs_trace("  5GS_TRACKING_AREA_IDENTITY_LIST - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -2747,12 +2747,12 @@ int ogs_nas_decode_5gs_tracking_area_identity_list(ogs_nas_5gs_tracking_area_ide
     return size;
 }
 
-int ogs_nas_encode_5gs_tracking_area_identity_list(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_tracking_area_identity_list_t *5gs_tracking_area_identity_list)
+int ogs_nas_encode_5gs_tracking_area_identity_list(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_tracking_area_identity_list_t *tracking_area_identity_list)
 {
-    uint16_t size = 5gs_tracking_area_identity_list->length + sizeof(5gs_tracking_area_identity_list->length);
+    uint16_t size = tracking_area_identity_list->length + sizeof(tracking_area_identity_list->length);
     ogs_nas_5gs_tracking_area_identity_list_t target;
 
-    memcpy(&target, 5gs_tracking_area_identity_list, sizeof(ogs_nas_5gs_tracking_area_identity_list_t));
+    memcpy(&target, tracking_area_identity_list, sizeof(ogs_nas_5gs_tracking_area_identity_list_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -2764,16 +2764,16 @@ int ogs_nas_encode_5gs_tracking_area_identity_list(ogs_pkbuf_t *pkbuf, ogs_nas_5
 
 /* 9.11.3.9A 5GS update type
  * O TLV 3 */
-int ogs_nas_decode_5gs_update_type(ogs_nas_5gs_update_type_t *5gs_update_type, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gs_update_type(ogs_nas_5gs_update_type_t *update_type, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_5gs_update_type_t *source = (ogs_nas_5gs_update_type_t *)pkbuf->data;
 
-    5gs_update_type->length = source->length;
-    size = 5gs_update_type->length + sizeof(5gs_update_type->length);
+    update_type->length = source->length;
+    size = update_type->length + sizeof(update_type->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gs_update_type, pkbuf->data - size, size);
+    memcpy(update_type, pkbuf->data - size, size);
 
     ogs_trace("  5GS_UPDATE_TYPE - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -2781,12 +2781,12 @@ int ogs_nas_decode_5gs_update_type(ogs_nas_5gs_update_type_t *5gs_update_type, o
     return size;
 }
 
-int ogs_nas_encode_5gs_update_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_update_type_t *5gs_update_type)
+int ogs_nas_encode_5gs_update_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_update_type_t *update_type)
 {
-    uint16_t size = 5gs_update_type->length + sizeof(5gs_update_type->length);
+    uint16_t size = update_type->length + sizeof(update_type->length);
     ogs_nas_5gs_update_type_t target;
 
-    memcpy(&target, 5gs_update_type, sizeof(ogs_nas_5gs_update_type_t));
+    memcpy(&target, update_type, sizeof(ogs_nas_5gs_update_type_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 

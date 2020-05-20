@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:56:11.674046 by acetcom
+ * Created on: 2020-05-20 16:57:29.644920 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -78,8 +78,8 @@ int ogs_nas_decode_extended_emergency_number_list(ogs_nas_extended_emergency_num
 int ogs_nas_decode_extended_drx_parameters(ogs_nas_extended_drx_parameters_t *extended_drx_parameters, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_imeisv_request(ogs_nas_imeisv_request_t *imeisv_request, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_ladn_indication(ogs_nas_ladn_indication_t *ladn_indication, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gs_drx_parameters(ogs_nas_5gs_drx_parameters_t *5gs_drx_parameters, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gs_identity_type(ogs_nas_5gs_identity_type_t *5gs_identity_type, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gs_drx_parameters(ogs_nas_5gs_drx_parameters_t *drx_parameters, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gs_identity_type(ogs_nas_5gs_identity_type_t *identity_type, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_ladn_information(ogs_nas_ladn_information_t *ladn_information, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_mico_indication(ogs_nas_mico_indication_t *mico_indication, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_ma_pdu_session_information(ogs_nas_ma_pdu_session_information_t *ma_pdu_session_information, ogs_pkbuf_t *pkbuf);
@@ -95,7 +95,7 @@ int ogs_nas_decode_nssai(ogs_nas_nssai_t *nssai, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_nssai_inclusion_mode(ogs_nas_nssai_inclusion_mode_t *nssai_inclusion_mode, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_operator_defined_access_category_definitions(ogs_nas_operator_defined_access_category_definitions_t *operator_defined_access_category_definitions, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_payload_container(ogs_nas_payload_container_t *payload_container, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gs_mobile_identity(ogs_nas_5gs_mobile_identity_t *5gs_mobile_identity, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gs_mobile_identity(ogs_nas_5gs_mobile_identity_t *mobile_identity, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_payload_container_type(ogs_nas_payload_container_type_t *payload_container_type, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_pdu_session_identity_2(ogs_nas_pdu_session_identity_2_t *pdu_session_identity_2, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_pdu_session_reactivation_result(ogs_nas_pdu_session_reactivation_result_t *pdu_session_reactivation_result, ogs_pkbuf_t *pkbuf);
@@ -108,7 +108,7 @@ int ogs_nas_decode_request_type(ogs_nas_request_type_t *request_type, ogs_pkbuf_
 int ogs_nas_decode_s1_ue_network_capability(ogs_nas_s1_ue_network_capability_t *s1_ue_network_capability, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_s1_ue_security_capability(ogs_nas_s1_ue_security_capability_t *s1_ue_security_capability, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_service_area_list(ogs_nas_service_area_list_t *service_area_list, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gs_network_feature_support(ogs_nas_5gs_network_feature_support_t *5gs_network_feature_support, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gs_network_feature_support(ogs_nas_5gs_network_feature_support_t *network_feature_support, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_sms_indication(ogs_nas_sms_indication_t *sms_indication, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_sor_transparent_container(ogs_nas_sor_transparent_container_t *sor_transparent_container, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_supported_codec_list(ogs_nas_supported_codec_list_t *supported_codec_list, ogs_pkbuf_t *pkbuf);
@@ -118,16 +118,16 @@ int ogs_nas_decode_ue_security_capability(ogs_nas_ue_security_capability_t *ue_s
 int ogs_nas_decode_ue_usage_setting(ogs_nas_ue_usage_setting_t *ue_usage_setting, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_ue_status(ogs_nas_ue_status_t *ue_status, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_uplink_data_status(ogs_nas_uplink_data_status_t *uplink_data_status, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gs_registration_result(ogs_nas_5gs_registration_result_t *5gs_registration_result, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gs_registration_result(ogs_nas_5gs_registration_result_t *registration_result, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_ue_radio_capability_id(ogs_nas_ue_radio_capability_id_t *ue_radio_capability_id, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_ue_radio_capability_id_deletion_indication(ogs_nas_ue_radio_capability_id_deletion_indication_t *ue_radio_capability_id_deletion_indication, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gs_registration_type(ogs_nas_5gs_registration_type_t *5gs_registration_type, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gs_registration_type(ogs_nas_5gs_registration_type_t *registration_type, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_truncated_5g_s_tmsi_configuration(ogs_nas_truncated_5g_s_tmsi_configuration_t *truncated_s_tmsi_configuration, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_wus_assistance_information(ogs_nas_wus_assistance_information_t *wus_assistance_information, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_n5gc_indication(ogs_nas_n5gc_indication_t *n5gc_indication, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gs_tracking_area_identity(ogs_nas_5gs_tracking_area_identity_t *5gs_tracking_area_identity, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gs_tracking_area_identity_list(ogs_nas_5gs_tracking_area_identity_list_t *5gs_tracking_area_identity_list, ogs_pkbuf_t *pkbuf);
-int ogs_nas_decode_5gs_update_type(ogs_nas_5gs_update_type_t *5gs_update_type, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gs_tracking_area_identity(ogs_nas_5gs_tracking_area_identity_t *tracking_area_identity, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gs_tracking_area_identity_list(ogs_nas_5gs_tracking_area_identity_list_t *tracking_area_identity_list, ogs_pkbuf_t *pkbuf);
+int ogs_nas_decode_5gs_update_type(ogs_nas_5gs_update_type_t *update_type, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_5gsm_capability(ogs_nas_5gsm_capability_t *gsm_capability, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_pdu_address(ogs_nas_pdu_address_t *pdu_address, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_pdu_session_type(ogs_nas_pdu_session_type_t *pdu_session_type, ogs_pkbuf_t *pkbuf);
@@ -188,8 +188,8 @@ int ogs_nas_encode_extended_emergency_number_list(ogs_pkbuf_t *pkbuf, ogs_nas_ex
 int ogs_nas_encode_extended_drx_parameters(ogs_pkbuf_t *pkbuf, ogs_nas_extended_drx_parameters_t *extended_drx_parameters);
 int ogs_nas_encode_imeisv_request(ogs_pkbuf_t *pkbuf, ogs_nas_imeisv_request_t *imeisv_request);
 int ogs_nas_encode_ladn_indication(ogs_pkbuf_t *pkbuf, ogs_nas_ladn_indication_t *ladn_indication);
-int ogs_nas_encode_5gs_drx_parameters(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_drx_parameters_t *5gs_drx_parameters);
-int ogs_nas_encode_5gs_identity_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_identity_type_t *5gs_identity_type);
+int ogs_nas_encode_5gs_drx_parameters(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_drx_parameters_t *drx_parameters);
+int ogs_nas_encode_5gs_identity_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_identity_type_t *identity_type);
 int ogs_nas_encode_ladn_information(ogs_pkbuf_t *pkbuf, ogs_nas_ladn_information_t *ladn_information);
 int ogs_nas_encode_mico_indication(ogs_pkbuf_t *pkbuf, ogs_nas_mico_indication_t *mico_indication);
 int ogs_nas_encode_ma_pdu_session_information(ogs_pkbuf_t *pkbuf, ogs_nas_ma_pdu_session_information_t *ma_pdu_session_information);
@@ -205,7 +205,7 @@ int ogs_nas_encode_nssai(ogs_pkbuf_t *pkbuf, ogs_nas_nssai_t *nssai);
 int ogs_nas_encode_nssai_inclusion_mode(ogs_pkbuf_t *pkbuf, ogs_nas_nssai_inclusion_mode_t *nssai_inclusion_mode);
 int ogs_nas_encode_operator_defined_access_category_definitions(ogs_pkbuf_t *pkbuf, ogs_nas_operator_defined_access_category_definitions_t *operator_defined_access_category_definitions);
 int ogs_nas_encode_payload_container(ogs_pkbuf_t *pkbuf, ogs_nas_payload_container_t *payload_container);
-int ogs_nas_encode_5gs_mobile_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_mobile_identity_t *5gs_mobile_identity);
+int ogs_nas_encode_5gs_mobile_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_mobile_identity_t *mobile_identity);
 int ogs_nas_encode_payload_container_type(ogs_pkbuf_t *pkbuf, ogs_nas_payload_container_type_t *payload_container_type);
 int ogs_nas_encode_pdu_session_identity_2(ogs_pkbuf_t *pkbuf, ogs_nas_pdu_session_identity_2_t *pdu_session_identity_2);
 int ogs_nas_encode_pdu_session_reactivation_result(ogs_pkbuf_t *pkbuf, ogs_nas_pdu_session_reactivation_result_t *pdu_session_reactivation_result);
@@ -218,7 +218,7 @@ int ogs_nas_encode_request_type(ogs_pkbuf_t *pkbuf, ogs_nas_request_type_t *requ
 int ogs_nas_encode_s1_ue_network_capability(ogs_pkbuf_t *pkbuf, ogs_nas_s1_ue_network_capability_t *s1_ue_network_capability);
 int ogs_nas_encode_s1_ue_security_capability(ogs_pkbuf_t *pkbuf, ogs_nas_s1_ue_security_capability_t *s1_ue_security_capability);
 int ogs_nas_encode_service_area_list(ogs_pkbuf_t *pkbuf, ogs_nas_service_area_list_t *service_area_list);
-int ogs_nas_encode_5gs_network_feature_support(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_network_feature_support_t *5gs_network_feature_support);
+int ogs_nas_encode_5gs_network_feature_support(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_network_feature_support_t *network_feature_support);
 int ogs_nas_encode_sms_indication(ogs_pkbuf_t *pkbuf, ogs_nas_sms_indication_t *sms_indication);
 int ogs_nas_encode_sor_transparent_container(ogs_pkbuf_t *pkbuf, ogs_nas_sor_transparent_container_t *sor_transparent_container);
 int ogs_nas_encode_supported_codec_list(ogs_pkbuf_t *pkbuf, ogs_nas_supported_codec_list_t *supported_codec_list);
@@ -228,16 +228,16 @@ int ogs_nas_encode_ue_security_capability(ogs_pkbuf_t *pkbuf, ogs_nas_ue_securit
 int ogs_nas_encode_ue_usage_setting(ogs_pkbuf_t *pkbuf, ogs_nas_ue_usage_setting_t *ue_usage_setting);
 int ogs_nas_encode_ue_status(ogs_pkbuf_t *pkbuf, ogs_nas_ue_status_t *ue_status);
 int ogs_nas_encode_uplink_data_status(ogs_pkbuf_t *pkbuf, ogs_nas_uplink_data_status_t *uplink_data_status);
-int ogs_nas_encode_5gs_registration_result(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_registration_result_t *5gs_registration_result);
+int ogs_nas_encode_5gs_registration_result(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_registration_result_t *registration_result);
 int ogs_nas_encode_ue_radio_capability_id(ogs_pkbuf_t *pkbuf, ogs_nas_ue_radio_capability_id_t *ue_radio_capability_id);
 int ogs_nas_encode_ue_radio_capability_id_deletion_indication(ogs_pkbuf_t *pkbuf, ogs_nas_ue_radio_capability_id_deletion_indication_t *ue_radio_capability_id_deletion_indication);
-int ogs_nas_encode_5gs_registration_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_registration_type_t *5gs_registration_type);
+int ogs_nas_encode_5gs_registration_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_registration_type_t *registration_type);
 int ogs_nas_encode_truncated_5g_s_tmsi_configuration(ogs_pkbuf_t *pkbuf, ogs_nas_truncated_5g_s_tmsi_configuration_t *truncated_s_tmsi_configuration);
 int ogs_nas_encode_wus_assistance_information(ogs_pkbuf_t *pkbuf, ogs_nas_wus_assistance_information_t *wus_assistance_information);
 int ogs_nas_encode_n5gc_indication(ogs_pkbuf_t *pkbuf, ogs_nas_n5gc_indication_t *n5gc_indication);
-int ogs_nas_encode_5gs_tracking_area_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_tracking_area_identity_t *5gs_tracking_area_identity);
-int ogs_nas_encode_5gs_tracking_area_identity_list(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_tracking_area_identity_list_t *5gs_tracking_area_identity_list);
-int ogs_nas_encode_5gs_update_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_update_type_t *5gs_update_type);
+int ogs_nas_encode_5gs_tracking_area_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_tracking_area_identity_t *tracking_area_identity);
+int ogs_nas_encode_5gs_tracking_area_identity_list(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_tracking_area_identity_list_t *tracking_area_identity_list);
+int ogs_nas_encode_5gs_update_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_update_type_t *update_type);
 int ogs_nas_encode_5gsm_capability(ogs_pkbuf_t *pkbuf, ogs_nas_5gsm_capability_t *gsm_capability);
 int ogs_nas_encode_pdu_address(ogs_pkbuf_t *pkbuf, ogs_nas_pdu_address_t *pdu_address);
 int ogs_nas_encode_pdu_session_type(ogs_pkbuf_t *pkbuf, ogs_nas_pdu_session_type_t *pdu_session_type);
