@@ -25,10 +25,10 @@
 
 #define OGS_NAS_INSIDE
 
-#include "nas/types.h"
-#include "nas/conv.h"
-#include "nas/ies.h"
-#include "nas/message.h"
+#include "nas/epc/types.h"
+#include "nas/epc/conv.h"
+#include "nas/epc/ies.h"
+#include "nas/epc/message.h"
 
 #undef OGS_NAS_INSIDE
 
