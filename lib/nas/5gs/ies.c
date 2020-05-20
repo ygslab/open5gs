@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 16:42:41.818015 by acetcom
+ * Created on: 2020-05-20 16:46:21.441388 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -385,16 +385,16 @@ int ogs_nas_encode_abba(ogs_pkbuf_t *pkbuf, ogs_nas_abba_t *abba)
 
 /* 9.11.3.12 Additional 5G security information
  * O TLV 3 */
-int ogs_nas_decode_additional_5g_security_information(ogs_nas_additional_5g_security_information_t *additional_5g_security_information, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_additional_5g_security_information(ogs_nas_additional_5g_security_information_t *additional_security_information, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_additional_5g_security_information_t *source = (ogs_nas_additional_5g_security_information_t *)pkbuf->data;
 
-    additional_5g_security_information->length = source->length;
-    size = additional_5g_security_information->length + sizeof(additional_5g_security_information->length);
+    additional_security_information->length = source->length;
+    size = additional_security_information->length + sizeof(additional_security_information->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(additional_5g_security_information, pkbuf->data - size, size);
+    memcpy(additional_security_information, pkbuf->data - size, size);
 
     ogs_trace("  ADDITIONAL_5G_SECURITY_INFORMATION - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -402,12 +402,12 @@ int ogs_nas_decode_additional_5g_security_information(ogs_nas_additional_5g_secu
     return size;
 }
 
-int ogs_nas_encode_additional_5g_security_information(ogs_pkbuf_t *pkbuf, ogs_nas_additional_5g_security_information_t *additional_5g_security_information)
+int ogs_nas_encode_additional_5g_security_information(ogs_pkbuf_t *pkbuf, ogs_nas_additional_5g_security_information_t *additional_security_information)
 {
-    uint16_t size = additional_5g_security_information->length + sizeof(additional_5g_security_information->length);
+    uint16_t size = additional_security_information->length + sizeof(additional_security_information->length);
     ogs_nas_additional_5g_security_information_t target;
 
-    memcpy(&target, additional_5g_security_information, sizeof(ogs_nas_additional_5g_security_information_t));
+    memcpy(&target, additional_security_information, sizeof(ogs_nas_additional_5g_security_information_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -2598,16 +2598,16 @@ int ogs_nas_encode_5gs_registration_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_registr
 
 /* 9.11.3.70 Truncated 5G-S-TMSI configuration
  * O TLV 3 */
-int ogs_nas_decode_truncated_5g_s_tmsi_configuration(ogs_nas_truncated_5g_s_tmsi_configuration_t *truncated_5g_s_tmsi_configuration, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_truncated_5g_s_tmsi_configuration(ogs_nas_truncated_5g_s_tmsi_configuration_t *truncated_s_tmsi_configuration, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_truncated_5g_s_tmsi_configuration_t *source = (ogs_nas_truncated_5g_s_tmsi_configuration_t *)pkbuf->data;
 
-    truncated_5g_s_tmsi_configuration->length = source->length;
-    size = truncated_5g_s_tmsi_configuration->length + sizeof(truncated_5g_s_tmsi_configuration->length);
+    truncated_s_tmsi_configuration->length = source->length;
+    size = truncated_s_tmsi_configuration->length + sizeof(truncated_s_tmsi_configuration->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(truncated_5g_s_tmsi_configuration, pkbuf->data - size, size);
+    memcpy(truncated_s_tmsi_configuration, pkbuf->data - size, size);
 
     ogs_trace("  TRUNCATED_5G_S_TMSI_CONFIGURATION - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -2615,12 +2615,12 @@ int ogs_nas_decode_truncated_5g_s_tmsi_configuration(ogs_nas_truncated_5g_s_tmsi
     return size;
 }
 
-int ogs_nas_encode_truncated_5g_s_tmsi_configuration(ogs_pkbuf_t *pkbuf, ogs_nas_truncated_5g_s_tmsi_configuration_t *truncated_5g_s_tmsi_configuration)
+int ogs_nas_encode_truncated_5g_s_tmsi_configuration(ogs_pkbuf_t *pkbuf, ogs_nas_truncated_5g_s_tmsi_configuration_t *truncated_s_tmsi_configuration)
 {
-    uint16_t size = truncated_5g_s_tmsi_configuration->length + sizeof(truncated_5g_s_tmsi_configuration->length);
+    uint16_t size = truncated_s_tmsi_configuration->length + sizeof(truncated_s_tmsi_configuration->length);
     ogs_nas_truncated_5g_s_tmsi_configuration_t target;
 
-    memcpy(&target, truncated_5g_s_tmsi_configuration, sizeof(ogs_nas_truncated_5g_s_tmsi_configuration_t));
+    memcpy(&target, truncated_s_tmsi_configuration, sizeof(ogs_nas_truncated_5g_s_tmsi_configuration_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -2798,16 +2798,16 @@ int ogs_nas_encode_5gs_update_type(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_update_type_t
 
 /* 9.11.4.1 5GSM capability
  * O TLV 3-15 */
-int ogs_nas_decode_5gsm_capability(ogs_nas_5gsm_capability_t *5gsm_capability, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gsm_capability(ogs_nas_5gsm_capability_t *gsm_capability, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_5gsm_capability_t *source = (ogs_nas_5gsm_capability_t *)pkbuf->data;
 
-    5gsm_capability->length = source->length;
-    size = 5gsm_capability->length + sizeof(5gsm_capability->length);
+    gsm_capability->length = source->length;
+    size = gsm_capability->length + sizeof(gsm_capability->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gsm_capability, pkbuf->data - size, size);
+    memcpy(gsm_capability, pkbuf->data - size, size);
 
     ogs_trace("  5GSM_CAPABILITY - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -2815,12 +2815,12 @@ int ogs_nas_decode_5gsm_capability(ogs_nas_5gsm_capability_t *5gsm_capability, o
     return size;
 }
 
-int ogs_nas_encode_5gsm_capability(ogs_pkbuf_t *pkbuf, ogs_nas_5gsm_capability_t *5gsm_capability)
+int ogs_nas_encode_5gsm_capability(ogs_pkbuf_t *pkbuf, ogs_nas_5gsm_capability_t *gsm_capability)
 {
-    uint16_t size = 5gsm_capability->length + sizeof(5gsm_capability->length);
+    uint16_t size = gsm_capability->length + sizeof(gsm_capability->length);
     ogs_nas_5gsm_capability_t target;
 
-    memcpy(&target, 5gsm_capability, sizeof(ogs_nas_5gsm_capability_t));
+    memcpy(&target, gsm_capability, sizeof(ogs_nas_5gsm_capability_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -3102,16 +3102,16 @@ int ogs_nas_encode_re_attempt_indicator(ogs_pkbuf_t *pkbuf, ogs_nas_re_attempt_i
 
 /* 9.11.4.18 5GSM network feature support
  * O TLV 3-15 */
-int ogs_nas_decode_5gsm_network_feature_support(ogs_nas_5gsm_network_feature_support_t *5gsm_network_feature_support, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gsm_network_feature_support(ogs_nas_5gsm_network_feature_support_t *gsm_network_feature_support, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_5gsm_network_feature_support_t *source = (ogs_nas_5gsm_network_feature_support_t *)pkbuf->data;
 
-    5gsm_network_feature_support->length = source->length;
-    size = 5gsm_network_feature_support->length + sizeof(5gsm_network_feature_support->length);
+    gsm_network_feature_support->length = source->length;
+    size = gsm_network_feature_support->length + sizeof(gsm_network_feature_support->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gsm_network_feature_support, pkbuf->data - size, size);
+    memcpy(gsm_network_feature_support, pkbuf->data - size, size);
 
     ogs_trace("  5GSM_NETWORK_FEATURE_SUPPORT - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -3119,12 +3119,12 @@ int ogs_nas_decode_5gsm_network_feature_support(ogs_nas_5gsm_network_feature_sup
     return size;
 }
 
-int ogs_nas_encode_5gsm_network_feature_support(ogs_pkbuf_t *pkbuf, ogs_nas_5gsm_network_feature_support_t *5gsm_network_feature_support)
+int ogs_nas_encode_5gsm_network_feature_support(ogs_pkbuf_t *pkbuf, ogs_nas_5gsm_network_feature_support_t *gsm_network_feature_support)
 {
-    uint16_t size = 5gsm_network_feature_support->length + sizeof(5gsm_network_feature_support->length);
+    uint16_t size = gsm_network_feature_support->length + sizeof(gsm_network_feature_support->length);
     ogs_nas_5gsm_network_feature_support_t target;
 
-    memcpy(&target, 5gsm_network_feature_support, sizeof(ogs_nas_5gsm_network_feature_support_t));
+    memcpy(&target, gsm_network_feature_support, sizeof(ogs_nas_5gsm_network_feature_support_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -3136,12 +3136,12 @@ int ogs_nas_encode_5gsm_network_feature_support(ogs_pkbuf_t *pkbuf, ogs_nas_5gsm
 
 /* 9.11.4.2 5GSM cause
  * O TV 2 */
-int ogs_nas_decode_5gsm_cause(ogs_nas_5gsm_cause_t *5gsm_cause, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gsm_cause(ogs_nas_5gsm_cause_t *gsm_cause, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = sizeof(ogs_nas_5gsm_cause_t);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gsm_cause, pkbuf->data - size, size);
+    memcpy(gsm_cause, pkbuf->data - size, size);
 
     ogs_trace("  5GSM_CAUSE - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -3149,12 +3149,12 @@ int ogs_nas_decode_5gsm_cause(ogs_nas_5gsm_cause_t *5gsm_cause, ogs_pkbuf_t *pkb
     return size;
 }
 
-int ogs_nas_encode_5gsm_cause(ogs_pkbuf_t *pkbuf, ogs_nas_5gsm_cause_t *5gsm_cause)
+int ogs_nas_encode_5gsm_cause(ogs_pkbuf_t *pkbuf, ogs_nas_5gsm_cause_t *gsm_cause)
 {
     uint16_t size = sizeof(ogs_nas_5gsm_cause_t);
     ogs_nas_5gsm_cause_t target;
 
-    memcpy(&target, 5gsm_cause, size);
+    memcpy(&target, gsm_cause, size);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -3200,16 +3200,16 @@ int ogs_nas_encode_serving_plmn_rate_control(ogs_pkbuf_t *pkbuf, ogs_nas_serving
 
 /* 9.11.4.21 5GSM congestion re-attempt indicator
  * O TLV 3 */
-int ogs_nas_decode_5gsm_congestion_re_attempt_indicator(ogs_nas_5gsm_congestion_re_attempt_indicator_t *5gsm_congestion_re_attempt_indicator, ogs_pkbuf_t *pkbuf)
+int ogs_nas_decode_5gsm_congestion_re_attempt_indicator(ogs_nas_5gsm_congestion_re_attempt_indicator_t *gsm_congestion_re_attempt_indicator, ogs_pkbuf_t *pkbuf)
 {
     uint16_t size = 0;
     ogs_nas_5gsm_congestion_re_attempt_indicator_t *source = (ogs_nas_5gsm_congestion_re_attempt_indicator_t *)pkbuf->data;
 
-    5gsm_congestion_re_attempt_indicator->length = source->length;
-    size = 5gsm_congestion_re_attempt_indicator->length + sizeof(5gsm_congestion_re_attempt_indicator->length);
+    gsm_congestion_re_attempt_indicator->length = source->length;
+    size = gsm_congestion_re_attempt_indicator->length + sizeof(gsm_congestion_re_attempt_indicator->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(5gsm_congestion_re_attempt_indicator, pkbuf->data - size, size);
+    memcpy(gsm_congestion_re_attempt_indicator, pkbuf->data - size, size);
 
     ogs_trace("  5GSM_CONGESTION_RE_ATTEMPT_INDICATOR - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
@@ -3217,12 +3217,12 @@ int ogs_nas_decode_5gsm_congestion_re_attempt_indicator(ogs_nas_5gsm_congestion_
     return size;
 }
 
-int ogs_nas_encode_5gsm_congestion_re_attempt_indicator(ogs_pkbuf_t *pkbuf, ogs_nas_5gsm_congestion_re_attempt_indicator_t *5gsm_congestion_re_attempt_indicator)
+int ogs_nas_encode_5gsm_congestion_re_attempt_indicator(ogs_pkbuf_t *pkbuf, ogs_nas_5gsm_congestion_re_attempt_indicator_t *gsm_congestion_re_attempt_indicator)
 {
-    uint16_t size = 5gsm_congestion_re_attempt_indicator->length + sizeof(5gsm_congestion_re_attempt_indicator->length);
+    uint16_t size = gsm_congestion_re_attempt_indicator->length + sizeof(gsm_congestion_re_attempt_indicator->length);
     ogs_nas_5gsm_congestion_re_attempt_indicator_t target;
 
-    memcpy(&target, 5gsm_congestion_re_attempt_indicator, sizeof(ogs_nas_5gsm_congestion_re_attempt_indicator_t));
+    memcpy(&target, gsm_congestion_re_attempt_indicator, sizeof(ogs_nas_5gsm_congestion_re_attempt_indicator_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
