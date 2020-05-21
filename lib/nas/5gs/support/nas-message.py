@@ -520,18 +520,18 @@ extern "C" {
 
 #define OGS_NAS_EPS_BEARER_IDENTITY_UNASSIGNED 0
 
-typedef struct ogs_nas_emm_header_s {
+typedef struct ogs_nas_5gmm_header_s {
 ED2(uint8_t security_header_type:4;,
     uint8_t protocol_discriminator:4;)
     uint8_t message_type;
-} __attribute__ ((packed)) ogs_nas_emm_header_t;
+} __attribute__ ((packed)) ogs_nas_5gmm_header_t;
 
-typedef struct ogs_nas_esm_header_s {
+typedef struct ogs_nas_5gsm_header_s {
 ED2(uint8_t eps_bearer_identity:4;,
     uint8_t protocol_discriminator:4;)
     uint8_t procedure_transaction_identity;
     uint8_t message_type;
-} __attribute__ ((packed)) ogs_nas_esm_header_t;
+} __attribute__ ((packed)) ogs_nas_5gsm_header_t;
 
 typedef struct ogs_nas_security_header_s {
 ED2(uint8_t security_header_type:4;,
@@ -584,8 +584,8 @@ for (k, v) in sorted_msg_list:
 
 f.write("\n")
 
-f.write("""typedef struct ogs_nas_emm_message_s {
-    ogs_nas_emm_header_t h;
+f.write("""typedef struct ogs_nas_5gmm_message_s {
+    ogs_nas_5gmm_header_t h;
     union {
 """)
 for (k, v) in sorted_msg_list:
@@ -596,10 +596,10 @@ for (k, v) in sorted_msg_list:
     if float(msg_list[k]["type"]) < 192:
         f.write("        ogs_nas_%s_t %s;\n" % (v_lower(k), get_value(k)))
 f.write("""    };
-} ogs_nas_emm_message_t;
+} ogs_nas_5gmm_message_t;
 
-typedef struct ogs_nas_esm_message_s {
-    ogs_nas_esm_header_t h;
+typedef struct ogs_nas_5gsm_message_s {
+    ogs_nas_5gsm_header_t h;
     union {
 """)
 for (k, v) in sorted_msg_list:
@@ -611,20 +611,20 @@ for (k, v) in sorted_msg_list:
         f.write("        ogs_nas_%s_t %s;\n" % (v_lower(k), get_value(k)))
 
 f.write("""    };
-} ogs_nas_esm_message_t;
+} ogs_nas_5gsm_message_t;
 
 typedef struct ogs_nas_message_s {
     ogs_nas_security_header_t h;
     union {
-        ogs_nas_emm_message_t emm;
-        ogs_nas_esm_message_t esm;
+        ogs_nas_5gmm_message_t gmm;
+        ogs_nas_5gsm_message_t gsm;
     };
 } ogs_nas_message_t;
 
-ogs_pkbuf_t *ogs_nas_emm_encode(ogs_nas_message_t *message);
-ogs_pkbuf_t *ogs_nas_esm_encode(ogs_nas_message_t *message);
-int ogs_nas_emm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
-int ogs_nas_esm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
+ogs_pkbuf_t *ogs_nas_5gmm_encode(ogs_nas_message_t *message);
+ogs_pkbuf_t *ogs_nas_5gsm_encode(ogs_nas_message_t *message);
+int ogs_nas_5gmm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
+int ogs_nas_5gsm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 ogs_pkbuf_t *ogs_nas_plain_encode(ogs_nas_message_t *message);
 
 #ifdef __cplusplus
@@ -659,9 +659,9 @@ for (k, v) in sorted_msg_list:
 
     f.write("int ogs_nas_decode_%s(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)\n{\n" % v_lower(k))
     if float(msg_list[k]["type"]) < 192:
-        f.write("    ogs_nas_%s_t *%s = &message->emm.%s;\n" % (v_lower(k), get_value(k), get_value(k)))
+        f.write("    ogs_nas_%s_t *%s = &message->gmm.%s;\n" % (v_lower(k), get_value(k), get_value(k)))
     else:
-        f.write("    ogs_nas_%s_t *%s = &message->esm.%s;\n" % (v_lower(k), get_value(k), get_value(k)))
+        f.write("    ogs_nas_%s_t *%s = &message->gsm.%s;\n" % (v_lower(k), get_value(k), get_value(k)))
     f.write("    int decoded = 0;\n")
     f.write("    int size = 0;\n\n")
     f.write("    ogs_trace(\"[NAS] Decode %s\\n\");\n\n" % v_upper(k))
@@ -708,7 +708,7 @@ for (k, v) in sorted_msg_list:
 
 """)
 
-f.write("""int ogs_nas_emm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
+f.write("""int ogs_nas_5gmm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
     int size = 0;
     uint16_t decoded = 0;
@@ -719,12 +719,12 @@ f.write("""int ogs_nas_emm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf
 
     memset(message, 0, sizeof(ogs_nas_message_t));
 
-    size = sizeof(ogs_nas_emm_header_t);
+    size = sizeof(ogs_nas_5gmm_header_t);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(&message->emm.h, pkbuf->data - size, size);
+    memcpy(&message->gmm.h, pkbuf->data - size, size);
     decoded += size;
 
-    if (message->emm.h.security_header_type >=
+    if (message->gmm.h.security_header_type >=
             OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE)
     {
         ogs_assert(ogs_pkbuf_push(pkbuf, 1));
@@ -736,7 +736,7 @@ f.write("""int ogs_nas_emm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf
         goto out;
     }
 
-    switch(message->emm.h.message_type)
+    switch(message->gmm.h.message_type)
     {
 """)
 for (k, v) in sorted_msg_list:
@@ -752,7 +752,7 @@ for (k, v) in sorted_msg_list:
 
 f.write("""        default:
             ogs_error("Unknown message type (0x%x) or not implemented", 
-                    message->emm.h.message_type);
+                    message->gmm.h.message_type);
             break;
     }
 
@@ -763,7 +763,7 @@ out:
 }
 """)
 
-f.write("""int ogs_nas_esm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
+f.write("""int ogs_nas_5gsm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
     int size = 0;
     uint16_t decoded = 0;
@@ -774,12 +774,12 @@ f.write("""int ogs_nas_esm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf
 
     memset(message, 0, sizeof(ogs_nas_message_t));
 
-    size = sizeof(ogs_nas_esm_header_t);
+    size = sizeof(ogs_nas_5gsm_header_t);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(&message->esm.h, pkbuf->data - size, size);
+    memcpy(&message->gsm.h, pkbuf->data - size, size);
     decoded += size;
 
-    switch(message->esm.h.message_type)
+    switch(message->gsm.h.message_type)
     {
 """)
 for (k, v) in sorted_msg_list:
@@ -795,7 +795,7 @@ for (k, v) in sorted_msg_list:
 
 f.write("""        default:
             ogs_error("Unknown message type (0x%x) or not implemented", 
-                    message->esm.h.message_type);
+                    message->gsm.h.message_type);
             break;
     }
 
@@ -829,9 +829,9 @@ for (k, v) in sorted_msg_list:
 
     f.write("int ogs_nas_encode_%s(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *message)\n{\n" % v_lower(k))
     if float(msg_list[k]["type"]) < 192:
-        f.write("    ogs_nas_%s_t *%s = &message->emm.%s;\n" % (v_lower(k), get_value(k), get_value(k)))
+        f.write("    ogs_nas_%s_t *%s = &message->gmm.%s;\n" % (v_lower(k), get_value(k), get_value(k)))
     else:
-        f.write("    ogs_nas_%s_t *%s = &message->esm.%s;\n" % (v_lower(k), get_value(k), get_value(k)))
+        f.write("    ogs_nas_%s_t *%s = &message->gsm.%s;\n" % (v_lower(k), get_value(k), get_value(k)))
     f.write("    int encoded = 0;\n")
     f.write("    int size = 0;\n\n")
     f.write("    ogs_trace(\"[NAS] Encode %s\");\n\n" % v_upper(k))
@@ -861,7 +861,7 @@ for (k, v) in sorted_msg_list:
 """)
 
 
-f.write("""ogs_pkbuf_t *ogs_nas_emm_encode(ogs_nas_message_t *message)
+f.write("""ogs_pkbuf_t *ogs_nas_5gmm_encode(ogs_nas_message_t *message)
 {
     ogs_pkbuf_t *pkbuf = NULL;
     int size = 0;
@@ -876,13 +876,13 @@ f.write("""ogs_pkbuf_t *ogs_nas_emm_encode(ogs_nas_message_t *message)
     ogs_pkbuf_reserve(pkbuf, OGS_NAS_HEADROOM);
     ogs_pkbuf_put(pkbuf, OGS_MAX_SDU_LEN-OGS_NAS_HEADROOM);
 
-    size = sizeof(ogs_nas_emm_header_t);
+    size = sizeof(ogs_nas_5gmm_header_t);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
 
-    memcpy(pkbuf->data - size, &message->emm.h, size);
+    memcpy(pkbuf->data - size, &message->gmm.h, size);
     encoded += size;
 
-    if (message->emm.h.security_header_type >=
+    if (message->gmm.h.security_header_type >=
             OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE)
     {
         ogs_assert(ogs_pkbuf_push(pkbuf, 1));
@@ -894,7 +894,7 @@ f.write("""ogs_pkbuf_t *ogs_nas_emm_encode(ogs_nas_message_t *message)
         goto out;
     }
 
-    switch(message->emm.h.message_type)
+    switch(message->gmm.h.message_type)
     {
 """)
 
@@ -911,7 +911,7 @@ for (k, v) in sorted_msg_list:
 
 f.write("""        default:
             ogs_error("Unknown message type (0x%x) or not implemented", 
-                    message->emm.h.message_type);
+                    message->gmm.h.message_type);
             ogs_pkbuf_free(pkbuf);
             return NULL;
     }
@@ -926,7 +926,7 @@ out:
 
 """)
 
-f.write("""ogs_pkbuf_t *ogs_nas_esm_encode(ogs_nas_message_t *message)
+f.write("""ogs_pkbuf_t *ogs_nas_5gsm_encode(ogs_nas_message_t *message)
 {
     ogs_pkbuf_t *pkbuf = NULL;
     int size = 0;
@@ -941,12 +941,12 @@ f.write("""ogs_pkbuf_t *ogs_nas_esm_encode(ogs_nas_message_t *message)
     ogs_pkbuf_reserve(pkbuf, OGS_NAS_HEADROOM);
     ogs_pkbuf_put(pkbuf, OGS_MAX_SDU_LEN-OGS_NAS_HEADROOM);
 
-    size = sizeof(ogs_nas_esm_header_t);
+    size = sizeof(ogs_nas_5gsm_header_t);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(pkbuf->data - size, &message->esm.h, size);
+    memcpy(pkbuf->data - size, &message->gsm.h, size);
     encoded += size;
 
-    switch(message->esm.h.message_type)
+    switch(message->gsm.h.message_type)
     {
 """)
 
@@ -963,7 +963,7 @@ for (k, v) in sorted_msg_list:
 
 f.write("""        default:
             ogs_error("Unknown message type (0x%x) or not implemented", 
-                    message->esm.h.message_type);
+                    message->gsm.h.message_type);
             ogs_pkbuf_free(pkbuf);
             return NULL;
     }
@@ -978,15 +978,15 @@ ogs_pkbuf_t *ogs_nas_plain_encode(ogs_nas_message_t *message)
 {
     ogs_assert(message);
 
-    ogs_assert(message->emm.h.protocol_discriminator ==
-            message->esm.h.protocol_discriminator);
+    ogs_assert(message->gmm.h.protocol_discriminator ==
+            message->gsm.h.protocol_discriminator);
 
-    if (message->emm.h.protocol_discriminator == 
+    if (message->gmm.h.protocol_discriminator == 
             OGS_NAS_PROTOCOL_DISCRIMINATOR_EMM)
-        return ogs_nas_emm_encode(message);
-    else if (message->emm.h.protocol_discriminator == 
+        return ogs_nas_5gmm_encode(message);
+    else if (message->gmm.h.protocol_discriminator == 
             OGS_NAS_PROTOCOL_DISCRIMINATOR_ESM)
-        return ogs_nas_esm_encode(message);
+        return ogs_nas_5gsm_encode(message);
 
     return NULL;
 }

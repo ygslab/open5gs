@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 18:17:08.795222 by acetcom
+ * Created on: 2020-05-21 10:45:21.934220 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -78,7 +78,7 @@ int ogs_nas_decode_pdu_session_release_complete(ogs_nas_message_t *message, ogs_
 int ogs_nas_decode_5gsm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 int ogs_nas_decode_registration_request(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_registration_request_t *registration_request = &message->emm.registration_request;
+    ogs_nas_registration_request_t *registration_request = &message->gmm.registration_request;
     int decoded = 0;
     int size = 0;
 
@@ -300,7 +300,7 @@ int ogs_nas_decode_registration_request(ogs_nas_message_t *message, ogs_pkbuf_t 
 
 int ogs_nas_decode_registration_accept(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_registration_accept_t *registration_accept = &message->emm.registration_accept;
+    ogs_nas_registration_accept_t *registration_accept = &message->gmm.registration_accept;
     int decoded = 0;
     int size = 0;
 
@@ -554,7 +554,7 @@ int ogs_nas_decode_registration_accept(ogs_nas_message_t *message, ogs_pkbuf_t *
 
 int ogs_nas_decode_registration_complete(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_registration_complete_t *registration_complete = &message->emm.registration_complete;
+    ogs_nas_registration_complete_t *registration_complete = &message->gmm.registration_complete;
     int decoded = 0;
     int size = 0;
 
@@ -588,7 +588,7 @@ int ogs_nas_decode_registration_complete(ogs_nas_message_t *message, ogs_pkbuf_t
 
 int ogs_nas_decode_registration_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_registration_reject_t *registration_reject = &message->emm.registration_reject;
+    ogs_nas_registration_reject_t *registration_reject = &message->gmm.registration_reject;
     int decoded = 0;
     int size = 0;
 
@@ -644,7 +644,7 @@ int ogs_nas_decode_registration_reject(ogs_nas_message_t *message, ogs_pkbuf_t *
 
 int ogs_nas_decode_deregistration_request_from_ue(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_deregistration_request_from_ue_t *deregistration_request_from_ue = &message->emm.deregistration_request_from_ue;
+    ogs_nas_deregistration_request_from_ue_t *deregistration_request_from_ue = &message->gmm.deregistration_request_from_ue;
     int decoded = 0;
     int size = 0;
 
@@ -663,7 +663,7 @@ int ogs_nas_decode_deregistration_request_from_ue(ogs_nas_message_t *message, og
 
 int ogs_nas_decode_deregistration_request_to_ue(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_deregistration_request_to_ue_t *deregistration_request_to_ue = &message->emm.deregistration_request_to_ue;
+    ogs_nas_deregistration_request_to_ue_t *deregistration_request_to_ue = &message->gmm.deregistration_request_to_ue;
     int decoded = 0;
     int size = 0;
 
@@ -713,7 +713,7 @@ int ogs_nas_decode_deregistration_request_to_ue(ogs_nas_message_t *message, ogs_
 
 int ogs_nas_decode_service_request(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_service_request_t *service_request = &message->emm.service_request;
+    ogs_nas_service_request_t *service_request = &message->gmm.service_request;
     int decoded = 0;
     int size = 0;
 
@@ -773,7 +773,7 @@ int ogs_nas_decode_service_request(ogs_nas_message_t *message, ogs_pkbuf_t *pkbu
 
 int ogs_nas_decode_service_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_service_reject_t *service_reject = &message->emm.service_reject;
+    ogs_nas_service_reject_t *service_reject = &message->gmm.service_reject;
     int decoded = 0;
     int size = 0;
 
@@ -829,7 +829,7 @@ int ogs_nas_decode_service_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf
 
 int ogs_nas_decode_service_accept(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_service_accept_t *service_accept = &message->emm.service_accept;
+    ogs_nas_service_accept_t *service_accept = &message->gmm.service_accept;
     int decoded = 0;
     int size = 0;
 
@@ -887,7 +887,7 @@ int ogs_nas_decode_service_accept(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf
 
 int ogs_nas_decode_configuration_update_command(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_configuration_update_command_t *configuration_update_command = &message->emm.configuration_update_command;
+    ogs_nas_configuration_update_command_t *configuration_update_command = &message->gmm.configuration_update_command;
     int decoded = 0;
     int size = 0;
 
@@ -1053,7 +1053,7 @@ int ogs_nas_decode_configuration_update_command(ogs_nas_message_t *message, ogs_
 
 int ogs_nas_decode_configuration_update_complete(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_configuration_update_complete_t *configuration_update_complete = &message->emm.configuration_update_complete;
+    ogs_nas_configuration_update_complete_t *configuration_update_complete = &message->gmm.configuration_update_complete;
     int decoded = 0;
     int size = 0;
 
@@ -1133,7 +1133,7 @@ int ogs_nas_decode_configuration_update_complete(ogs_nas_message_t *message, ogs
 
 int ogs_nas_decode_authentication_request(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_authentication_request_t *authentication_request = &message->emm.authentication_request;
+    ogs_nas_authentication_request_t *authentication_request = &message->gmm.authentication_request;
     int decoded = 0;
     int size = 0;
 
@@ -1187,7 +1187,7 @@ int ogs_nas_decode_authentication_request(ogs_nas_message_t *message, ogs_pkbuf_
 
 int ogs_nas_decode_authentication_response(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_authentication_response_t *authentication_response = &message->emm.authentication_response;
+    ogs_nas_authentication_response_t *authentication_response = &message->gmm.authentication_response;
     int decoded = 0;
     int size = 0;
 
@@ -1227,7 +1227,7 @@ int ogs_nas_decode_authentication_response(ogs_nas_message_t *message, ogs_pkbuf
 
 int ogs_nas_decode_authentication_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_authentication_reject_t *authentication_reject = &message->emm.authentication_reject;
+    ogs_nas_authentication_reject_t *authentication_reject = &message->gmm.authentication_reject;
     int decoded = 0;
     int size = 0;
 
@@ -1261,7 +1261,7 @@ int ogs_nas_decode_authentication_reject(ogs_nas_message_t *message, ogs_pkbuf_t
 
 int ogs_nas_decode_authentication_failure(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_authentication_failure_t *authentication_failure = &message->emm.authentication_failure;
+    ogs_nas_authentication_failure_t *authentication_failure = &message->gmm.authentication_failure;
     int decoded = 0;
     int size = 0;
 
@@ -1299,7 +1299,7 @@ int ogs_nas_decode_authentication_failure(ogs_nas_message_t *message, ogs_pkbuf_
 
 int ogs_nas_decode_authentication_result(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_authentication_result_t *authentication_result = &message->emm.authentication_result;
+    ogs_nas_authentication_result_t *authentication_result = &message->gmm.authentication_result;
     int decoded = 0;
     int size = 0;
 
@@ -1341,7 +1341,7 @@ int ogs_nas_decode_authentication_result(ogs_nas_message_t *message, ogs_pkbuf_t
 
 int ogs_nas_decode_identity_request(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_identity_request_t *identity_request = &message->emm.identity_request;
+    ogs_nas_identity_request_t *identity_request = &message->gmm.identity_request;
     int decoded = 0;
     int size = 0;
 
@@ -1356,7 +1356,7 @@ int ogs_nas_decode_identity_request(ogs_nas_message_t *message, ogs_pkbuf_t *pkb
 
 int ogs_nas_decode_identity_response(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_identity_response_t *identity_response = &message->emm.identity_response;
+    ogs_nas_identity_response_t *identity_response = &message->gmm.identity_response;
     int decoded = 0;
     int size = 0;
 
@@ -1371,7 +1371,7 @@ int ogs_nas_decode_identity_response(ogs_nas_message_t *message, ogs_pkbuf_t *pk
 
 int ogs_nas_decode_security_mode_command(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_security_mode_command_t *security_mode_command = &message->emm.security_mode_command;
+    ogs_nas_security_mode_command_t *security_mode_command = &message->gmm.security_mode_command;
     int decoded = 0;
     int size = 0;
 
@@ -1447,7 +1447,7 @@ int ogs_nas_decode_security_mode_command(ogs_nas_message_t *message, ogs_pkbuf_t
 
 int ogs_nas_decode_security_mode_complete(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_security_mode_complete_t *security_mode_complete = &message->emm.security_mode_complete;
+    ogs_nas_security_mode_complete_t *security_mode_complete = &message->gmm.security_mode_complete;
     int decoded = 0;
     int size = 0;
 
@@ -1493,7 +1493,7 @@ int ogs_nas_decode_security_mode_complete(ogs_nas_message_t *message, ogs_pkbuf_
 
 int ogs_nas_decode_security_mode_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_security_mode_reject_t *security_mode_reject = &message->emm.security_mode_reject;
+    ogs_nas_security_mode_reject_t *security_mode_reject = &message->gmm.security_mode_reject;
     int decoded = 0;
     int size = 0;
 
@@ -1508,7 +1508,7 @@ int ogs_nas_decode_security_mode_reject(ogs_nas_message_t *message, ogs_pkbuf_t 
 
 int ogs_nas_decode_5gmm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_5gmm_status_t *gmm_status = &message->emm.gmm_status;
+    ogs_nas_5gmm_status_t *gmm_status = &message->gmm.gmm_status;
     int decoded = 0;
     int size = 0;
 
@@ -1523,7 +1523,7 @@ int ogs_nas_decode_5gmm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 
 int ogs_nas_decode_notification(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_notification_t *notification = &message->emm.notification;
+    ogs_nas_notification_t *notification = &message->gmm.notification;
     int decoded = 0;
     int size = 0;
 
@@ -1538,7 +1538,7 @@ int ogs_nas_decode_notification(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 
 int ogs_nas_decode_notification_response(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_notification_response_t *notification_response = &message->emm.notification_response;
+    ogs_nas_notification_response_t *notification_response = &message->gmm.notification_response;
     int decoded = 0;
     int size = 0;
 
@@ -1572,7 +1572,7 @@ int ogs_nas_decode_notification_response(ogs_nas_message_t *message, ogs_pkbuf_t
 
 int ogs_nas_decode_ul_nas_transport(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_ul_nas_transport_t *ul_nas_transport = &message->emm.ul_nas_transport;
+    ogs_nas_ul_nas_transport_t *ul_nas_transport = &message->gmm.ul_nas_transport;
     int decoded = 0;
     int size = 0;
 
@@ -1650,7 +1650,7 @@ int ogs_nas_decode_ul_nas_transport(ogs_nas_message_t *message, ogs_pkbuf_t *pkb
 
 int ogs_nas_decode_dl_nas_transport(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_dl_nas_transport_t *dl_nas_transport = &message->emm.dl_nas_transport;
+    ogs_nas_dl_nas_transport_t *dl_nas_transport = &message->gmm.dl_nas_transport;
     int decoded = 0;
     int size = 0;
 
@@ -1704,7 +1704,7 @@ int ogs_nas_decode_dl_nas_transport(ogs_nas_message_t *message, ogs_pkbuf_t *pkb
 
 int ogs_nas_decode_pdu_session_establishment_request(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_establishment_request_t *pdu_session_establishment_request = &message->esm.pdu_session_establishment_request;
+    ogs_nas_pdu_session_establishment_request_t *pdu_session_establishment_request = &message->gsm.pdu_session_establishment_request;
     int decoded = 0;
     int size = 0;
 
@@ -1784,7 +1784,7 @@ int ogs_nas_decode_pdu_session_establishment_request(ogs_nas_message_t *message,
 
 int ogs_nas_decode_pdu_session_establishment_accept(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_establishment_accept_t *pdu_session_establishment_accept = &message->esm.pdu_session_establishment_accept;
+    ogs_nas_pdu_session_establishment_accept_t *pdu_session_establishment_accept = &message->gsm.pdu_session_establishment_accept;
     int decoded = 0;
     int size = 0;
 
@@ -1803,7 +1803,7 @@ int ogs_nas_decode_pdu_session_establishment_accept(ogs_nas_message_t *message, 
 
 int ogs_nas_decode_pdu_session_establishment_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_establishment_reject_t *pdu_session_establishment_reject = &message->esm.pdu_session_establishment_reject;
+    ogs_nas_pdu_session_establishment_reject_t *pdu_session_establishment_reject = &message->gsm.pdu_session_establishment_reject;
     int decoded = 0;
     int size = 0;
 
@@ -1822,7 +1822,7 @@ int ogs_nas_decode_pdu_session_establishment_reject(ogs_nas_message_t *message, 
 
 int ogs_nas_decode_pdu_session_authentication_command(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_authentication_command_t *pdu_session_authentication_command = &message->esm.pdu_session_authentication_command;
+    ogs_nas_pdu_session_authentication_command_t *pdu_session_authentication_command = &message->gsm.pdu_session_authentication_command;
     int decoded = 0;
     int size = 0;
 
@@ -1841,7 +1841,7 @@ int ogs_nas_decode_pdu_session_authentication_command(ogs_nas_message_t *message
 
 int ogs_nas_decode_pdu_session_authentication_complete(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_authentication_complete_t *pdu_session_authentication_complete = &message->esm.pdu_session_authentication_complete;
+    ogs_nas_pdu_session_authentication_complete_t *pdu_session_authentication_complete = &message->gsm.pdu_session_authentication_complete;
     int decoded = 0;
     int size = 0;
 
@@ -1939,7 +1939,7 @@ int ogs_nas_decode_pdu_session_authentication_complete(ogs_nas_message_t *messag
 
 int ogs_nas_decode_pdu_session_authentication_result(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_authentication_result_t *pdu_session_authentication_result = &message->esm.pdu_session_authentication_result;
+    ogs_nas_pdu_session_authentication_result_t *pdu_session_authentication_result = &message->gsm.pdu_session_authentication_result;
     int decoded = 0;
     int size = 0;
 
@@ -2069,7 +2069,7 @@ int ogs_nas_decode_pdu_session_authentication_result(ogs_nas_message_t *message,
 
 int ogs_nas_decode_pdu_session_modification_request(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_modification_request_t *pdu_session_modification_request = &message->esm.pdu_session_modification_request;
+    ogs_nas_pdu_session_modification_request_t *pdu_session_modification_request = &message->gsm.pdu_session_modification_request;
     int decoded = 0;
     int size = 0;
 
@@ -2137,7 +2137,7 @@ int ogs_nas_decode_pdu_session_modification_request(ogs_nas_message_t *message, 
 
 int ogs_nas_decode_pdu_session_modification_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_modification_reject_t *pdu_session_modification_reject = &message->esm.pdu_session_modification_reject;
+    ogs_nas_pdu_session_modification_reject_t *pdu_session_modification_reject = &message->gsm.pdu_session_modification_reject;
     int decoded = 0;
     int size = 0;
 
@@ -2175,7 +2175,7 @@ int ogs_nas_decode_pdu_session_modification_reject(ogs_nas_message_t *message, o
 
 int ogs_nas_decode_pdu_session_modification_command(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_modification_command_t *pdu_session_modification_command = &message->esm.pdu_session_modification_command;
+    ogs_nas_pdu_session_modification_command_t *pdu_session_modification_command = &message->gsm.pdu_session_modification_command;
     int decoded = 0;
     int size = 0;
 
@@ -2213,7 +2213,7 @@ int ogs_nas_decode_pdu_session_modification_command(ogs_nas_message_t *message, 
 
 int ogs_nas_decode_pdu_session_modification_complete(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_modification_complete_t *pdu_session_modification_complete = &message->esm.pdu_session_modification_complete;
+    ogs_nas_pdu_session_modification_complete_t *pdu_session_modification_complete = &message->gsm.pdu_session_modification_complete;
     int decoded = 0;
     int size = 0;
 
@@ -2253,7 +2253,7 @@ int ogs_nas_decode_pdu_session_modification_complete(ogs_nas_message_t *message,
 
 int ogs_nas_decode_pdu_session_modification_command_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_modification_command_reject_t *pdu_session_modification_command_reject = &message->esm.pdu_session_modification_command_reject;
+    ogs_nas_pdu_session_modification_command_reject_t *pdu_session_modification_command_reject = &message->gsm.pdu_session_modification_command_reject;
     int decoded = 0;
     int size = 0;
 
@@ -2347,7 +2347,7 @@ int ogs_nas_decode_pdu_session_modification_command_reject(ogs_nas_message_t *me
 
 int ogs_nas_decode_pdu_session_release_request(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_release_request_t *pdu_session_release_request = &message->esm.pdu_session_release_request;
+    ogs_nas_pdu_session_release_request_t *pdu_session_release_request = &message->gsm.pdu_session_release_request;
     int decoded = 0;
     int size = 0;
 
@@ -2403,7 +2403,7 @@ int ogs_nas_decode_pdu_session_release_request(ogs_nas_message_t *message, ogs_p
 
 int ogs_nas_decode_pdu_session_release_reject(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_release_reject_t *pdu_session_release_reject = &message->esm.pdu_session_release_reject;
+    ogs_nas_pdu_session_release_reject_t *pdu_session_release_reject = &message->gsm.pdu_session_release_reject;
     int decoded = 0;
     int size = 0;
 
@@ -2503,7 +2503,7 @@ int ogs_nas_decode_pdu_session_release_reject(ogs_nas_message_t *message, ogs_pk
 
 int ogs_nas_decode_pdu_session_release_command(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_release_command_t *pdu_session_release_command = &message->esm.pdu_session_release_command;
+    ogs_nas_pdu_session_release_command_t *pdu_session_release_command = &message->gsm.pdu_session_release_command;
     int decoded = 0;
     int size = 0;
 
@@ -2543,7 +2543,7 @@ int ogs_nas_decode_pdu_session_release_command(ogs_nas_message_t *message, ogs_p
 
 int ogs_nas_decode_pdu_session_release_complete(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_pdu_session_release_complete_t *pdu_session_release_complete = &message->esm.pdu_session_release_complete;
+    ogs_nas_pdu_session_release_complete_t *pdu_session_release_complete = &message->gsm.pdu_session_release_complete;
     int decoded = 0;
     int size = 0;
 
@@ -2581,7 +2581,7 @@ int ogs_nas_decode_pdu_session_release_complete(ogs_nas_message_t *message, ogs_
 
 int ogs_nas_decode_5gsm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
-    ogs_nas_5gsm_status_t *gsm_status = &message->esm.gsm_status;
+    ogs_nas_5gsm_status_t *gsm_status = &message->gsm.gsm_status;
     int decoded = 0;
     int size = 0;
 
@@ -2619,7 +2619,7 @@ int ogs_nas_decode_5gsm_status(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
     return decoded;
 }
 
-int ogs_nas_emm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
+int ogs_nas_5gmm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
     int size = 0;
     uint16_t decoded = 0;
@@ -2630,12 +2630,12 @@ int ogs_nas_emm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 
     memset(message, 0, sizeof(ogs_nas_message_t));
 
-    size = sizeof(ogs_nas_emm_header_t);
+    size = sizeof(ogs_nas_5gmm_header_t);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(&message->emm.h, pkbuf->data - size, size);
+    memcpy(&message->gmm.h, pkbuf->data - size, size);
     decoded += size;
 
-    if (message->emm.h.security_header_type >=
+    if (message->gmm.h.security_header_type >=
             OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE)
     {
         ogs_assert(ogs_pkbuf_push(pkbuf, 1));
@@ -2647,7 +2647,7 @@ int ogs_nas_emm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
         goto out;
     }
 
-    switch(message->emm.h.message_type)
+    switch(message->gmm.h.message_type)
     {
         case OGS_NAS_REGISTRATION_REQUEST:
             size = ogs_nas_decode_registration_request(message, pkbuf);
@@ -2773,7 +2773,7 @@ int ogs_nas_emm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
             break;
         default:
             ogs_error("Unknown message type (0x%x) or not implemented", 
-                    message->emm.h.message_type);
+                    message->gmm.h.message_type);
             break;
     }
 
@@ -2782,7 +2782,7 @@ out:
 
     return OGS_OK;
 }
-int ogs_nas_esm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
+int ogs_nas_5gsm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 {
     int size = 0;
     uint16_t decoded = 0;
@@ -2793,12 +2793,12 @@ int ogs_nas_esm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
 
     memset(message, 0, sizeof(ogs_nas_message_t));
 
-    size = sizeof(ogs_nas_esm_header_t);
+    size = sizeof(ogs_nas_5gsm_header_t);
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(&message->esm.h, pkbuf->data - size, size);
+    memcpy(&message->gsm.h, pkbuf->data - size, size);
     decoded += size;
 
-    switch(message->esm.h.message_type)
+    switch(message->gsm.h.message_type)
     {
         case OGS_NAS_PDU_SESSION_ESTABLISHMENT_REQUEST:
             size = ogs_nas_decode_pdu_session_establishment_request(message, pkbuf);
@@ -2882,7 +2882,7 @@ int ogs_nas_esm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf)
             break;
         default:
             ogs_error("Unknown message type (0x%x) or not implemented", 
-                    message->esm.h.message_type);
+                    message->gsm.h.message_type);
             break;
     }
 

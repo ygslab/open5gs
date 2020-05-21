@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-20 18:17:08.787482 by acetcom
+ * Created on: 2020-05-21 10:45:21.926195 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -60,18 +60,18 @@ extern "C" {
 
 #define OGS_NAS_EPS_BEARER_IDENTITY_UNASSIGNED 0
 
-typedef struct ogs_nas_emm_header_s {
+typedef struct ogs_nas_5gmm_header_s {
 ED2(uint8_t security_header_type:4;,
     uint8_t protocol_discriminator:4;)
     uint8_t message_type;
-} __attribute__ ((packed)) ogs_nas_emm_header_t;
+} __attribute__ ((packed)) ogs_nas_5gmm_header_t;
 
-typedef struct ogs_nas_esm_header_s {
+typedef struct ogs_nas_5gsm_header_s {
 ED2(uint8_t eps_bearer_identity:4;,
     uint8_t protocol_discriminator:4;)
     uint8_t procedure_transaction_identity;
     uint8_t message_type;
-} __attribute__ ((packed)) ogs_nas_esm_header_t;
+} __attribute__ ((packed)) ogs_nas_5gsm_header_t;
 
 typedef struct ogs_nas_security_header_s {
 ED2(uint8_t security_header_type:4;,
@@ -1308,8 +1308,8 @@ typedef struct ogs_nas_5gsm_status_s {
 } ogs_nas_5gsm_status_t;
 
 
-typedef struct ogs_nas_emm_message_s {
-    ogs_nas_emm_header_t h;
+typedef struct ogs_nas_5gmm_message_s {
+    ogs_nas_5gmm_header_t h;
     union {
         ogs_nas_registration_request_t registration_request;
         ogs_nas_registration_accept_t registration_accept;
@@ -1338,10 +1338,10 @@ typedef struct ogs_nas_emm_message_s {
         ogs_nas_ul_nas_transport_t ul_nas_transport;
         ogs_nas_dl_nas_transport_t dl_nas_transport;
     };
-} ogs_nas_emm_message_t;
+} ogs_nas_5gmm_message_t;
 
-typedef struct ogs_nas_esm_message_s {
-    ogs_nas_esm_header_t h;
+typedef struct ogs_nas_5gsm_message_s {
+    ogs_nas_5gsm_header_t h;
     union {
         ogs_nas_pdu_session_establishment_request_t pdu_session_establishment_request;
         ogs_nas_pdu_session_establishment_accept_t pdu_session_establishment_accept;
@@ -1360,20 +1360,20 @@ typedef struct ogs_nas_esm_message_s {
         ogs_nas_pdu_session_release_complete_t pdu_session_release_complete;
         ogs_nas_5gsm_status_t gsm_status;
     };
-} ogs_nas_esm_message_t;
+} ogs_nas_5gsm_message_t;
 
 typedef struct ogs_nas_message_s {
     ogs_nas_security_header_t h;
     union {
-        ogs_nas_emm_message_t emm;
-        ogs_nas_esm_message_t esm;
+        ogs_nas_5gmm_message_t gmm;
+        ogs_nas_5gsm_message_t gsm;
     };
 } ogs_nas_message_t;
 
-ogs_pkbuf_t *ogs_nas_emm_encode(ogs_nas_message_t *message);
-ogs_pkbuf_t *ogs_nas_esm_encode(ogs_nas_message_t *message);
-int ogs_nas_emm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
-int ogs_nas_esm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
+ogs_pkbuf_t *ogs_nas_5gmm_encode(ogs_nas_message_t *message);
+ogs_pkbuf_t *ogs_nas_5gsm_encode(ogs_nas_message_t *message);
+int ogs_nas_5gmm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
+int ogs_nas_5gsm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbuf);
 ogs_pkbuf_t *ogs_nas_plain_encode(ogs_nas_message_t *message);
 
 #ifdef __cplusplus
