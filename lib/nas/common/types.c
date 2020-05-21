@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "ogs-nas.h"
+#include "ogs-nas-common.h"
 
 int __ogs_nas_domain;
 

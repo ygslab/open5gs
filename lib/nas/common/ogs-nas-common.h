@@ -17,32 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined(OGS_NAS_INSIDE) && !defined(OGS_NAS_COMPILATION)
-#error "This header cannot be included directly."
-#endif
+#ifndef OGS_NAS_COMMON_H
+#define OGS_NAS_COMMON_H
 
-#ifndef OGS_NAS_CONV_H
-#define OGS_NAS_CONV_H
+#include "ogs-core.h"
+#include "ogs-crypt.h"
 
-#include "ogs-nas.h"
+#define OGS_NAS_INSIDE
+
+#include "nas/common/types.h"
+#include "nas/common/conv.h"
+
+#undef OGS_NAS_INSIDE
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void ogs_nas_imsi_to_buffer(
-    ogs_nas_mobile_identity_imsi_t *imsi, uint8_t imsi_len, 
-    uint8_t *buf, uint8_t *buf_len);
+extern int __ogs_nas_domain;
 
-void ogs_nas_imsi_to_bcd(
-    ogs_nas_mobile_identity_imsi_t *imsi, uint8_t imsi_len, char *bcd);
-
-void ogs_nas_imeisv_to_bcd(
-    ogs_nas_mobile_identity_imeisv_t *imeisv, uint8_t imeisv_len, char *bcd);
+#undef OGS_LOG_DOMAIN
+#define OGS_LOG_DOMAIN __ogs_nas_domain
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_NAS_CONV_H */
-
+#endif /* OGS_NAS_COMMON_H */

@@ -334,8 +334,8 @@ f.write("""#if !defined(OGS_NAS_INSIDE) && !defined(OGS_NAS_COMPILATION)
 #error "This header cannot be included directly."
 #endif
 
-#ifndef OGS_NAS_IES_H
-#define OGS_NAS_IES_H
+#ifndef OGS_NAS_5GS_IES_H
+#define OGS_NAS_5GS_IES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -358,14 +358,14 @@ f.write("""#ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_NAS_IES_H */
+#endif /* OGS_NAS_5GS_IES_H */
 
 """)
 f.close()
 
 f = open(outdir + 'ies.c', 'w')
 output_header_to_file(f)
-f.write("""#include "ogs-nas.h"
+f.write("""#include "ogs-nas-5gs.h"
 
 int ogs_nas_encode_optional_type(ogs_pkbuf_t *pkbuf, uint8_t type)
 {
@@ -496,8 +496,8 @@ f.write("""#if !defined(OGS_NAS_INSIDE) && !defined(OGS_NAS_COMPILATION)
 #error "This header cannot be included directly."
 #endif
 
-#ifndef OGS_NAS_MESSAGE_H
-#define OGS_NAS_MESSAGE_H
+#ifndef OGS_NAS_5GS_MESSAGE_H
+#define OGS_NAS_5GS_MESSAGE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -631,7 +631,7 @@ ogs_pkbuf_t *ogs_nas_plain_encode(ogs_nas_message_t *message);
 }
 #endif
 
-#endif /* OGS_NAS_MESSAGE_H */
+#endif /* OGS_NAS_5GS_MESSAGE_H */
 """)
 
 f.close()
@@ -640,7 +640,7 @@ f.close()
 
 f = open(outdir + 'decoder.c', 'w')
 output_header_to_file(f)
-f.write("""#include "ogs-nas.h"
+f.write("""#include "ogs-nas-5gs.h"
 
 """)
 
@@ -793,7 +793,7 @@ f.close()
 
 f = open(outdir + 'encoder.c', 'w')
 output_header_to_file(f)
-f.write("""#include "ogs-nas.h"
+f.write("""#include "ogs-nas-5gs.h"
 
 """)
 

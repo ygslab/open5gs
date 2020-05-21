@@ -17,18 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef OGS_NAS_H
-#define OGS_NAS_H
+#ifndef OGS_NAS_EPS_H
+#define OGS_NAS_EPS_H
 
-#include "ogs-core.h"
-#include "ogs-crypt.h"
+#include "ogs-nas-common.h"
 
 #define OGS_NAS_INSIDE
 
-#include "nas/5gs/types.h"
-#include "nas/5gs/conv.h"
-#include "nas/5gs/ies.h"
-#include "nas/5gs/message.h"
+#include "nas/eps/types.h"
+#include "nas/eps/ies.h"
+#include "nas/eps/message.h"
 
 #undef OGS_NAS_INSIDE
 
@@ -36,13 +34,8 @@
 extern "C" {
 #endif
 
-extern int __ogs_nas_domain;
-
-#undef OGS_LOG_DOMAIN
-#define OGS_LOG_DOMAIN __ogs_nas_domain
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_NAS_H */
+#endif /* OGS_NAS_EPS_H */

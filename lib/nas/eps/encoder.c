@@ -28,11 +28,11 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.1.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-04-24 08:50:31.653587 by acetcom
+ * Created on: 2020-05-21 18:36:22.051273 by acetcom
  * from 24301-d80.docx
  ******************************************************************************/
 
-#include "ogs-nas.h"
+#include "ogs-nas-eps.h"
 
 int ogs_nas_encode_attach_request(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *message);
 int ogs_nas_encode_attach_accept(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *message);

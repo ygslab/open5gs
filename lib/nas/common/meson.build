@@ -15,23 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-libnas_5gs_sources = files('''
-    ies.c
-    decoder.c
-    encoder.c
+libnas_common_sources = files('''
+    conv.c
+    types.c
 '''.split())
 
-libnas_5gs_inc = include_directories('.')
+libnas_common_inc = include_directories('.')
 
-libnas_5gs = library('ogsnas-5gs',
-    sources : libnas_5gs_sources,
+libnas_common = library('ogsnas-common',
+    sources : libnas_common_sources,
     version : libogslib_version,
     c_args : '-DOGS_NAS_COMPILATION',
-    include_directories : libnas_5gs_inc,
-    dependencies : libnas_common_dep,
+    include_directories : [libnas_common_inc, libcrypt_inc, libinc],
+    dependencies : libcore_dep,
     install : true)
 
-libnas_5gs_dep = declare_dependency(
-    link_with : libnas_5gs,
-    include_directories : libnas_5gs_inc,
-    dependencies : libnas_common_dep)
+libnas_common_dep = declare_dependency(
+    link_with : libnas_common,
+    include_directories : [libnas_common_inc, libcrypt_inc, libinc],
+    dependencies : libcore_dep)

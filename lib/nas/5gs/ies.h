@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-21 11:09:21.201391 by acetcom
+ * Created on: 2020-05-21 18:36:58.102727 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -36,8 +36,8 @@
 #error "This header cannot be included directly."
 #endif
 
-#ifndef OGS_NAS_IES_H
-#define OGS_NAS_IES_H
+#ifndef OGS_NAS_5GS_IES_H
+#define OGS_NAS_5GS_IES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -269,5 +269,5 @@ int ogs_nas_encode_maximum_number_of_supported_packet_filters(ogs_pkbuf_t *pkbuf
 }
 #endif
 
-#endif /* OGS_NAS_IES_H */
+#endif /* OGS_NAS_5GS_IES_H */
 

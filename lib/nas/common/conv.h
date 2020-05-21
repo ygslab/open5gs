@@ -21,10 +21,10 @@
 #error "This header cannot be included directly."
 #endif
 
-#ifndef OGS_NAS_CONV_H
-#define OGS_NAS_CONV_H
+#ifndef OGS_NAS_COMMON_CONV_H
+#define OGS_NAS_COMMON_CONV_H
 
-#include "ogs-nas.h"
+#include "ogs-nas-common.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,5 +44,5 @@ void ogs_nas_imeisv_to_bcd(
 }
 #endif
 
-#endif /* OGS_NAS_CONV_H */
+#endif /* OGS_NAS_COMMON_CONV_H */
 

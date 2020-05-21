@@ -16,16 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 libnas_eps_sources = files('''
-    ogs-nas.h
-
-    ies.h
-    types.h
-    conv.h
-    message.h
-
     ies.c
-    types.c
-    conv.c
     decoder.c
     encoder.c
 '''.split())
@@ -36,11 +27,11 @@ libnas_eps = library('ogsnas-eps',
     sources : libnas_eps_sources,
     version : libogslib_version,
     c_args : '-DOGS_NAS_COMPILATION',
-    include_directories : [libnas_eps_inc, libcrypt_inc, libinc],
-    dependencies : libcore_dep,
+    include_directories : libnas_eps_inc,
+    dependencies : libnas_common_dep,
     install : true)
 
 libnas_eps_dep = declare_dependency(
     link_with : libnas_eps,
-    include_directories : [libnas_eps_inc, libcrypt_inc, libinc],
-    dependencies : libcore_dep)
+    include_directories : libnas_eps_inc,
+    dependencies : libnas_common_dep)

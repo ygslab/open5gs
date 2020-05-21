@@ -250,7 +250,7 @@ ogs_pkbuf_t *emm_build_security_mode_command(mme_ue_t *mme_ue)
         mme_ue->selected_enc_algorithm;
 
     nas_key_set_identifier->tsc = 0;
-    nas_key_set_identifier->nas_key_set_identifier = 0;
+    nas_key_set_identifier->value = 0;
 
     replayed_ue_security_capabilities->eea = mme_ue->ue_network_capability.eea;
     replayed_ue_security_capabilities->eia = mme_ue->ue_network_capability.eia;

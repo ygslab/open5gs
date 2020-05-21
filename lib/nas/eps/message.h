@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.1.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-04-24 08:50:31.635873 by acetcom
+ * Created on: 2020-05-21 18:36:22.033042 by acetcom
  * from 24301-d80.docx
  ******************************************************************************/
 
@@ -36,8 +36,8 @@
 #error "This header cannot be included directly."
 #endif
 
-#ifndef OGS_NAS_MESSAGE_H
-#define OGS_NAS_MESSAGE_H
+#ifndef OGS_NAS_EPS_MESSAGE_H
+#define OGS_NAS_EPS_MESSAGE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -1425,4 +1425,4 @@ ogs_pkbuf_t *ogs_nas_plain_encode(ogs_nas_message_t *message);
 }
 #endif
 
-#endif /* OGS_NAS_MESSAGE_H */
+#endif /* OGS_NAS_EPS_MESSAGE_H */

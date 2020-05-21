@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "ogs-nas.h"
+#include "ogs-nas-common.h"
 
 void ogs_nas_imsi_to_bcd(
     ogs_nas_mobile_identity_imsi_t *imsi, uint8_t imsi_len, char *bcd)
