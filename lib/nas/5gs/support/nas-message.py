@@ -513,7 +513,6 @@ extern "C" {
 #define OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_NEW_SECURITY_CONTEXT 3
 #define OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHTERD_WITH_NEW_INTEGRITY_CONTEXT 4
 #define OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_PARTICALLY_CIPHTERD 5
-#define OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE 12
 
 #define OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_ESM 0x2e
 #define OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_EMM 0x7e
@@ -544,7 +543,7 @@ typedef struct ogs_nas_security_header_s {
 """)
 
 for (k, v) in sorted_msg_list:
-    if k.find("TO UE") == -1 and k != "SERVICE REQUEST":
+    if k.find("TO UE") == -1:
         f.write("#define OGS_NAS_" + v_upper(k) + " " + v.split('.')[0] + "\n")
 f.write("\n")
 
@@ -675,8 +674,7 @@ for (k, v) in sorted_msg_list:
     optional_fields = False;
     for ie in [ies for ies in msg_list[k]["ies"] if ies["presence"] == "O"]:
         if optional_fields is False:
-            f.write("""    while(pkbuf->len > 0) 
-    {
+            f.write("""    while (pkbuf->len > 0) {
         uint8_t *buffer = pkbuf->data;
         uint8_t type = (*buffer) >= 0x80 ? ((*buffer) & 0xf0) : (*buffer);
 
@@ -684,22 +682,21 @@ for (k, v) in sorted_msg_list:
         ogs_assert(ogs_pkbuf_pull(pkbuf, size));
         decoded += size;
 
-        switch(type)
-        {
+        switch(type) {
 """)
             optional_fields = True;
 
-        f.write("             case OGS_NAS_%s_%s_TYPE:\n" % (v_upper(k), v_upper(ie["value"])))
-        f.write("                 size = ogs_nas_decode_%s(&%s->%s, pkbuf);\n" % (v_lower(ie["type"]), get_value(k), get_value(ie["value"])))
-        f.write("                 ogs_assert(size >= 0);\n")
-        f.write("                 %s->presencemask |= OGS_NAS_%s_%s_PRESENT;\n" % (get_value(k), v_upper(k), v_upper(ie["value"])))
-        f.write("                 decoded += size;\n")
-        f.write("                 break;\n")
+        f.write("        case OGS_NAS_%s_%s_TYPE:\n" % (v_upper(k), v_upper(ie["value"])))
+        f.write("            size = ogs_nas_decode_%s(&%s->%s, pkbuf);\n" % (v_lower(ie["type"]), get_value(k), get_value(ie["value"])))
+        f.write("            ogs_assert(size >= 0);\n")
+        f.write("            %s->presencemask |= OGS_NAS_%s_%s_PRESENT;\n" % (get_value(k), v_upper(k), v_upper(ie["value"])))
+        f.write("            decoded += size;\n")
+        f.write("            break;\n")
 
     if [ies for ies in msg_list[k]["ies"] if ies["presence"] == "O"]:
-        f.write("""             default:
-                ogs_warn("Unknown type(0x%x) or not implemented\\n", type);
-                break;
+        f.write("""        default:
+            ogs_warn("Unknown type(0x%x) or not implemented\\n", type);
+            break;
         }
     }
 
@@ -725,39 +722,25 @@ f.write("""int ogs_nas_5gmm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbu
     memcpy(&message->gmm.h, pkbuf->data - size, size);
     decoded += size;
 
-    if (message->gmm.h.security_header_type >=
-            OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE)
-    {
-        ogs_assert(ogs_pkbuf_push(pkbuf, 1));
-        decoded -= 1;
-        size = ogs_nas_decode_service_request(message, pkbuf);
-        ogs_assert(size >= 0);
-        decoded += size;
-
-        goto out;
-    }
-
-    switch(message->gmm.h.message_type)
-    {
+    switch(message->gmm.h.message_type) {
 """)
 for (k, v) in sorted_msg_list:
     if "ies" not in msg_list[k]:
         continue;
-    if float(msg_list[k]["type"]) < 192 and k.find("TO UE") == -1 and k != "SERVICE REQUEST":
-        f.write("        case OGS_NAS_%s:\n" % v_upper(k))
+    if float(msg_list[k]["type"]) < 192 and k.find("TO UE") == -1:
+        f.write("    case OGS_NAS_%s:\n" % v_upper(k))
         if len(msg_list[k]["ies"]) != 0:
-            f.write("            size = ogs_nas_decode_%s(message, pkbuf);\n" % v_lower(k))
-            f.write("            ogs_assert(size >= 0);\n")
-            f.write("            decoded += size;\n")
-        f.write("            break;\n")
+            f.write("        size = ogs_nas_decode_%s(message, pkbuf);\n" % v_lower(k))
+            f.write("        ogs_assert(size >= 0);\n")
+            f.write("        decoded += size;\n")
+        f.write("        break;\n")
 
-f.write("""        default:
-            ogs_error("Unknown message type (0x%x) or not implemented", 
-                    message->gmm.h.message_type);
-            break;
+f.write("""    default:
+        ogs_error("Unknown message type (0x%x) or not implemented", 
+                message->gmm.h.message_type);
+        break;
     }
 
-out:
     ogs_assert(ogs_pkbuf_push(pkbuf, decoded));
 
     return OGS_OK;
@@ -780,24 +763,23 @@ f.write("""int ogs_nas_5gsm_decode(ogs_nas_message_t *message, ogs_pkbuf_t *pkbu
     memcpy(&message->gsm.h, pkbuf->data - size, size);
     decoded += size;
 
-    switch(message->gsm.h.message_type)
-    {
+    switch(message->gsm.h.message_type) {
 """)
 for (k, v) in sorted_msg_list:
     if "ies" not in msg_list[k]:
         continue;
     if float(msg_list[k]["type"]) >= 192:
-        f.write("        case OGS_NAS_%s:\n" % v_upper(k))
+        f.write("    case OGS_NAS_%s:\n" % v_upper(k))
         if len(msg_list[k]["ies"]) != 0:
-            f.write("            size = ogs_nas_decode_%s(message, pkbuf);\n" % v_lower(k))
-            f.write("            ogs_assert(size >= 0);\n")
-            f.write("            decoded += size;\n")
-        f.write("            break;\n")
+            f.write("        size = ogs_nas_decode_%s(message, pkbuf);\n" % v_lower(k))
+            f.write("        ogs_assert(size >= 0);\n")
+            f.write("        decoded += size;\n")
+        f.write("        break;\n")
 
-f.write("""        default:
-            ogs_error("Unknown message type (0x%x) or not implemented", 
-                    message->gsm.h.message_type);
-            break;
+f.write("""    default:
+        ogs_error("Unknown message type (0x%x) or not implemented", 
+                message->gsm.h.message_type);
+        break;
     }
 
     ogs_assert(ogs_pkbuf_push(pkbuf, decoded));
@@ -843,8 +825,7 @@ for (k, v) in sorted_msg_list:
         f.write("    encoded += size;\n\n")
 
     for ie in [ies for ies in msg_list[k]["ies"] if ies["presence"] == "O"]:
-        f.write("    if (%s->presencemask & OGS_NAS_%s_%s_PRESENT)\n" % (get_value(k), v_upper(k), v_upper(ie["value"])))
-        f.write("    {\n")
+        f.write("    if (%s->presencemask & OGS_NAS_%s_%s_PRESENT) {\n" % (get_value(k), v_upper(k), v_upper(ie["value"])))
         if ie["length"] == "1" and ie["format"] == "TV":
             f.write("        %s->%s.type = (OGS_NAS_%s_%s_TYPE >> 4);\n\n" % (get_value(k), get_value(ie["value"]), v_upper(k), v_upper(ie["value"])))
         else:
@@ -883,41 +864,27 @@ f.write("""ogs_pkbuf_t *ogs_nas_5gmm_encode(ogs_nas_message_t *message)
     memcpy(pkbuf->data - size, &message->gmm.h, size);
     encoded += size;
 
-    if (message->gmm.h.security_header_type >=
-            OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE)
-    {
-        ogs_assert(ogs_pkbuf_push(pkbuf, 1));
-        encoded -= 1;
-        size = ogs_nas_encode_service_request(pkbuf, message);
-        ogs_assert(size >= 0);
-        encoded += size;
-
-        goto out;
-    }
-
-    switch(message->gmm.h.message_type)
-    {
+    switch(message->gmm.h.message_type) {
 """)
 
 for (k, v) in sorted_msg_list:
     if "ies" not in msg_list[k]:
         continue;
-    if float(msg_list[k]["type"]) < 192 and k.find("FROM UE") == -1 and k != "SERVICE REQUEST":
-        f.write("        case OGS_NAS_%s:\n" % v_upper(k))
+    if float(msg_list[k]["type"]) < 192 and k.find("FROM UE") == -1:
+        f.write("    case OGS_NAS_%s:\n" % v_upper(k))
         if len(msg_list[k]["ies"]) != 0:
-            f.write("            size = ogs_nas_encode_%s(pkbuf, message);\n" % v_lower(k))
-            f.write("            ogs_assert(size >= 0);\n")
-            f.write("            encoded += size;\n")
-        f.write("            break;\n")
+            f.write("        size = ogs_nas_encode_%s(pkbuf, message);\n" % v_lower(k))
+            f.write("        ogs_assert(size >= 0);\n")
+            f.write("        encoded += size;\n")
+        f.write("        break;\n")
 
-f.write("""        default:
-            ogs_error("Unknown message type (0x%x) or not implemented", 
-                    message->gmm.h.message_type);
-            ogs_pkbuf_free(pkbuf);
-            return NULL;
+f.write("""    default:
+        ogs_error("Unknown message type (0x%x) or not implemented", 
+                message->gmm.h.message_type);
+        ogs_pkbuf_free(pkbuf);
+        return NULL;
     }
 
-out:
     ogs_assert(ogs_pkbuf_push(pkbuf, encoded));
 
     pkbuf->len = encoded;
@@ -947,26 +914,25 @@ f.write("""ogs_pkbuf_t *ogs_nas_5gsm_encode(ogs_nas_message_t *message)
     memcpy(pkbuf->data - size, &message->gsm.h, size);
     encoded += size;
 
-    switch(message->gsm.h.message_type)
-    {
+    switch(message->gsm.h.message_type) {
 """)
 
 for (k, v) in sorted_msg_list:
     if "ies" not in msg_list[k]:
         continue;
     if float(msg_list[k]["type"]) >= 192:
-        f.write("        case OGS_NAS_%s:\n" % v_upper(k))
+        f.write("    case OGS_NAS_%s:\n" % v_upper(k))
         if len(msg_list[k]["ies"]) != 0:
-            f.write("            size = ogs_nas_encode_%s(pkbuf, message);\n" % v_lower(k))
-            f.write("            ogs_assert(size >= 0);\n")
-            f.write("            encoded += size;\n")
-        f.write("            break;\n")
+            f.write("        size = ogs_nas_encode_%s(pkbuf, message);\n" % v_lower(k))
+            f.write("        ogs_assert(size >= 0);\n")
+            f.write("        encoded += size;\n")
+        f.write("        break;\n")
 
-f.write("""        default:
-            ogs_error("Unknown message type (0x%x) or not implemented", 
-                    message->gsm.h.message_type);
-            ogs_pkbuf_free(pkbuf);
-            return NULL;
+f.write("""    default:
+        ogs_error("Unknown message type (0x%x) or not implemented", 
+                message->gsm.h.message_type);
+        ogs_pkbuf_free(pkbuf);
+        return NULL;
     }
 
     ogs_assert(ogs_pkbuf_push(pkbuf, encoded));

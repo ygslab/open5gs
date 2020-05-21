@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-21 10:50:11.719499 by acetcom
+ * Created on: 2020-05-21 11:09:21.213518 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -53,7 +53,6 @@ extern "C" {
 #define OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_NEW_SECURITY_CONTEXT 3
 #define OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_CIPHTERD_WITH_NEW_INTEGRITY_CONTEXT 4
 #define OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_PARTICALLY_CIPHTERD 5
-#define OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE 12
 
 #define OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_ESM 0x2e
 #define OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_EMM 0x7e
@@ -87,6 +86,7 @@ typedef struct ogs_nas_security_header_s {
 #define OGS_NAS_REGISTRATION_REJECT 68
 #define OGS_NAS_DEREGISTRATION_REQUEST 69
 #define OGS_NAS_DEREGISTRATION_ACCEPT 70
+#define OGS_NAS_SERVICE_REQUEST 76
 #define OGS_NAS_SERVICE_REJECT 77
 #define OGS_NAS_SERVICE_ACCEPT 78
 #define OGS_NAS_CONFIGURATION_UPDATE_COMMAND 84
