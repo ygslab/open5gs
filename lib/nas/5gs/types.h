@@ -425,7 +425,8 @@ ED3(uint8_t spare:1;,
     /*
      * Do not change 'ogs_tai_t' to 'ogs_nas_tracking_area_identity_t'.
      * Use 'ogs_tai_t' for easy implementation.
-     * ogs_nas_tai_list_build() changes to NAS format(ogs_nas_tracking_area_identity_t)
+     * ogs_nas_tai_list_build() changes to NAS 
+     * format(ogs_nas_tracking_area_identity_t)
      * and is sent to the UE.
      */
     ogs_tai_t tai[OGS_MAX_NUM_OF_TAI];
@@ -515,6 +516,14 @@ ED8(uint8_t epco:1;,
 ED2(uint8_t spare:7;,
     uint8_t multiple_drb:1;)
 } __attribute__ ((packed)) ogs_nas_ue_network_capability_t;
+
+/* 9.9.3.62 WUS assistance information
+ * O TLV 3-n */
+#define OGS_MAX_NAS_WUS_ASSISTANCE_INFORAMTION_LEN 255
+typedef struct ogs_nas_wus_assistance_information_s {
+    uint8_t length;
+    uint8_t buffer[OGS_MAX_NAS_WUS_ASSISTANCE_INFORAMTION_LEN];
+} ogs_nas_wus_assistance_information_t;
 
 /* 9.11.3.36A Non-3GPP NW provided policies
  * See subclause 10.5.5.37 in 3GPP TS 24.008 [12].
@@ -844,6 +853,18 @@ typedef ogs_nas_tracking_area_identity_t ogs_nas_5gs_tracking_area_identity_t;
  * O TLV 9-114 */
 typedef ogs_nas_tracking_area_identity_list_t ogs_nas_5gs_tracking_area_identity_list_t;
 
+/* 9.11.3.9A 5GS update type
+ * O TLV 3 */
+typedef struct ogs_nas_5gs_update_type_s {
+    uint8_t length;
+ED6(uint8_t spare:2;,
+    uint8_t pnb_ciot_eps:1;,
+    uint8_t pnb_ciot_5gs:1;,
+    uint8_t ng_ran_rcu:1;,
+    uint8_t sms_requested:1;,
+    uint8_t amf_pointer_value:2;)
+} __attribute__ ((packed)) ogs_nas_5gs_update_type_t;
+
 /* 9.11.3.10 ABBA
  * M LV 3-n */
 #define OGS_NAS_ABBA_LEN 255
@@ -869,6 +890,14 @@ ED3(uint8_t spare:6;,
     uint8_t rinmr:1;,
     uint8_t hdr:1;)
 } __attribute__ ((packed)) ogs_nas_additional_5g_security_information_t;
+
+/* 9.11.3.12A Additional information requested
+ * O TLV 3 */
+typedef struct ogs_nas_additional_information_requested_s {
+    uint8_t length;
+ED2(uint8_t spare:7;,
+    uint8_t cipher_key:1;)
+} ogs_nas_additional_information_requested_t;
 
 /* 9.11.3.13 Allowed PDU session status
  * O TLV 4-34 */
@@ -908,12 +937,31 @@ typedef struct ogs_nas_cag_information_list_s {
     uint8_t *buffer;
 } ogs_nas_cag_information_list_t;
 
+/* 9.11.3.18B CIoT small data container
+ * O TLV 4-257 */
+#define OGS_NAS_MAX_CIOT_SMALL_DATA_CONTAINER_LEN 254
+typedef struct ogs_nas_ciot_small_data_container_s {
+    uint8_t length;
+ED3(uint8_t data_type:3;,
+    uint8_t ddx:2;,
+    uint8_t pdu_session_identity:1;)
+    uint8_t buffer[OGS_NAS_MAX_CIOT_SMALL_DATA_CONTAINER_LEN];
+} __attribute__ ((packed)) ogs_nas_ciot_small_data_container_t;
+
 /* 9.11.3.18C Ciphering key data
  * O TLV-E x-n */
 typedef struct ogs_nas_ciphering_key_data_s {
     uint8_t length;
     uint8_t *buffer;
 } ogs_nas_ciphering_key_data_t;
+
+/* 9.11.3.18D Control plane service type
+ * M V 1/2 */
+typedef struct ogs_nas_control_plane_service_type_s {
+ED3(uint8_t type:4;,
+    uint8_t spare:1;,
+    uint8_t value:1;)
+} __attribute__ ((packed)) ogs_nas_control_plane_service_type_t;
 
 /* 9.11.3.20 De-registration type
  * M V 1/2 */
@@ -976,6 +1024,14 @@ typedef struct ogs_nas_ma_pdu_session_information_s {
 ED2(uint8_t type:4;,
     uint8_t value:4;)
 } __attribute__ ((packed)) ogs_nas_ma_pdu_session_information_t;
+
+/* 9.11.3.31B Mapped NSSAI
+ * O TLV 3-42 */
+#define OGS_NAS_MAX_MAPPED_NSSAI_LEN 40
+typedef struct ogs_nas_mapped_nssai_s {
+    uint8_t length;
+    uint8_t buffer[OGS_NAS_MAX_MAPPED_NSSAI_LEN];
+} ogs_nas_mapped_nssai_t;
 
 /* 9.11.3.33 message container
  * O TLV-E 4-n */
@@ -1297,6 +1353,14 @@ ED3(uint8_t spare:6;,
  * O TLV 4-34 */
 typedef ogs_nas_allowed_pdu_session_status_t ogs_nas_uplink_data_status_t;
 
+/* 9.11.3.68 UE radio capability ID
+ * O TLV 3-n */
+#define OGS_NAS_MAX_UE_RADIO_CAPABILITY_ID_LEN 255
+typedef struct ogs_nas_ue_radio_capability_id_s {
+    uint8_t length;
+    uint8_t buffer[OGS_NAS_MAX_UE_RADIO_CAPABILITY_ID_LEN];
+} ogs_nas_ue_radio_capability_id_t;
+
 /* 9.11.3.69 UE radio capability ID deletion infication
  * O TV 1 */
 typedef struct ogs_nas_ue_radio_capability_id_deletion_indication_s {
@@ -1304,6 +1368,14 @@ ED3(uint8_t type:4;,
     uint8_t spare:1;,
     uint8_t value:3;)
 } __attribute__ ((packed)) ogs_nas_ue_radio_capability_id_deletion_indication_t;
+
+/* 9.11.3.70 Truncated 5G-S-TMSI configuration
+ * O TLV 3 */
+typedef struct ogs_nas_truncated_5g_s_tmsi_configuration_s {
+    uint8_t length;
+ED2(uint8_t amf_set_id:4;,
+    uint8_t amf_pointer_value:4;)
+} __attribute__ ((packed))  ogs_nas_truncated_5g_s_tmsi_configuration_t;
 
 /* 9.11.4.1 5GSM capability
  * O TLV 3-15 */
@@ -1363,6 +1435,14 @@ typedef struct ogs_nas_5gsm_congestion_re_attempt_indicator_s {
 ED2(uint8_t spare:7;,
     uint8_t abo:1;)
 } __attribute__ ((packed)) ogs_nas_5gsm_congestion_re_attempt_indicator_t;
+
+/* 9.11.4.3 Always-on PDU session indication
+ * O TV 1 */
+typedef struct ogs_nas_always_on_pdu_session_indication_s {
+ED3(uint8_t type:4;,
+    uint8_t spare:1;,
+    uint8_t apsi:3;)
+} __attribute__ ((packed)) ogs_nas_always_on_pdu_session_indication_t;
 
 /* 9.11.4.4 Always-on PDU session requested
  * O TV 1 */
@@ -1509,12 +1589,58 @@ ED3(uint8_t type:4;,
     uint8_t value:3;)
 } __attribute__ ((packed)) ogs_nas_ssc_mode_t;
 
+/* 9.11.4.18 5GSM network feature support
+ * O TLV 3-15 */
+typedef struct ogs_nas_5gsm_network_feature_support_s {
+    uint8_t length;
+ED2(uint8_t spare:7;,
+    uint8_t s1:1;)
+} __attribute__ ((packed)) ogs_nas_5gsm_network_feature_support_t;
+
 /* 9.11.4.22 ATSSS container
  * O TLV-E 3-65535 */
 typedef struct ogs_nas_atsss_container_s {
     uint8_t length;
     uint8_t *buffer;
 } ogs_nas_atsss_container_t;
+
+/* 9.9.4.25 Release assistance indication
+ * O TV 1
+ *
+ * Release assistance indication value
+ *
+ * Downlink data expected (DDX)
+ *
+ * Bits
+ * 0 0 No information regarding DDX is conveyed by the information element.
+ *     If received it shall be interpreted as 'neither value "01" nor "10"
+ *     applies
+ * 0 1 No further uplink or downlink data transmission subsequent to the
+ *     uplink data transmission is expected
+ * 1 0 Only a single downlink data transmission and no further uplink data
+ *     transmission subsequent to the uplink data transmission is expected
+ * 1 1 reserved */
+typedef struct ogs_nas_release_assistance_indication_s {
+ED3(uint8_t type:4;,
+    uint8_t spare:2;,
+    uint8_t value:2;)
+} __attribute__ ((packed)) ogs_nas_release_assistance_indication_t;
+
+/* 9.11.4.25 DS-TT Ethernet port MAC address
+ * O TLV 8 */
+#define OGS_NAX_MAX_EHTERNET_MAC_ADDRESS_LEN 6
+typedef struct ogs_nas_ds_tt_ethernet_port_mac_address_s {
+    uint8_t length;
+    uint8_t buffer[OGS_NAX_MAX_EHTERNET_MAC_ADDRESS_LEN];
+} ogs_nas_ds_tt_ethernet_port_mac_address_t;
+
+/* 9.11.4.26 UE-DS-TT residence time
+ * O TLV 10 */
+#define OGS_NAS_MAX_UE_DS_TT_REDISENCE_TIME_LEN 8
+typedef struct ogs_nas_ue_ds_tt_residence_time_s {
+    uint8_t length;
+    uint8_t buffer[OGS_NAS_MAX_UE_DS_TT_REDISENCE_TIME_LEN];
+} ogs_nas_ue_ds_tt_residence_time_t;
 
 /* 9.11.4.27 Port management information container
  * O TLV-E 4-65535 */
@@ -1524,66 +1650,19 @@ typedef struct ogs_nas_port_management_information_container_s {
 } ogs_nas_port_management_information_container_t;
 
 
-typedef struct ogs_nas_always_on_pdu_session_indication_s {
-    int type;
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_always_on_pdu_session_indication_t;
-typedef struct ogs_nas_5gsm_network_feature_support_s {
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_5gsm_network_feature_support_t;
-typedef struct ogs_nas_ciot_small_data_container_s {
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_ciot_small_data_container_t;
-typedef struct ogs_nas_control_plane_service_type_s {
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_control_plane_service_type_t;
-typedef struct ogs_nas_release_assistance_indication_s {
-    int type;
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_release_assistance_indication_t;
-typedef struct ogs_nas_ue_radio_capability_id_s {
-    int type;
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_ue_radio_capability_id_t;
 
-typedef struct ogs_nas_ue_ds_tt_residence_time_s {
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_ue_ds_tt_residence_time_t;
-typedef struct ogs_nas_ds_tt_ethernet_port_mac_address_s {
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_ds_tt_ethernet_port_mac_address_t;
-typedef struct ogs_nas_truncated_5g_s_tmsi_configuration_s {
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_truncated_5g_s_tmsi_configuration_t;
-typedef struct ogs_nas_wus_assistance_information_s {
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_wus_assistance_information_t;
+
+
+
+
+
+
+/* 9.11.3.72 N5GC indication
+ * O T 1 */
 typedef struct ogs_nas_n5gc_indication_s {
     uint8_t length;
-    uint8_t buffer[100];
 } ogs_nas_n5gc_indication_t;
-typedef struct ogs_nas_mapped_nssai_s {
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_mapped_nssai_t;
-typedef struct ogs_nas_5gs_update_type_s {
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_5gs_update_type_t;
-typedef struct ogs_nas_additional_information_requested_s {
-    uint8_t length;
-    uint8_t buffer[100];
-} ogs_nas_additional_information_requested_t;
+
 
 #ifdef __cplusplus
 }
