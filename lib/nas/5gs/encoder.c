@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-21 10:45:21.945315 by acetcom
+ * Created on: 2020-05-21 10:50:11.738149 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -3409,14 +3409,14 @@ ogs_pkbuf_t *ogs_nas_plain_encode(ogs_nas_message_t *message)
 {
     ogs_assert(message);
 
-    ogs_assert(message->gmm.h.protocol_discriminator ==
-            message->gsm.h.protocol_discriminator);
+    ogs_assert(message->gmm.h.extended_protocol_discriminator ==
+            message->gsm.h.extended_protocol_discriminator);
 
-    if (message->gmm.h.protocol_discriminator == 
-            OGS_NAS_PROTOCOL_DISCRIMINATOR_EMM)
+    if (message->gmm.h.extended_protocol_discriminator == 
+            OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_EMM)
         return ogs_nas_5gmm_encode(message);
-    else if (message->gmm.h.protocol_discriminator == 
-            OGS_NAS_PROTOCOL_DISCRIMINATOR_ESM)
+    else if (message->gmm.h.extended_protocol_discriminator == 
+            OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_ESM)
         return ogs_nas_5gsm_encode(message);
 
     return NULL;

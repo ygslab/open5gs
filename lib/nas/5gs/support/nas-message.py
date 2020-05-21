@@ -515,27 +515,28 @@ extern "C" {
 #define OGS_NAS_SECURITY_HEADER_INTEGRITY_PROTECTED_AND_PARTICALLY_CIPHTERD 5
 #define OGS_NAS_SECURITY_HEADER_FOR_SERVICE_REQUEST_MESSAGE 12
 
-#define OGS_NAS_PROTOCOL_DISCRIMINATOR_ESM 0x2
-#define OGS_NAS_PROTOCOL_DISCRIMINATOR_EMM 0x7
+#define OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_ESM 0x2e
+#define OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_EMM 0x7e
 
-#define OGS_NAS_EPS_BEARER_IDENTITY_UNASSIGNED 0
+#define OGS_NAS_PDU_SESSION_IDENTITY_UNASSIGNED 0
+#define OGS_NAS_PROCEDURE_TRANSACTION_IDENTITY_UNASSIGNED 0
 
 typedef struct ogs_nas_5gmm_header_s {
-ED2(uint8_t security_header_type:4;,
-    uint8_t protocol_discriminator:4;)
+    uint8_t extended_protocol_discriminator;
+    uint8_t security_header_type;
     uint8_t message_type;
 } __attribute__ ((packed)) ogs_nas_5gmm_header_t;
 
 typedef struct ogs_nas_5gsm_header_s {
-ED2(uint8_t eps_bearer_identity:4;,
-    uint8_t protocol_discriminator:4;)
+    uint8_t extended_protocol_discriminator;
+    uint8_t pdu_session_identity;
     uint8_t procedure_transaction_identity;
     uint8_t message_type;
 } __attribute__ ((packed)) ogs_nas_5gsm_header_t;
 
 typedef struct ogs_nas_security_header_s {
-ED2(uint8_t security_header_type:4;,
-    uint8_t protocol_discriminator:4;)
+    uint8_t extended_protocol_discriminator;
+    uint8_t security_header_type;
     uint32_t message_authentication_code;
     uint8_t sequence_number;
 } __attribute__ ((packed)) ogs_nas_security_header_t;
@@ -978,14 +979,14 @@ ogs_pkbuf_t *ogs_nas_plain_encode(ogs_nas_message_t *message)
 {
     ogs_assert(message);
 
-    ogs_assert(message->gmm.h.protocol_discriminator ==
-            message->gsm.h.protocol_discriminator);
+    ogs_assert(message->gmm.h.extended_protocol_discriminator ==
+            message->gsm.h.extended_protocol_discriminator);
 
-    if (message->gmm.h.protocol_discriminator == 
-            OGS_NAS_PROTOCOL_DISCRIMINATOR_EMM)
+    if (message->gmm.h.extended_protocol_discriminator == 
+            OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_EMM)
         return ogs_nas_5gmm_encode(message);
-    else if (message->gmm.h.protocol_discriminator == 
-            OGS_NAS_PROTOCOL_DISCRIMINATOR_ESM)
+    else if (message->gmm.h.extended_protocol_discriminator == 
+            OGS_NAS_EXTENDED_PROTOCOL_DISCRIMINATOR_ESM)
         return ogs_nas_5gsm_encode(message);
 
     return NULL;
