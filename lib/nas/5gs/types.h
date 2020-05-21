@@ -834,10 +834,14 @@ typedef struct ogs_nas_qos_rules_s {
 #define OGS_NAS_BR_UNIT_256P    25
 typedef struct ogs_nas_session_ambr_s {
     uint8_t length;
-    uint8_t dl_unit;
-    uint16_t dl;
-    uint8_t ul_unit;
-    uint16_t ul;
+    struct {
+        uint8_t unit;
+        uint16_t br;
+    } dl;
+    struct {
+        uint8_t unit;
+        uint16_t br;
+    } ul;
 } __attribute__ ((packed)) ogs_nas_session_ambr_t;
 
 /* 9.11.4.15 SM PDU DN request container
