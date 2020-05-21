@@ -443,7 +443,7 @@ void ogs_nas_tai_list_build(
 
 /* 9.9.3.34 UE network capability
  * M LV  3-14 */
-typedef struct ogs_nas_ue_network_capability_s {
+typedef struct ogs_nas_s1_ue_network_capability_s {
     uint8_t length;
     union { 
         struct {
@@ -515,7 +515,78 @@ ED8(uint8_t epco:1;,
     uint8_t prose_dc:1;)
 ED2(uint8_t spare:7;,
     uint8_t multiple_drb:1;)
-} __attribute__ ((packed)) ogs_nas_ue_network_capability_t;
+} __attribute__ ((packed)) ogs_nas_s1_ue_network_capability_t;
+
+/* 9.9.3.36 UE security capability
+ * M LV 3-6 */
+typedef struct ogs_nas_s1_ue_security_capability_s {
+    uint8_t length;
+    union {
+        struct {
+        ED8(uint8_t eea0:1;,
+            uint8_t eea1:1;,
+            uint8_t eea2:1;,
+            uint8_t eea3:1;,
+            uint8_t eea4:1;,
+            uint8_t eea5:1;,
+            uint8_t eea6:1;,
+            uint8_t eea7:1;)
+        };
+        uint8_t eea;
+    };
+    union {
+        struct {
+        ED8(uint8_t eia0:1;,
+            uint8_t eia1:1;,
+            uint8_t eia2:1;,
+            uint8_t eia3:1;,
+            uint8_t eia4:1;,
+            uint8_t eia5:1;,
+            uint8_t eia6:1;,
+            uint8_t eia7:1;)
+        };
+        uint8_t eia;
+    };
+    union {
+        struct {
+        ED8(uint8_t uea0:1;,
+            uint8_t uea1:1;,
+            uint8_t uea2:1;,
+            uint8_t uea3:1;,
+            uint8_t uea4:1;,
+            uint8_t uea5:1;,
+            uint8_t uea6:1;,
+            uint8_t uea7:1;)
+        };
+        uint8_t uea;
+    };
+    union {
+        struct {
+        ED8(uint8_t spare1:1;,
+            uint8_t uia1:1;,
+            uint8_t uia2:1;,
+            uint8_t uia3:1;,
+            uint8_t uia4:1;,
+            uint8_t uia5:1;,
+            uint8_t uia6:1;,
+            uint8_t uia7:1;)
+        };
+        uint8_t uia;
+    };
+    union {
+        struct {
+        ED8(uint8_t spare2:1;,
+            uint8_t gea1:1;,
+            uint8_t gea2:1;,
+            uint8_t gea3:1;,
+            uint8_t gea4:1;,
+            uint8_t gea5:1;,
+            uint8_t gea6:1;,
+            uint8_t gea7:1;)
+        };
+        uint8_t gea;
+    };
+} __attribute__ ((packed)) ogs_nas_s1_ue_security_capability_t;
 
 /* 9.9.3.62 WUS assistance information
  * O TLV 3-n */

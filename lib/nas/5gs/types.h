@@ -323,7 +323,7 @@ ED4(uint8_t type:4;,
 /* 9.11.3.24 EPS NAS message container
  * O TLV-E 4-n */
 typedef struct ogs_nas_eps_nas_message_container_s {
-    uint8_t length;
+    uint16_t length;
     uint8_t *buffer;
 } ogs_nas_eps_nas_message_container_t;
 
@@ -505,81 +505,6 @@ ED3(uint8_t type:4;,
     uint8_t spare:1;,
     uint8_t value:3;)
 } __attribute__ ((packed)) ogs_nas_request_type_t;
-
-/* 9.11.3.48 S1 UE network capability
- * O TLV 4-15 */
-typedef struct ogs_nas_ue_network_capability_s ogs_nas_s1_ue_network_capability_t;
-
-/* 9.11.3.48A S1 UE security capability
- * O TLV 4-7 */
-typedef struct ogs_nas_s1_ue_security_capability_s {
-    uint8_t length;
-    union { 
-        struct {
-        ED8(uint8_t eea0:1;,
-            uint8_t eea1:1;,
-            uint8_t eea2:1;,
-            uint8_t eea3:1;,
-            uint8_t eea4:1;,
-            uint8_t eea5:1;,
-            uint8_t eea6:1;,
-            uint8_t eea7:1;)
-        };
-        uint8_t eea; 
-    };
-    union { 
-        struct {
-        ED8(uint8_t eia0:1;,
-            uint8_t eia1:1;,
-            uint8_t eia2:1;,
-            uint8_t eia3:1;,
-            uint8_t eia4:1;,
-            uint8_t eia5:1;,
-            uint8_t eia6:1;,
-            uint8_t eia7:1;)
-        };
-        uint8_t eia; 
-    };
-    union { 
-        struct {
-        ED8(uint8_t uea0:1;,
-            uint8_t uea1:1;,
-            uint8_t uea2:1;,
-            uint8_t uea3:1;,
-            uint8_t uea4:1;,
-            uint8_t uea5:1;,
-            uint8_t uea6:1;,
-            uint8_t uea7:1;)
-        };
-        uint8_t uea; 
-    };
-    union { 
-        struct {
-        ED8(uint8_t spare1:1;,
-            uint8_t uia1:1;,
-            uint8_t uia2:1;,
-            uint8_t uia3:1;,
-            uint8_t uia4:1;,
-            uint8_t uia5:1;,
-            uint8_t uia6:1;,
-            uint8_t uia7:1;)
-        };
-        uint8_t uia; 
-    };
-    union { 
-        struct {
-        ED8(uint8_t spare2:1;,
-            uint8_t gea1:1;,
-            uint8_t gea2:1;,
-            uint8_t gea3:1;,
-            uint8_t gea4:1;,
-            uint8_t gea5:1;,
-            uint8_t gea6:1;,
-            uint8_t gea7:1;)
-        };
-        uint8_t gea; 
-    };
-} __attribute__ ((packed)) ogs_nas_s1_ue_security_capability_t;
 
 /* 9.11.3.49 Service area list
  * O TLV 6-114 */
