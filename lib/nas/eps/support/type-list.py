@@ -32,26 +32,22 @@ type_list["Tracking area identity"]["encode"] = \
 "    target.tac = htobe16(tracking_area_identity->tac);\n\n"
 
 type_list["Mobile identity"]["decode"] = \
-"    if (mobile_identity->tmsi.type == OGS_NAS_MOBILE_IDENTITY_TMSI)\n" \
-"    {\n" \
+"    if (mobile_identity->tmsi.type == OGS_NAS_MOBILE_IDENTITY_TMSI) {\n" \
 "        mobile_identity->tmsi.tmsi = be32toh(mobile_identity->tmsi.tmsi);\n" \
 "    }\n\n"
 type_list["Mobile identity"]["encode"] = \
-"    if (mobile_identity->tmsi.type == OGS_NAS_MOBILE_IDENTITY_TMSI)\n" \
-"    {\n" \
+"    if (mobile_identity->tmsi.type == OGS_NAS_MOBILE_IDENTITY_TMSI) {\n" \
 "        target.tmsi.tmsi = htobe32(mobile_identity->tmsi.tmsi);\n" \
 "        target.tmsi.spare = 0xf;\n" \
 "    }\n\n" 
 
 type_list["EPS mobile identity"]["decode"] = \
-"    if (eps_mobile_identity->guti.type == OGS_NAS_EPS_MOBILE_IDENTITY_GUTI)\n" \
-"    {\n" \
+"    if (eps_mobile_identity->guti.type == OGS_NAS_EPS_MOBILE_IDENTITY_GUTI) {\n" \
 "        eps_mobile_identity->guti.mme_gid = be16toh(eps_mobile_identity->guti.mme_gid);\n" \
 "        eps_mobile_identity->guti.m_tmsi = be32toh(eps_mobile_identity->guti.m_tmsi);\n" \
 "    }\n\n"
 type_list["EPS mobile identity"]["encode"] = \
-"    if (target.guti.type == OGS_NAS_EPS_MOBILE_IDENTITY_GUTI)\n" \
-"    {\n" \
+"    if (target.guti.type == OGS_NAS_EPS_MOBILE_IDENTITY_GUTI) {\n" \
 "        target.guti.spare = 0xf;\n" \
 "        target.guti.mme_gid = htobe16(eps_mobile_identity->guti.mme_gid);\n" \
 "        target.guti.m_tmsi = htobe32(eps_mobile_identity->guti.m_tmsi);\n" \

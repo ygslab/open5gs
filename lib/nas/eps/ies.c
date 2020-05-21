@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.1.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-21 18:36:22.026967 by acetcom
+ * Created on: 2020-05-21 19:34:18.701468 by acetcom
  * from 24301-d80.docx
  ******************************************************************************/
 
@@ -217,8 +217,7 @@ int ogs_nas_decode_mobile_identity(ogs_nas_mobile_identity_t *mobile_identity, o
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(mobile_identity, pkbuf->data - size, size);
 
-    if (mobile_identity->tmsi.type == OGS_NAS_MOBILE_IDENTITY_TMSI)
-    {
+    if (mobile_identity->tmsi.type == OGS_NAS_MOBILE_IDENTITY_TMSI) {
         mobile_identity->tmsi.tmsi = be32toh(mobile_identity->tmsi.tmsi);
     }
 
@@ -234,8 +233,7 @@ int ogs_nas_encode_mobile_identity(ogs_pkbuf_t *pkbuf, ogs_nas_mobile_identity_t
     ogs_nas_mobile_identity_t target;
 
     memcpy(&target, mobile_identity, sizeof(ogs_nas_mobile_identity_t));
-    if (mobile_identity->tmsi.type == OGS_NAS_MOBILE_IDENTITY_TMSI)
-    {
+    if (mobile_identity->tmsi.type == OGS_NAS_MOBILE_IDENTITY_TMSI) {
         target.tmsi.tmsi = htobe32(mobile_identity->tmsi.tmsi);
         target.tmsi.spare = 0xf;
     }
@@ -508,8 +506,7 @@ int ogs_nas_decode_eps_mobile_identity(ogs_nas_eps_mobile_identity_t *eps_mobile
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(eps_mobile_identity, pkbuf->data - size, size);
 
-    if (eps_mobile_identity->guti.type == OGS_NAS_EPS_MOBILE_IDENTITY_GUTI)
-    {
+    if (eps_mobile_identity->guti.type == OGS_NAS_EPS_MOBILE_IDENTITY_GUTI) {
         eps_mobile_identity->guti.mme_gid = be16toh(eps_mobile_identity->guti.mme_gid);
         eps_mobile_identity->guti.m_tmsi = be32toh(eps_mobile_identity->guti.m_tmsi);
     }
@@ -526,8 +523,7 @@ int ogs_nas_encode_eps_mobile_identity(ogs_pkbuf_t *pkbuf, ogs_nas_eps_mobile_id
     ogs_nas_eps_mobile_identity_t target;
 
     memcpy(&target, eps_mobile_identity, sizeof(ogs_nas_eps_mobile_identity_t));
-    if (target.guti.type == OGS_NAS_EPS_MOBILE_IDENTITY_GUTI)
-    {
+    if (target.guti.type == OGS_NAS_EPS_MOBILE_IDENTITY_GUTI) {
         target.guti.spare = 0xf;
         target.guti.mme_gid = htobe16(eps_mobile_identity->guti.mme_gid);
         target.guti.m_tmsi = htobe32(eps_mobile_identity->guti.m_tmsi);
