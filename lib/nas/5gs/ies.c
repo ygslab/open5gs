@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-21 21:08:54.928135 by acetcom
+ * Created on: 2020-05-21 21:20:09.023713 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -1737,6 +1737,12 @@ int ogs_nas_decode_5gs_mobile_identity(ogs_nas_5gs_mobile_identity_t *mobile_ide
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(mobile_identity, pkbuf->data - size, size);
 
+    if (mobile_identity->guti.type == OGS_NAS_5GS_MOBILE_IDENTITY_GUTI) {
+        mobile_identity->guti.m_tmsi = be32toh(mobile_identity->guti.m_tmsi);
+    } else if (mobile_identity->s_tmsi.type == OGS_NAS_5GS_MOBILE_IDENTITY_S_TMSI) {
+        mobile_identity->s_tmsi.m_tmsi = be32toh(mobile_identity->s_tmsi.m_tmsi);
+    }
+
     ogs_trace("  5GS_MOBILE_IDENTITY - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
 
@@ -1749,6 +1755,14 @@ int ogs_nas_encode_5gs_mobile_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_mobile_id
     ogs_nas_5gs_mobile_identity_t target;
 
     memcpy(&target, mobile_identity, sizeof(ogs_nas_5gs_mobile_identity_t));
+    if (mobile_identity->guti.type == OGS_NAS_5GS_MOBILE_IDENTITY_GUTI) {
+        target.guti.m_tmsi = htobe32(mobile_identity->guti.m_tmsi);
+        target.guti._0xf = 0xf;
+    } else if (mobile_identity->s_tmsi.type == OGS_NAS_5GS_MOBILE_IDENTITY_S_TMSI) {
+        target.s_tmsi.m_tmsi = htobe32(mobile_identity->s_tmsi.m_tmsi);
+        target.s_tmsi._0xf = 0xf;
+    }
+
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
