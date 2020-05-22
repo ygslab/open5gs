@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-21 18:36:58.134011 by acetcom
+ * Created on: 2020-05-21 20:05:45.626484 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -385,9 +385,7 @@ int ogs_nas_encode_registration_request(ogs_pkbuf_t *pkbuf, ogs_nas_message_t *m
     }
 
     if (registration_request->presencemask & OGS_NAS_REGISTRATION_REQUEST_N5GC_INDICATION_PRESENT) {
-        size = ogs_nas_encode_optional_type(pkbuf, OGS_NAS_REGISTRATION_REQUEST_N5GC_INDICATION_TYPE);
-        ogs_assert(size >= 0);
-        encoded += size;
+        registration_request->n5gc_indication.type = OGS_NAS_REGISTRATION_REQUEST_N5GC_INDICATION_TYPE;
 
         size = ogs_nas_encode_n5gc_indication(pkbuf, &registration_request->n5gc_indication);
         ogs_assert(size >= 0);

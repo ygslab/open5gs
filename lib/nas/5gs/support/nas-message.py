@@ -382,7 +382,7 @@ for (k, v) in sorted_type_list:
 #    d_print("%s = %s\n" % (k, type_list[k]))
     f.write("/* %s %s\n" % (type_list[k]["reference"], k))
     f.write(" * %s %s %s */\n" % (type_list[k]["presence"], type_list[k]["format"], type_list[k]["length"]))
-    if type_list[k]["format"] == "TV" and type_list[k]["length"] == "1":
+    if (type_list[k]["format"] == "TV" or type_list[k]["format"] == "T") and type_list[k]["length"] == "1":
         f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf)\n" % (v_lower(k), v_lower(k), get_value(k)))
         f.write("{\n")
         f.write("    memcpy(%s, pkbuf->data - 1, 1);\n\n" % get_value(k))
@@ -828,6 +828,8 @@ for (k, v) in sorted_msg_list:
         f.write("    if (%s->presencemask & OGS_NAS_%s_%s_PRESENT) {\n" % (get_value(k), v_upper(k), v_upper(ie["value"])))
         if ie["length"] == "1" and ie["format"] == "TV":
             f.write("        %s->%s.type = (OGS_NAS_%s_%s_TYPE >> 4);\n\n" % (get_value(k), get_value(ie["value"]), v_upper(k), v_upper(ie["value"])))
+        elif ie["length"] == "1" and ie["format"] == "T":
+            f.write("        %s->%s.type = OGS_NAS_%s_%s_TYPE;\n\n" % (get_value(k), get_value(ie["value"]), v_upper(k), v_upper(ie["value"])))
         else:
             f.write("        size = ogs_nas_encode_optional_type(pkbuf, OGS_NAS_%s_%s_TYPE);\n" % (v_upper(k), v_upper(ie["value"])))
             f.write("        ogs_assert(size >= 0);\n")

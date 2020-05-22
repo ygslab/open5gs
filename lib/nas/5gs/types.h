@@ -926,18 +926,10 @@ typedef struct ogs_nas_port_management_information_container_s {
     uint8_t *buffer;
 } ogs_nas_port_management_information_container_t;
 
-
-
-
-
-
-
-
-
 /* 9.11.3.72 N5GC indication
  * O T 1 */
 typedef struct ogs_nas_n5gc_indication_s {
-    uint8_t length;
+    uint8_t type;
 } ogs_nas_n5gc_indication_t;
 
 

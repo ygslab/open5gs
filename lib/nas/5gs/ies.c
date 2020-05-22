@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-21 18:36:58.105494 by acetcom
+ * Created on: 2020-05-21 20:05:45.597859 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -2668,29 +2668,20 @@ int ogs_nas_encode_wus_assistance_information(ogs_pkbuf_t *pkbuf, ogs_nas_wus_as
  * O T 1 */
 int ogs_nas_decode_n5gc_indication(ogs_nas_n5gc_indication_t *n5gc_indication, ogs_pkbuf_t *pkbuf)
 {
-    uint16_t size = 0;
-    ogs_nas_n5gc_indication_t *source = (ogs_nas_n5gc_indication_t *)pkbuf->data;
-
-    n5gc_indication->length = source->length;
-    size = n5gc_indication->length + sizeof(n5gc_indication->length);
-
-    ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(n5gc_indication, pkbuf->data - size, size);
+    memcpy(n5gc_indication, pkbuf->data - 1, 1);
 
     ogs_trace("  N5GC_INDICATION - ");
-    ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
+    ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - 1, 1);
 
-    return size;
+    return 0;
 }
 
 int ogs_nas_encode_n5gc_indication(ogs_pkbuf_t *pkbuf, ogs_nas_n5gc_indication_t *n5gc_indication)
 {
-    uint16_t size = n5gc_indication->length + sizeof(n5gc_indication->length);
-    ogs_nas_n5gc_indication_t target;
+    uint16_t size = sizeof(ogs_nas_n5gc_indication_t);
 
-    memcpy(&target, n5gc_indication, sizeof(ogs_nas_n5gc_indication_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(pkbuf->data - size, &target, size);
+    memcpy(pkbuf->data - size, n5gc_indication, size);
 
     ogs_trace("  N5GC_INDICATION - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
