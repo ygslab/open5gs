@@ -115,6 +115,9 @@ ED8(uint8_t ebi15:1;,
 #define OGS_NAS_MOBILE_IDENTITY_TMSI 4
 #define OGS_NAS_MOBILE_IDENTITY_TMGI 5
 #define OGS_NAS_MOBILE_IDENTITY_GUTI 6
+
+#define OGS_NAS_MOBILE_IDENTITY_EVEN 0
+#define OGS_NAS_MOBILE_IDENTITY_ODD 1
 typedef struct ogs_nas_mobile_identity_imsi_s {
 ED3(uint8_t digit1:4;,
     uint8_t odd_even:1;,
@@ -134,6 +137,8 @@ ED2(uint8_t digit13:4;,
 ED2(uint8_t digit15:4;,
     uint8_t digit14:4;)
 } __attribute__ ((packed)) ogs_nas_mobile_identity_imsi_t;
+
+typedef ogs_nas_mobile_identity_imsi_t ogs_nas_mobile_identity_imei_t;
 
 typedef struct ogs_nas_mobile_identity_tmsi_s {
 ED3(uint8_t spare:4;,

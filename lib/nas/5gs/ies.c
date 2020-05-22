@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-21 20:18:40.986745 by acetcom
+ * Created on: 2020-05-21 21:08:54.928135 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -1731,39 +1731,31 @@ int ogs_nas_decode_5gs_mobile_identity(ogs_nas_5gs_mobile_identity_t *mobile_ide
     uint16_t size = 0;
     ogs_nas_5gs_mobile_identity_t *source = (ogs_nas_5gs_mobile_identity_t *)pkbuf->data;
 
-    mobile_identity->length = be16toh(source->length);
+    mobile_identity->length = source->length;
     size = mobile_identity->length + sizeof(mobile_identity->length);
 
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    mobile_identity->buffer = pkbuf->data - size + sizeof(mobile_identity->length);
+    memcpy(mobile_identity, pkbuf->data - size, size);
 
     ogs_trace("  5GS_MOBILE_IDENTITY - ");
-    ogs_log_hexdump(OGS_LOG_TRACE, (void*)mobile_identity->buffer, mobile_identity->length);
+    ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
 
     return size;
 }
 
 int ogs_nas_encode_5gs_mobile_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_mobile_identity_t *mobile_identity)
 {
-    uint16_t size = 0;
-    uint16_t target;
+    uint16_t size = mobile_identity->length + sizeof(mobile_identity->length);
+    ogs_nas_5gs_mobile_identity_t target;
 
-    ogs_assert(mobile_identity);
-    ogs_assert(mobile_identity->buffer);
-
-    size = sizeof(mobile_identity->length);
+    memcpy(&target, mobile_identity, sizeof(ogs_nas_5gs_mobile_identity_t));
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    target = htobe16(mobile_identity->length);
     memcpy(pkbuf->data - size, &target, size);
-
-    size = mobile_identity->length;
-    ogs_assert(ogs_pkbuf_pull(pkbuf, size));
-    memcpy(pkbuf->data - size, mobile_identity->buffer, size);
 
     ogs_trace("  5GS_MOBILE_IDENTITY - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
 
-    return mobile_identity->length + sizeof(mobile_identity->length);
+    return size;
 }
 
 /* 9.11.3.40 Payload container type

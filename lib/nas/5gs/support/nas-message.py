@@ -430,7 +430,7 @@ for (k, v) in sorted_type_list:
         f.write("    ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);\n\n");
         f.write("    return size;\n")
         f.write("}\n\n")
-    elif type_list[k]["format"] == "LV-E" or type_list[k]["format"] == "TLV-E":
+    elif (type_list[k]["format"] == "LV-E" or type_list[k]["format"] == "TLV-E") and type_list[k]["value"] != "5GS mobile identity":
         f.write("int ogs_nas_decode_%s(ogs_nas_%s_t *%s, ogs_pkbuf_t *pkbuf)\n" % (v_lower(k), v_lower(k), get_value(k)))
         f.write("{\n")
         f.write("    uint16_t size = 0;\n")

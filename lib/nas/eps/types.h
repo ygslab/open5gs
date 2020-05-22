@@ -218,9 +218,6 @@ ED4(uint8_t tsc:1;,
 #define OGS_NAS_EPS_MOBILE_IDENTITY_IMSI 1
 #define OGS_NAS_EPS_MOBILE_IDENTITY_GUTI 6
 #define OGS_NAS_EPS_MOBILE_IDENTITY_IMEI 3
-
-#define OGS_NAS_EPS_MOBILE_IDENTITY_EVEN 0
-#define OGS_NAS_EPS_MOBILE_IDENTITY_ODD 1
 typedef struct ogs_nas_eps_mobile_identity_guti_s {
 ED3(uint8_t spare:4;,
     uint8_t odd_even:1;,
@@ -230,16 +227,12 @@ ED3(uint8_t spare:4;,
     uint8_t mme_code;
     uint32_t m_tmsi;
 } __attribute__ ((packed)) ogs_nas_eps_mobile_identity_guti_t;
-
-typedef ogs_nas_mobile_identity_imsi_t ogs_nas_eps_mobile_identity_imsi_t;
-typedef ogs_nas_eps_mobile_identity_imsi_t ogs_nas_eps_mobile_identity_imei_t;
-
 typedef struct ogs_nas_eps_mobile_identity_s {
     uint8_t length;
     union {
-        ogs_nas_eps_mobile_identity_imsi_t imsi;
+        ogs_nas_mobile_identity_imsi_t imsi;
         ogs_nas_eps_mobile_identity_guti_t guti;
-        ogs_nas_eps_mobile_identity_imei_t imei;
+        ogs_nas_mobile_identity_imei_t imei;
     };
 } __attribute__ ((packed)) ogs_nas_eps_mobile_identity_t;
 

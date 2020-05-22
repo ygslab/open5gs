@@ -85,7 +85,7 @@ ogs_pkbuf_t *emm_build_attach_accept(
     if (mme_ue->guti_present) {
         attach_accept->presencemask |= OGS_NAS_ATTACH_ACCEPT_GUTI_PRESENT;
         nas_guti->length = sizeof(ogs_nas_eps_mobile_identity_guti_t);
-        nas_guti->guti.odd_even = OGS_NAS_EPS_MOBILE_IDENTITY_EVEN;
+        nas_guti->guti.odd_even = OGS_NAS_MOBILE_IDENTITY_EVEN;
         nas_guti->guti.type = OGS_NAS_EPS_MOBILE_IDENTITY_GUTI;
         nas_guti->guti.nas_plmn_id = mme_ue->guti.nas_plmn_id;
         nas_guti->guti.mme_gid = mme_ue->guti.mme_gid;

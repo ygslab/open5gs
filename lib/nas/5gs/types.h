@@ -119,6 +119,7 @@ ED2(uint8_t spare:4;,
 
 /* 9.11.3.3 5GS identity type
  * M V 1/2 */
+#define OGS_NAS_5GS_MOBILE_IDENTITY_IS_NOT_AVAILABLE 0
 #define OGS_NAS_5GS_MOBILE_IDENTITY_SUCI 1
 #define OGS_NAS_5GS_MOBILE_IDENTITY_5G_GUTI 2
 #define OGS_NAS_5GS_MOBILE_IDENTITY_IMEI 3
@@ -132,11 +133,17 @@ ED3(uint8_t type:4;,
 
 /* 9.11.3.4 5GS mobile identity
  * M LV-E 6-n */
-#define OGS_NAS_5GS_MOBILE_IDENTITY_EVEN 0
-#define OGS_NAS_5GS_MOBILE_IDENTITY_ODD 1
-typedef struct ogs_nas_5gs_mobile_identity_5g_guti_s {
-ED3(uint8_t spare:4;,
-    uint8_t odd_even:1;,
+#define OGS_NAS_GET_AMF_SET_ID(_iDentity) \
+    ((_iDentity)->amf_set_id2 + ((_iDentity)->amf_set_id1 << 2))
+#define OGS_NAS_SET_AMF_SET_ID(_iDentity, _aMFSetId) \
+    do { \
+        ogs_assert((_iDentity)); \
+        (_iDentity)->amf_set_id1 = (_aMFSetId >> 2) & 0x000f; \
+        (_iDentity)->amf_set_id2 = _aMFSetId & 0x0003; \
+    } while(0)
+typedef struct ogs_nas_5gs_mobile_identity_guti_s {
+ED3(uint8_t _0xf:4;,
+    uint8_t spare:1;,
     uint8_t type:3;)
     ogs_nas_plmn_id_t nas_plmn_id;
     uint16_t amf_region_id;
@@ -144,14 +151,26 @@ ED3(uint8_t spare:4;,
 ED2(uint8_t amf_set_id2:2;,
     uint8_t amf_pointer:6;)
     uint32_t m_tmsi;
-} __attribute__ ((packed)) ogs_nas_5gs_mobile_identity_5g_guti_t;
-
-typedef ogs_nas_mobile_identity_imsi_t ogs_nas_5gs_mobile_identity_imsi_t;
-typedef ogs_nas_mobile_identity_imsi_t ogs_nas_5gs_mobile_identity_imei_t;
-
+} __attribute__ ((packed)) ogs_nas_5gs_mobile_identity_guti_t;
+typedef struct ogs_nas_5gs_mobile_identity_s_tmsi_s {
+ED3(uint8_t _0xf:4;,
+    uint8_t spare:1;,
+    uint8_t type:3;)
+    uint16_t amf_region_id;
+    uint8_t amf_set_id1;
+ED2(uint8_t amf_set_id2:2;,
+    uint8_t amf_pointer:6;)
+    uint32_t m_tmsi;
+} __attribute__ ((packed)) ogs_nas_5gs_mobile_identity_s_tmsi_t;
 typedef struct ogs_nas_5gs_mobile_identity_s {
-    uint8_t length;
-    uint8_t *buffer;
+    uint16_t length;
+    union {
+        ogs_nas_mobile_identity_imsi_t imsi;
+        ogs_nas_5gs_mobile_identity_guti_t guti;
+        ogs_nas_5gs_mobile_identity_s_tmsi_t s_tmsi;
+        ogs_nas_mobile_identity_imei_t imei;
+        ogs_nas_mobile_identity_imeisv_t imeisv;
+    };
 } ogs_nas_5gs_mobile_identity_t;
 
 /* 9.11.3.5 5GS network feature support
