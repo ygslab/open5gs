@@ -28,7 +28,7 @@
 /*******************************************************************************
  * This file had been created by nas-message.py script v0.2.0
  * Please do not modify this file but regenerate it via script.
- * Created on: 2020-05-21 20:05:45.597859 by acetcom
+ * Created on: 2020-05-21 20:18:40.986745 by acetcom
  * from 24501-g41.docx
  ******************************************************************************/
 
@@ -120,6 +120,12 @@ int ogs_nas_decode_dnn(ogs_nas_dnn_t *dnn, ogs_pkbuf_t *pkbuf)
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(dnn, pkbuf->data - size, size);
 
+    {
+        char data_network_name[OGS_MAX_DNN_LEN];
+        dnn->length  = ogs_fqdn_parse(data_network_name, dnn->value, dnn->length);
+        ogs_cpystrn(dnn->value, data_network_name, ogs_min(dnn->length, OGS_MAX_DNN_LEN) + 1);
+    }
+
     ogs_trace("  DNN - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
 
@@ -132,6 +138,9 @@ int ogs_nas_encode_dnn(ogs_pkbuf_t *pkbuf, ogs_nas_dnn_t *dnn)
     ogs_nas_dnn_t target;
 
     memcpy(&target, dnn, sizeof(ogs_nas_dnn_t));
+    target.length = ogs_fqdn_build(target.value, dnn->value, dnn->length);
+    size = target.length + sizeof(target.length);
+
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -2698,6 +2707,8 @@ int ogs_nas_decode_5gs_tracking_area_identity(ogs_nas_5gs_tracking_area_identity
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(tracking_area_identity, pkbuf->data - size, size);
 
+    tracking_area_identity->tac = be16toh(tracking_area_identity->tac);
+
     ogs_trace("  5GS_TRACKING_AREA_IDENTITY - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
 
@@ -2710,6 +2721,8 @@ int ogs_nas_encode_5gs_tracking_area_identity(ogs_pkbuf_t *pkbuf, ogs_nas_5gs_tr
     ogs_nas_5gs_tracking_area_identity_t target;
 
     memcpy(&target, tracking_area_identity, size);
+    target.tac = htobe16(tracking_area_identity->tac);
+
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
@@ -3303,6 +3316,8 @@ int ogs_nas_decode_header_compression_configuration(ogs_nas_header_compression_c
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(header_compression_configuration, pkbuf->data - size, size);
 
+    header_compression_configuration->max_cid = be16toh(header_compression_configuration->max_cid);
+
     ogs_trace("  HEADER_COMPRESSION_CONFIGURATION - ");
     ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data - size, size);
 
@@ -3315,6 +3330,8 @@ int ogs_nas_encode_header_compression_configuration(ogs_pkbuf_t *pkbuf, ogs_nas_
     ogs_nas_header_compression_configuration_t target;
 
     memcpy(&target, header_compression_configuration, sizeof(ogs_nas_header_compression_configuration_t));
+    target.max_cid = htobe16(header_compression_configuration->max_cid);
+
     ogs_assert(ogs_pkbuf_pull(pkbuf, size));
     memcpy(pkbuf->data - size, &target, size);
 
